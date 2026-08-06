@@ -15,8 +15,10 @@
         .card h2 { margin-top: 0; text-align: center; }
         .artist { color: #94a3b8; text-align: center; margin-bottom: 20px; }
         .rank-list { background: #334155; padding: 15px 20px; border-radius: 10px; }
-        .rank-item { display: flex; justify-content: space-between; margin: 10px 0; border-bottom: 1px solid #475569; padding-bottom: 8px; }
+        .rank-item { display: flex; justify-content: space-between; align-items: flex-start; margin: 12px 0; border-bottom: 1px solid #475569; padding-bottom: 10px; }
         .rank-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .rank-item span { font-weight: bold; min-width: 130px; }
+        .rank-item b { text-align: right; line-height: 1.5; font-weight: normal; }
     </style>
 </head>
 <body>
@@ -25,7 +27,7 @@
         <h1>🎵 fromis_9 곡 기록 검색</h1>
         
         <div class="search-box">
-            <input type="text" id="songInput" placeholder="곡 제목 (예: dm, supersonic)">
+            <input type="text" id="songInput" placeholder="곡 제목 (예: dm, stay this way, supersonic)">
             <button id="searchBtn">검색</button>
         </div>
 
@@ -36,57 +38,55 @@
             <div class="rank-list">
                 <h3>🏆 곡 상세 & 역대 기록</h3>
                 <div class="rank-item"><span>📅 발매일</span><b id="releaseDate">-</b></div>
-                <div class="rank-item"><span>🍈 멜론 TOP 100 최고 순위</span><b id="melonRank">-</b></div>
-                <div class="rank-item"><span>🧞 지니 차트 최고 순위</span><b id="genieRank">-</b></div>
-                <div class="rank-item"><span>📺 음악방송 총 수상</span><b id="trophyCount">-</b></div>
+                <div class="rank-item"><span>🍈 멜론 최고 순위</span><b id="melonRank">-</b></div>
+                <div class="rank-item"><span>🧞 지니 최고 순위</span><b id="genieRank">-</b></div>
+                <div class="rank-item"><span>📺 음악방송 수상 내역</span><b id="trophyCount">-</b></div>
             </div>
         </div>
     </div>
 
     <script>
-        // 📌 프로미스나인 역대 곡 데이터 모음 (발매일 항목 추가)
+        // 📌 상세 수상 날짜 및 방송사 정보 추가 (<br>로 줄바꿈)
         const musicData = {
             "DM": { 
                 title: "DM", 
-                release: "2022.1.17",
+                release: "2022년 1월 17일",
                 melon: "일간 66위 / TOP 100 57위", 
                 genie: "일간 24위 / 실시간 1위", 
-                trophy: "THE SHOW (2022.01.25),SHOW CHAMPION (2022.01.26)🏆🏆" 
+                trophy: "총 2관왕 🏆🏆<br>• 22.01.25 더쇼 1위<br>• 22.01.26 쇼챔피언 1위" 
             },
             "STAYTHISWAY": { 
                 title: "Stay This Way", 
-                release: "2022.6.27",
+                release: "2022년 6월 27일",
                 melon: "일간 82위 / TOP 100 54위", 
                 genie: "일간 38위 / 실시간 1위", 
-                trophy: "5관왕 🏆🏆🏆🏆🏆" 
+                trophy: "총 5관왕 🏆🏆🏆🏆🏆<br>• 22.07.05 더쇼 1위<br>• 22.07.06 쇼챔피언 1위<br>• 22.07.07 엠카운트다운 1위<br>• 22.07.08 뮤직뱅크 1위<br>• 22.07.09 음악중심 1위" 
             },
             "WEGO": { 
                 title: "WE GO", 
-                release: "2021.5.17",
+                release: "2021년 5월 17일",
                 melon: "TOP 100 진입 (115위)", 
                 genie: "일간 41위 / 실시간 1위", 
-                trophy: "음방 1위 후보 👏" 
+                trophy: "음방 1위 후보 (커리어하이 달성)" 
             },
             "MENOW": { 
                 title: "#menow", 
-                release: "2023.6.5",
+                release: "2023년 6월 5일",
                 melon: "TOP 100 진입", 
                 genie: "상위권 진입", 
-                trophy: "1관왕 🏆" 
+                trophy: "총 1관왕 🏆<br>• 23.06.13 더쇼 1위" 
             },
             "SUPERSONIC": { 
                 title: "Supersonic", 
-                release: "2024.8.12",
+                release: "2024년 8월 12일",
                 melon: "일간 10위권 / TOP 100 상위권", 
                 genie: "실시간 1위 / 상위권 유지", 
-                trophy: "4관왕 🏆🏆🏆🏆" 
+                trophy: "총 4관왕 🏆🏆🏆🏆<br>• 24.08.20 더쇼 1위<br>• 24.08.22 엠카운트다운 1위<br>• 24.08.23 뮤직뱅크 1위<br>• 24.08.24 음악중심 1위" 
             }
         };
 
         document.getElementById("searchBtn").addEventListener("click", function() {
             const input = document.getElementById("songInput").value;
-            
-            // 공백 제거 + 대문자 변환
             const query = input.replace(/\s+/g, '').toUpperCase(); 
             const card = document.getElementById("resultCard");
 
@@ -97,13 +97,15 @@
 
             if (musicData[query]) {
                 document.getElementById("songTitle").innerText = musicData[query].title; 
-                document.getElementById("releaseDate").innerText = musicData[query].release; // 발매일 세팅
+                document.getElementById("releaseDate").innerText = musicData[query].release;
                 document.getElementById("melonRank").innerText = musicData[query].melon;
                 document.getElementById("genieRank").innerText = musicData[query].genie;
-                document.getElementById("trophyCount").innerText = musicData[query].trophy;
+                
+                // 💡 HTML 줄바꿈 태그(<br>) 인식을 위해 innerHTML 사용!
+                document.getElementById("trophyCount").innerHTML = musicData[query].trophy;
                 card.style.display = "block";
             } else {
-                alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, we go)");
+                alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic)");
                 card.style.display = "none";
             }
         });
