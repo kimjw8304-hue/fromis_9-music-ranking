@@ -1,0 +1,61 @@
+<div class="container">
+    <h1>🎵 곡 정보 & 차트 검색</h1>
+    
+    <div class="search-box">
+        <input type="text" id="songInput" placeholder="노래 제목 (예: dm, stay this way)">
+        <button id="searchBtn">검색</button>
+    </div>
+
+    <div id="resultCard" class="card">
+        <h2 id="songTitle">곡 제목</h2>
+        <div id="artistName" class="artist">아티스트</div>
+        
+        <div class="rank-list">
+            <h3>📊 실시간 정보</h3>
+            <div class="rank-item"><span>🍈 멜론 차트</span><b id="melonRank">-</b></div>
+            <div class="rank-item"><span>🧞 지니 차트</span><b id="genieRank">-</b></div>
+            <div class="rank-item"><span>🏆 음악방송</span><b id="trophyCount">-</b></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body { font-family: 'Arial', sans-serif; background: #0f172a; color: white; text-align: center; padding: 40px; margin: 0; }
+    .container { max-width: 500px; margin: 0 auto; }
+    .search-box { margin-bottom: 30px; display: flex; justify-content: center; gap: 10px; }
+    input { padding: 12px 20px; width: 60%; border-radius: 20px; border: none; outline: none; font-size: 16px; }
+    button { padding: 12px 24px; border-radius: 20px; border: none; background: #6366f1; color: white; cursor: pointer; font-weight: bold; font-size: 16px; }
+    button:hover { background: #4f46e5; }
+    .card { background: #1e293b; padding: 25px; border-radius: 15px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: left; }
+    .card h2 { margin-top: 0; text-align: center; }
+    .artist { color: #94a3b8; text-align: center; margin-bottom: 20px; }
+    .rank-list { background: #334155; padding: 15px 20px; border-radius: 10px; }
+    .rank-item { display: flex; justify-content: space-between; margin: 10px 0; border-bottom: 1px solid #475569; padding-bottom: 8px; }
+    .rank-item:last-child { border-bottom: none; padding-bottom: 0; }
+</style>
+
+<script>
+    const musicData = {
+        "DM": { title: "DM", artist: "fromis_9", melon: "12위", genie: "8위", trophy: "2관왕 🏆" },
+        "STAYTHISWAY": { title: "Stay This Way", artist: "fromis_9", melon: "5위", genie: "3위", trophy: "5관왕 🏆" }
+    };
+
+    document.getElementById("searchBtn").addEventListener("click", function() {
+        const input = document.getElementById("songInput").value;
+        const query = input.toUpperCase().replace(/\s+/g, ''); 
+        
+        const card = document.getElementById("resultCard");
+
+        if (musicData[query]) {
+            document.getElementById("songTitle").innerText = musicData[query].title; 
+            document.getElementById("artistName").innerText = musicData[query].artist;
+            document.getElementById("melonRank").innerText = musicData[query].melon;
+            document.getElementById("genieRank").innerText = musicData[query].genie;
+            document.getElementById("trophyCount").innerText = musicData[query].trophy;
+            card.style.display = "block";
+        } else {
+            alert("등록되지 않은 곡입니다!\n(테스트용: dm 또는 staythisway 입력)");
+            card.style.display = "none";
+        }
+    });
+</script>
