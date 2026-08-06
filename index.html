@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fromis_9 곡 정보 & 차트 검색</title>
-    <!-- [CSS] 디자인 영역 -->
+    <title>fromis_9 역대 곡 기록 & 커리어 아카이브</title>
     <style>
         body { font-family: 'Arial', sans-serif; background: #0f172a; color: white; text-align: center; padding: 40px; margin: 0; }
         .container { max-width: 500px; margin: 0 auto; }
@@ -22,43 +21,67 @@
 </head>
 <body>
 
-    <!-- [HTML] 화면 뼈대 영역 -->
     <div class="container">
-        <h1>🎵 곡 정보 & 차트 검색</h1>
+        <h1>🎵 fromis_9 곡 기록 검색</h1>
         
         <div class="search-box">
-            <input type="text" id="songInput" placeholder="노래 제목 (예: dm, stay this way)">
+            <input type="text" id="songInput" placeholder="곡 제목 (예: dm, supersonic)">
             <button id="searchBtn">검색</button>
         </div>
 
         <div id="resultCard" class="card">
             <h2 id="songTitle">곡 제목</h2>
-            <div id="artistName" class="artist">아티스트</div>
+            <div id="artistName" class="artist">fromis_9 (프로미스나인)</div>
             
             <div class="rank-list">
-                <h3>📊 실시간 정보</h3>
-                <div class="rank-item"><span>🍈 멜론 차트</span><b id="melonRank">-</b></div>
-                <div class="rank-item"><span>🧞 지니 차트</span><b id="genieRank">-</b></div>
-                <div class="rank-item"><span>🏆 음악방송</span><b id="trophyCount">-</b></div>
+                <h3>🏆 역대 최고 기록</h3>
+                <div class="rank-item"><span>🍈 멜론 TOP 100 최고 순위</span><b id="melonRank">-</b></div>
+                <div class="rank-item"><span>🧞 지니 차트 최고 순위</span><b id="genieRank">-</b></div>
+                <div class="rank-item"><span>📺 음악방송 총 수상</span><b id="trophyCount">-</b></div>
             </div>
         </div>
     </div>
 
-    <!-- [JavaScript] 동작 및 검색 기능 영역 -->
     <script>
-        // 곡 데이터베이스 (검색용 키값은 공백없는 대문자로 보관)
+        // 📌 프로미스나인 역대 곡 데이터 모음 (공백/대소문자 자동 처리)
         const musicData = {
-            "DM": { title: "DM", artist: "fromis_9", melon: "12위", genie: "8위", trophy: "2관왕 🏆" },
-            "STAYTHISWAY": { title: "Stay This Way", artist: "fromis_9", melon: "5위", genie: "3위", trophy: "5관왕 🏆" }
+            "DM": { 
+                title: "DM", 
+                melon: "일간 66위 / TOP 100 57위", 
+                genie: "일간 24위 / 실시간 1위", 
+                trophy: "2관왕 🏆🏆" 
+            },
+            "STAYTHISWAY": { 
+                title: "Stay This Way", 
+                melon: "일간 82위 / TOP 100 54위", 
+                genie: "일간 38위 / 실시간 1위", 
+                trophy: "5관왕 🏆🏆🏆🏆🏆" 
+            },
+            "WEGO": { 
+                title: "WE GO", 
+                melon: "TOP 100 진입 (115위)", 
+                genie: "일간 41위 / 실시간 1위", 
+                trophy: "음방 1위 후보 👏" 
+            },
+            "MENOW": { 
+                title: "#menow", 
+                melon: "TOP 100 진입", 
+                genie: "상위권 진입", 
+                trophy: "1관왕 🏆" 
+            },
+            "SUPERSONIC": { 
+                title: "Supersonic", 
+                melon: "일간 10위권 / TOP 100 상위권", 
+                genie: "실시간 1위 / 상위권 유지", 
+                trophy: "4관왕 🏆🏆🏆🏆" 
+            }
         };
 
-        // 검색 버튼 클릭 이벤트
         document.getElementById("searchBtn").addEventListener("click", function() {
             const input = document.getElementById("songInput").value;
             
-            // 입력받은 단어에서 띄어쓰기를 지우고 전부 대문자로 변경 (소문자/띄어쓰기 완전 해결!)
+            // 공백 제거 + 대문자 변환 (오타/띄어쓰기 예방)
             const query = input.replace(/\s+/g, '').toUpperCase(); 
-            
             const card = document.getElementById("resultCard");
 
             if (!query) {
@@ -66,16 +89,14 @@
                 return;
             }
 
-            // 데이터가 존재하는지 확인
             if (musicData[query]) {
                 document.getElementById("songTitle").innerText = musicData[query].title; 
-                document.getElementById("artistName").innerText = musicData[query].artist;
                 document.getElementById("melonRank").innerText = musicData[query].melon;
                 document.getElementById("genieRank").innerText = musicData[query].genie;
                 document.getElementById("trophyCount").innerText = musicData[query].trophy;
                 card.style.display = "block";
             } else {
-                alert("등록되지 않은 곡입니다!\n(테스트용: dm 또는 stay this way 입력)");
+                alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, we go)");
                 card.style.display = "none";
             }
         });
