@@ -34,7 +34,8 @@
             <div id="artistName" class="artist">fromis_9 (프로미스나인)</div>
             
             <div class="rank-list">
-                <h3>🏆 역대 최고 기록</h3>
+                <h3>🏆 곡 상세 & 역대 기록</h3>
+                <div class="rank-item"><span>📅 발매일</span><b id="releaseDate">-</b></div>
                 <div class="rank-item"><span>🍈 멜론 TOP 100 최고 순위</span><b id="melonRank">-</b></div>
                 <div class="rank-item"><span>🧞 지니 차트 최고 순위</span><b id="genieRank">-</b></div>
                 <div class="rank-item"><span>📺 음악방송 총 수상</span><b id="trophyCount">-</b></div>
@@ -43,34 +44,39 @@
     </div>
 
     <script>
-        // 📌 프로미스나인 역대 곡 데이터 모음 (공백/대소문자 자동 처리)
+        // 📌 프로미스나인 역대 곡 데이터 모음 (발매일 항목 추가)
         const musicData = {
             "DM": { 
                 title: "DM", 
+                release: "2022년 1월 17일",
                 melon: "일간 66위 / TOP 100 57위", 
                 genie: "일간 24위 / 실시간 1위", 
                 trophy: "2관왕 🏆🏆" 
             },
             "STAYTHISWAY": { 
                 title: "Stay This Way", 
+                release: "2022년 6월 27일",
                 melon: "일간 82위 / TOP 100 54위", 
                 genie: "일간 38위 / 실시간 1위", 
                 trophy: "5관왕 🏆🏆🏆🏆🏆" 
             },
             "WEGO": { 
                 title: "WE GO", 
+                release: "2021년 5월 17일",
                 melon: "TOP 100 진입 (115위)", 
                 genie: "일간 41위 / 실시간 1위", 
                 trophy: "음방 1위 후보 👏" 
             },
             "MENOW": { 
                 title: "#menow", 
+                release: "2023년 6월 5일",
                 melon: "TOP 100 진입", 
                 genie: "상위권 진입", 
                 trophy: "1관왕 🏆" 
             },
             "SUPERSONIC": { 
                 title: "Supersonic", 
+                release: "2024년 8월 12일",
                 melon: "일간 10위권 / TOP 100 상위권", 
                 genie: "실시간 1위 / 상위권 유지", 
                 trophy: "4관왕 🏆🏆🏆🏆" 
@@ -80,7 +86,7 @@
         document.getElementById("searchBtn").addEventListener("click", function() {
             const input = document.getElementById("songInput").value;
             
-            // 공백 제거 + 대문자 변환 (오타/띄어쓰기 예방)
+            // 공백 제거 + 대문자 변환
             const query = input.replace(/\s+/g, '').toUpperCase(); 
             const card = document.getElementById("resultCard");
 
@@ -91,6 +97,7 @@
 
             if (musicData[query]) {
                 document.getElementById("songTitle").innerText = musicData[query].title; 
+                document.getElementById("releaseDate").innerText = musicData[query].release; // 발매일 세팅
                 document.getElementById("melonRank").innerText = musicData[query].melon;
                 document.getElementById("genieRank").innerText = musicData[query].genie;
                 document.getElementById("trophyCount").innerText = musicData[query].trophy;
