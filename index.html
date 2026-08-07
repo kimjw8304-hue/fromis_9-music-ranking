@@ -34,7 +34,7 @@
         <h1>🎵 fromis_9 곡 기록 검색</h1>
         
         <div class="search-box">
-            <input type="text" id="songInput" placeholder="곡 제목 (예: dm, stay this way, supersonic)">
+            <input type="text" id="songInput" placeholder="곡 제목 (예: dm, supersonic, fun)">
             <button id="searchBtn">검색</button>
         </div>
 
@@ -61,8 +61,44 @@
     </div>
 
     <script>
-        // 📌 공식 YouTube 단축 URL(youtu.be)로 수정하여 접속 오류 완벽 방지!
+        // 📌 프로미스나인 주요 곡 전체 데이터 모음 (이미지 + 뮤비 링크 + 기록 복구!)
         const musicData = {
+            "LOVEBOMB": { 
+                title: "LOVE BOMB", 
+                img: "https://img.youtube.com/vi/a4OuA98n2R8/hqdefault.jpg",
+                mv: "https://youtu.be/a4OuA98n2R8",
+                release: "2018년 10월 10일",
+                melon: "차트인 성공", 
+                genie: "상위권 진입", 
+                trophy: "음방 1위 후보 👏" 
+            },
+            "FUN": { 
+                title: "FUN!", 
+                img: "https://img.youtube.com/vi/ZsJ-BHohPwg/hqdefault.jpg",
+                mv: "https://youtu.be/ZsJ-BHohPwg",
+                release: "2019년 6월 4일",
+                melon: "차트인 성공", 
+                genie: "상위권 진입", 
+                trophy: "음방 활동 곡 👏" 
+            },
+            "WEGO": { 
+                title: "WE GO", 
+                img: "https://img.youtube.com/vi/HM64aP5P0E0/hqdefault.jpg",
+                mv: "https://youtu.be/HM64aP5P0E0",
+                release: "2021년 5월 17일",
+                melon: "TOP 100 진입 (115위)", 
+                genie: "일간 41위 / 실시간 1위", 
+                trophy: "음방 1위 후보 (커리어하이 달성)" 
+            },
+            "TALKNTALK": { 
+                title: "Talk & Talk", 
+                img: "https://img.youtube.com/vi/31bdP61_8qU/hqdefault.jpg",
+                mv: "https://youtu.be/31bdP61_8qU",
+                release: "2021년 9월 1일",
+                melon: "TOP 100 진입", 
+                genie: "실시간 1위", 
+                trophy: "총 1관왕 🏆<br>• 21.09.07 더쇼 1위" 
+            },
             "DM": { 
                 title: "DM", 
                 img: "https://img.youtube.com/vi/f_SAnS-S2I4/hqdefault.jpg",
@@ -80,6 +116,15 @@
                 melon: "일간 82위 / TOP 100 54위", 
                 genie: "일간 38위 / 실시간 1위", 
                 trophy: "총 5관왕 🏆🏆🏆🏆🏆<br>• 22.07.05 더쇼 1위<br>• 22.07.06 쇼챔피언 1위<br>• 22.07.07 엠카운트다운 1위<br>• 22.07.08 뮤직뱅크 1위<br>• 22.07.09 음악중심 1위" 
+            },
+            "MENOW": { 
+                title: "#menow", 
+                img: "https://img.youtube.com/vi/2I_I0S3I9c8/hqdefault.jpg",
+                mv: "https://youtu.be/2I_I0S3I9c8",
+                release: "2023년 6월 5일",
+                melon: "TOP 100 진입", 
+                genie: "상위권 진입", 
+                trophy: "총 1관왕 🏆<br>• 23.06.13 더쇼 1위" 
             },
             "SUPERSONIC": { 
                 title: "Supersonic", 
@@ -116,7 +161,7 @@
                 
                 card.style.display = "block";
             } else {
-                alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic)");
+                alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, love bomb, fun)");
                 card.style.display = "none";
             }
         });
