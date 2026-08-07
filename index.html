@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+            <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -11,9 +11,16 @@
         input { padding: 12px 20px; width: 60%; border-radius: 20px; border: none; outline: none; font-size: 16px; }
         button { padding: 12px 24px; border-radius: 20px; border: none; background: #6366f1; color: white; cursor: pointer; font-weight: bold; font-size: 16px; }
         button:hover { background: #4f46e5; }
+        
         .card { background: #1e293b; padding: 25px; border-radius: 15px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: left; }
-        .card h2 { margin-top: 0; text-align: center; }
+        .card h2 { margin-top: 15px; text-align: center; margin-bottom: 5px; }
         .artist { color: #94a3b8; text-align: center; margin-bottom: 20px; }
+        
+        /* 🖼️ 이미지 & 버튼 스타일 추가 */
+        .album-img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; display: block; margin: 0 auto; }
+        .mv-btn { display: block; width: 100%; text-align: center; background: #ff0000; color: white; text-decoration: none; font-weight: bold; padding: 12px 0; border-radius: 10px; margin-top: 15px; transition: 0.2s; }
+        .mv-btn:hover { background: #cc0000; }
+
         .rank-list { background: #334155; padding: 15px 20px; border-radius: 10px; }
         .rank-item { display: flex; justify-content: space-between; align-items: flex-start; margin: 12px 0; border-bottom: 1px solid #475569; padding-bottom: 10px; }
         .rank-item:last-child { border-bottom: none; padding-bottom: 0; }
@@ -27,11 +34,14 @@
         <h1>🎵 fromis_9 곡 기록 검색</h1>
         
         <div class="search-box">
-            <input type="text" id="songInput" placeholder="곡 제목 (예: dm, stay this way, supersonic)">
+            <input type="text" id="songInput" placeholder="곡 제목 (예: dm, supersonic)">
             <button id="searchBtn">검색</button>
         </div>
 
         <div id="resultCard" class="card">
+            <!-- 🖼️ 앨범 커버 이미지 영역 -->
+            <img id="albumImg" class="album-img" src="" alt="앨범 아트">
+            
             <h2 id="songTitle">곡 제목</h2>
             <div id="artistName" class="artist">fromis_9 (프로미스나인)</div>
             
@@ -42,14 +52,19 @@
                 <div class="rank-item"><span>🧞 지니 최고 순위</span><b id="genieRank">-</b></div>
                 <div class="rank-item"><span>📺 음악방송 수상 내역</span><b id="trophyCount">-</b></div>
             </div>
+
+            <!-- 🎬 뮤비 링크 버튼 -->
+            <a id="mvLink" class="mv-btn" href="#" target="_blank">🎬 YouTube 공식 뮤직비디오 보기</a>
         </div>
     </div>
 
     <script>
-        // 📌 상세 수상 날짜 및 방송사 정보 추가 (<br>로 줄바꿈)
+        // 📌 이미지 주소(img) 및 뮤비 유튜브 링크(mv) 추가
         const musicData = {
             "DM": { 
                 title: "DM", 
+                img: "https://i.ytimg.com/vi/4gX_lOUqD3Y/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=4gX_lOUqD3Y",
                 release: "2022년 1월 17일",
                 melon: "일간 66위 / TOP 100 57위", 
                 genie: "일간 24위 / 실시간 1위", 
@@ -57,56 +72,22 @@
             },
             "STAYTHISWAY": { 
                 title: "Stay This Way", 
+                img: "https://i.ytimg.com/vi/0T1y-p8p26Y/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=0T1y-p8p26Y",
                 release: "2022년 6월 27일",
                 melon: "일간 82위 / TOP 100 54위", 
                 genie: "일간 38위 / 실시간 1위", 
                 trophy: "총 5관왕 🏆🏆🏆🏆🏆<br>• 22.07.05 더쇼 1위<br>• 22.07.06 쇼챔피언 1위<br>• 22.07.07 엠카운트다운 1위<br>• 22.07.08 뮤직뱅크 1위<br>• 22.07.09 음악중심 1위" 
             },
-            "WEGO": { 
-                title: "WE GO", 
-                release: "2021년 5월 17일",
-                melon: "TOP 100 진입 (115위)", 
-                genie: "일간 41위 / 실시간 1위", 
-                trophy: "음방 1위 후보 (커리어하이 달성)" 
-            },
-            "MENOW": { 
-                title: "#menow", 
-                release: "2023년 6월 5일",
-                melon: "TOP 100 진입", 
-                genie: "상위권 진입", 
-                trophy: "총 1관왕 🏆<br>• 23.06.13 더쇼 1위" 
-            },
             "SUPERSONIC": { 
                 title: "Supersonic", 
+                img: "https://i.ytimg.com/vi/8aR09Oim3C4/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=8aR09Oim3C4",
                 release: "2024년 8월 12일",
                 melon: "일간 10위권 / TOP 100 상위권", 
                 genie: "실시간 1위 / 상위권 유지", 
                 trophy: "총 4관왕 🏆🏆🏆🏆<br>• 24.08.20 더쇼 1위<br>• 24.08.22 엠카운트다운 1위<br>• 24.08.23 뮤직뱅크 1위<br>• 24.08.24 음악중심 1위" 
-            },            
-            "TALK&TALK": { 
-                title: "Talk & Talk", 
-                release: "2021년 9월 1일",
-                melon: "TOP 100 진입", 
-                genie: "실시간 1위", 
-                trophy: "총 1관왕 🏆<br>• 21.09.07 더쇼 1위" 
-            },
-            "FUN": { 
-                title: "FUN!", 
-                release: "2019년 6월 4일",
-                melon: "차트인 성공", 
-                genie: "상위권 진입", 
-                trophy: "음방 활동 곡 👏" 
-            },
-            "LOVEBOMB": { 
-                title: "LOVE BOMB", 
-                release: "2018년 10월 10일",
-                melon: "차트인 성공", 
-                genie: "상위권 진입", 
-                trophy: "음방 1위 후보 👏" 
             }
-
-
-
         };
 
         document.getElementById("searchBtn").addEventListener("click", function() {
@@ -120,12 +101,12 @@
             }
 
             if (musicData[query]) {
+                document.getElementById("albumImg").src = musicData[query].img; // 이미지 적용
+                document.getElementById("mvLink").href = musicData[query].mv;   // 뮤비 링크 적용
                 document.getElementById("songTitle").innerText = musicData[query].title; 
                 document.getElementById("releaseDate").innerText = musicData[query].release;
                 document.getElementById("melonRank").innerText = musicData[query].melon;
                 document.getElementById("genieRank").innerText = musicData[query].genie;
-                
-                // 💡 HTML 줄바꿈 태그(<br>) 인식을 위해 innerHTML 사용!
                 document.getElementById("trophyCount").innerHTML = musicData[query].trophy;
                 card.style.display = "block";
             } else {
