@@ -1,4 +1,4 @@
-            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -16,9 +16,8 @@
         .card h2 { margin-top: 15px; text-align: center; margin-bottom: 5px; }
         .artist { color: #94a3b8; text-align: center; margin-bottom: 20px; }
         
-        /* 🖼️ 이미지 & 버튼 스타일 추가 */
         .album-img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; display: block; margin: 0 auto; }
-        .mv-btn { display: block; width: 100%; text-align: center; background: #ff0000; color: white; text-decoration: none; font-weight: bold; padding: 12px 0; border-radius: 10px; margin-top: 15px; transition: 0.2s; }
+        .mv-btn { display: block; width: 100%; text-align: center; background: #ff0000; color: white; text-decoration: none; font-weight: bold; padding: 12px 0; border-radius: 10px; margin-top: 20px; transition: 0.2s; box-sizing: border-box; }
         .mv-btn:hover { background: #cc0000; }
 
         .rank-list { background: #334155; padding: 15px 20px; border-radius: 10px; }
@@ -26,6 +25,7 @@
         .rank-item:last-child { border-bottom: none; padding-bottom: 0; }
         .rank-item span { font-weight: bold; min-width: 130px; }
         .rank-item b { text-align: right; line-height: 1.5; font-weight: normal; }
+        .copyright { font-size: 12px; color: #64748b; margin-top: 30px; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -34,12 +34,12 @@
         <h1>🎵 fromis_9 곡 기록 검색</h1>
         
         <div class="search-box">
-            <input type="text" id="songInput" placeholder="곡 제목 (예: dm, supersonic)">
+            <input type="text" id="songInput" placeholder="곡 제목 (예: dm, stay this way, supersonic)">
             <button id="searchBtn">검색</button>
         </div>
 
         <div id="resultCard" class="card">
-            <!-- 🖼️ 앨범 커버 이미지 영역 -->
+            <!-- 🖼️ 앨범 커버 이미지 -->
             <img id="albumImg" class="album-img" src="" alt="앨범 아트">
             
             <h2 id="songTitle">곡 제목</h2>
@@ -54,17 +54,19 @@
             </div>
 
             <!-- 🎬 뮤비 링크 버튼 -->
-            <a id="mvLink" class="mv-btn" href="#" target="_blank">🎬 YouTube 공식 뮤직비디오 보기</a>
+            <a id="mvLink" class="mv-btn" href="#" target="_blank" rel="noopener noreferrer">🎬 YouTube 공식 뮤직비디오 보기</a>
         </div>
+
+        <p class="copyright">본 사이트는 비상업적 팬 아카이브 사이트입니다.</p>
     </div>
 
     <script>
-        // 📌 이미지 주소(img) 및 뮤비 유튜브 링크(mv) 추가
+        // 📌 공식 YouTube 단축 URL(youtu.be)로 수정하여 접속 오류 완벽 방지!
         const musicData = {
             "DM": { 
                 title: "DM", 
-                img: "https://i.ytimg.com/vi/4gX_lOUqD3Y/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=4gX_lOUqD3Y",
+                img: "https://img.youtube.com/vi/f_SAnS-S2I4/hqdefault.jpg",
+                mv: "https://youtu.be/f_SAnS-S2I4",
                 release: "2022년 1월 17일",
                 melon: "일간 66위 / TOP 100 57위", 
                 genie: "일간 24위 / 실시간 1위", 
@@ -72,8 +74,8 @@
             },
             "STAYTHISWAY": { 
                 title: "Stay This Way", 
-                img: "https://i.ytimg.com/vi/0T1y-p8p26Y/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=0T1y-p8p26Y",
+                img: "https://img.youtube.com/vi/W593s4Vso88/hqdefault.jpg",
+                mv: "https://youtu.be/W593s4Vso88",
                 release: "2022년 6월 27일",
                 melon: "일간 82위 / TOP 100 54위", 
                 genie: "일간 38위 / 실시간 1위", 
@@ -81,8 +83,8 @@
             },
             "SUPERSONIC": { 
                 title: "Supersonic", 
-                img: "https://i.ytimg.com/vi/8aR09Oim3C4/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=8aR09Oim3C4",
+                img: "https://img.youtube.com/vi/vsk393-2A9g/hqdefault.jpg",
+                mv: "https://youtu.be/vsk393-2A9g",
                 release: "2024년 8월 12일",
                 melon: "일간 10위권 / TOP 100 상위권", 
                 genie: "실시간 1위 / 상위권 유지", 
@@ -101,13 +103,17 @@
             }
 
             if (musicData[query]) {
-                document.getElementById("albumImg").src = musicData[query].img; // 이미지 적용
-                document.getElementById("mvLink").href = musicData[query].mv;   // 뮤비 링크 적용
+                document.getElementById("albumImg").src = musicData[query].img;
+                
+                const mvBtn = document.getElementById("mvLink");
+                mvBtn.href = musicData[query].mv;
+                
                 document.getElementById("songTitle").innerText = musicData[query].title; 
                 document.getElementById("releaseDate").innerText = musicData[query].release;
                 document.getElementById("melonRank").innerText = musicData[query].melon;
                 document.getElementById("genieRank").innerText = musicData[query].genie;
                 document.getElementById("trophyCount").innerHTML = musicData[query].trophy;
+                
                 card.style.display = "block";
             } else {
                 alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic)");
