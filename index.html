@@ -8,7 +8,7 @@
         body { font-family: 'Arial', sans-serif; background: #0f172a; color: white; text-align: center; padding: 40px 20px; margin: 0; }
         .container { max-width: 550px; margin: 0 auto; }
         
-        /* 🍀 데뷔 D-Day 배너 */
+        /* 🍀 데뷔 D+Day 배너 */
         .debut-board { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 10px 15px; margin-bottom: 10px; font-size: 13px; color: #cbd5e1; }
         .debut-board strong { color: #38bdf8; font-size: 15px; }
 
@@ -97,7 +97,7 @@
         <!-- 📅 N년 전 오늘 발매 배너 -->
         <div id="todayBanner" class="today-banner"></div>
 
-        <!-- 🏆 커리어 하이 명예의 전당 -->
+        <!-- 🏆 커리어 하이 모듈 -->
         <div class="career-high">
             <h3>👑 fromis_9 CAREER HIGH</h3>
             <div class="career-stats">
@@ -123,12 +123,12 @@
             <button class="filter-btn" onclick="filterCategory('SPECIAL', this)">스페셜/프로젝트</button>
         </div>
 
-        <!-- 🖼️ 앨범 목록 그리드 -->
+        <!-- 🖼️ 앨범 목록 그리드 (발매순 정렬) -->
         <div id="albumGrid" class="album-grid"></div>
 
         <!-- 🔍 검색 창 -->
         <div class="search-box">
-            <input type="text" id="songInput" placeholder="곡 제목 또는 초성 (예: dm, ㅅㅍㅅㄴ)">
+            <input type="text" id="songInput" placeholder="곡 제목 또는 초성 (예: dm, ㅅㅍㅅㄴ, 랔큐베)">
             <button id="searchBtn">검색</button>
         </div>
 
@@ -174,7 +174,26 @@
     </div>
 
     <script>
+        // 📌 발매 순서대로 정렬된 musicData
         const musicData = {
+            "GLASS_SHOES": {
+                title: "유리구두", category: "PRE-DEBUT", type: "SPECIAL", monthDay: "11-30",
+                img: "https://img.youtube.com/vi/1_C_uUIn6yE/maxresdefault.jpg",
+                mv: "", fanchant: "", release: "2017년 11월 30일",
+                melon: "-", genie: "-", trophy: "-", alias: ["유리구두", "ㅇㄹㄱㄷ"]
+            },
+            "TO_HEART": {
+                title: "To Heart", category: "TITLE", type: "TITLE", monthDay: "01-24",
+                img: "https://img.youtube.com/vi/i2I9a1u5Y9c/maxresdefault.jpg",
+                mv: "", fanchant: "", release: "2018년 1월 24일",
+                melon: "-", genie: "-", trophy: "-", alias: ["투하트", "ㅌㅎㅌ"]
+            },
+            "DKDK": {
+                title: "두근두근 (DKDK)", category: "TITLE", type: "TITLE", monthDay: "06-05",
+                img: "https://img.youtube.com/vi/4vvA_S48H_4/maxresdefault.jpg",
+                mv: "", fanchant: "", release: "2018년 6월 5일",
+                melon: "-", genie: "-", trophy: "-", alias: ["두근두근", "ㄷㄱㄷㄱ"]
+            },
             "LOVEBOMB": { 
                 title: "LOVE BOMB", category: "TITLE", type: "TITLE", monthDay: "10-10",
                 img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg",
@@ -194,6 +213,12 @@
                 melon: "일간 167위 / TOP 100 -", 
                 genie: "일간 109위 / 실시간 30위", 
                 trophy: "음방 활동 곡 👏", alias: ["펀", "ㅍ"]
+            },
+            "FEEL_GOOD": {
+                title: "Feel Good (SECRET CODE)", category: "TITLE", type: "TITLE", monthDay: "09-16",
+                img: "https://img.youtube.com/vi/1_8p0M_s9-M/maxresdefault.jpg",
+                mv: "", fanchant: "", release: "2020년 9월 16일",
+                melon: "-", genie: "-", trophy: "-", alias: ["필굿", "ㅍㄱ"]
             },
             "WEGO": { 
                 title: "WE GO", category: "TITLE", type: "TITLE", monthDay: "05-17",
@@ -235,6 +260,12 @@
                 genie: "일간 142위 / 실시간 33위", 
                 trophy: "총 5관왕 🏆🏆🏆🏆🏆<br>• 22.07.05 더쇼 1위<br>• 22.07.06 쇼챔피언 1위<br>• 22.07.07 엠카운트다운 1위<br>• 22.07.08 뮤직뱅크 1위<br>• 22.07.09 음악중심 1위", alias: ["스디웨", "ㅅㄷㅇ"]
             },
+            "WHITE_MEMORIES": {
+                title: "하얀 그리움", category: "SPECIAL", type: "SPECIAL", monthDay: "12-30",
+                img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg",
+                mv: "", fanchant: "", release: "2022년 12월 30일",
+                melon: "-", genie: "-", trophy: "총 2관왕 🏆🏆", alias: ["하얀그리움", "ㅎㅇㄱㄹㅇ"]
+            },
             "MENOW": { 
                 title: "#menow", category: "TITLE", type: "TITLE", monthDay: "06-05",
                 img: "https://img.youtube.com/vi/QrYIOjs7K8E/maxresdefault.jpg",
@@ -254,6 +285,12 @@
                 melon: "일간 7위 / TOP 100 5위", 
                 genie: "일간 28위 / 실시간 20위", 
                 trophy: "총 4관왕 🏆🏆🏆🏆<br>• 24.08.20 더쇼 1위<br>• 24.08.22 엠카운트다운 1위<br>• 24.08.23 뮤직뱅크 1위<br>• 24.08.24 음악중심 1위", alias: ["슈퍼소닉", "ㅅㅍㅅㄴ"]
+            },
+            "LIKE_YOU_BETTER": {
+                title: "Like You Better", category: "BSIDE", type: "SPECIAL", monthDay: "08-12",
+                img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg",
+                mv: "", fanchant: "", release: "2024년 8월 12일",
+                melon: "-", genie: "-", trophy: "총 1관왕 🏆", alias: ["라이크유베터", "랔큐베", "ㄹㅇㅋㅇㅂㅌ"]
             }
         };
 
@@ -276,7 +313,6 @@
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
             document.getElementById("debutDday").innerText = `D+${diffDays}`;
 
-            // 각 멤버 D-Day 계산
             let calculated = memberBirthdays.map(m => {
                 const [month, day] = m.date.split("-").map(Number);
                 let nextBday = new Date(today.getFullYear(), month - 1, day);
@@ -287,7 +323,6 @@
                 return { ...m, dday: dday };
             });
 
-            // 가장 가까운 D-Day 찾기 (포인트 강조용)
             const minDday = Math.min(...calculated.map(c => c.dday));
 
             const grid = document.getElementById("bdayGrid");
@@ -389,14 +424,22 @@
             card.classList.remove("flipped");
 
             document.getElementById("albumImg").src = song.img;
-            document.getElementById("mvLink").href = song.mv;
-            document.getElementById("fanchantLink").href = song.fanchant;
+            
+            // 빈 데이터 보완 처리 (링크 없을 시 대응)
+            const mvBtn = document.getElementById("mvLink");
+            mvBtn.href = song.mv || "#";
+            mvBtn.style.opacity = song.mv ? "1" : "0.5";
+
+            const fcBtn = document.getElementById("fanchantLink");
+            fcBtn.href = song.fanchant || "#";
+            fcBtn.style.opacity = song.fanchant ? "1" : "0.5";
+
             document.getElementById("songTitle").innerText = song.title; 
             document.getElementById("cardCategory").innerText = song.category;
             document.getElementById("releaseDate").innerText = song.release;
-            document.getElementById("melonRank").innerText = song.melon;
-            document.getElementById("genieRank").innerText = song.genie;
-            document.getElementById("trophyCount").innerHTML = song.trophy;
+            document.getElementById("melonRank").innerText = song.melon || "-";
+            document.getElementById("genieRank").innerText = song.genie || "-";
+            document.getElementById("trophyCount").innerHTML = song.trophy || "-";
             
             const container = document.getElementById("flipCardContainer");
             container.style.display = "block";
@@ -410,7 +453,7 @@
 
             const matchedKey = findSongKey(input);
             if (matchedKey) displaySongData(matchedKey);
-            else alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, love bomb, fun)");
+            else alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, love bomb, fun, 랔큐베)");
         });
 
         document.getElementById("songInput").addEventListener("keypress", function(e) {
