@@ -8,9 +8,11 @@
         body { font-family: 'Arial', sans-serif; background: #0f172a; color: white; text-align: center; padding: 40px 20px; margin: 0; }
         .container { max-width: 550px; margin: 0 auto; }
         
-        /* ⏱️ 데뷔 D+Day & 생일 카운터 */
-        .dday-board { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 12px 15px; margin-bottom: 15px; font-size: 13px; color: #cbd5e1; display: flex; justify-content: space-around; align-items: center; }
+        /* ⏱️ 데뷔 D+Day & 멤버 생일 카운터 */
+        .dday-board { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 12px 15px; margin-bottom: 15px; font-size: 13px; color: #cbd5e1; display: flex; justify-content: space-around; align-items: center; cursor: pointer; transition: 0.2s; }
+        .dday-board:hover { background: #334155; }
         .dday-board strong { color: #38bdf8; font-size: 14px; }
+        .dday-board span.bday { color: #f472b6; font-size: 14px; font-weight: bold; }
 
         /* 📅 N년 전 오늘 배너 */
         .today-banner { background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 12px; padding: 12px 15px; margin-bottom: 20px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); display: none; }
@@ -77,10 +79,10 @@
     <div class="container">
         <h1>🎵 fromis_9 곡 기록 검색</h1>
         
-        <!-- ⏱️ 데뷔 D+Day 카운터 -->
-        <div class="dday-board">
+        <!-- ⏱️ 데뷔 D+Day & 다가오는 멤버 생일 카운터 -->
+        <div class="dday-board" id="ddayBoard" title="클릭 시 전체 멤버 생일 목록 확인">
             <div>🍀 데뷔 <strong id="debutDday">D+0000</strong></div>
-            <div>🎂 약속회 <strong id="nextAnniv">D-00</strong></div>
+            <div>🎂 <span id="nextBdayInfo" class="bday">계산 중...</span></div>
         </div>
 
         <!-- 📅 N년 전 오늘 발매 배너 -->
@@ -151,9 +153,7 @@
 
                     <div class="btn-group">
                         <a id="mvLink" class="mv-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎬 뮤직비디오 보기</a>
-                        <!-- 🎤 응원법 & 가사 링크 추가 -->
                         <a id="fanchantLink" class="fanchant-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎤 응원법 & 가사 보기</a>
-                        <!-- 📋 기록 간편 복사 -->
                         <button id="copyBtn" class="copy-btn" onclick="event.stopPropagation()">📋 기록 복사하기</button>
                     </div>
                 </div>
@@ -165,7 +165,7 @@
     </div>
 
     <script>
-        // 📌 데이터 완전 보존 + 응원법 링크(fanchant) 추가
+        // 📌 기존 데이터 100% 보존
         const musicData = {
             "LOVEBOMB": { 
                 title: "LOVE BOMB", category: "TITLE", type: "TITLE", monthDay: "10-10",
@@ -249,22 +249,56 @@
             }
         };
 
-        // ⏱️ 데뷔 D-Day 계산 알고리즘 (2018년 1월 24일 기준)
+        // 🎂 멤버 생일 데이터 (월-일)
+        const memberBirthdays = [
+            { name: "송하영", date: "09-29" },
+            { name: "박지원", date: "03-20" },
+            { name: "이나경", date: "06-01" },
+            { name: "이채영", date: "05-14" },
+            { name: "백지헌", date: "04-17" }
+        ];
+
+        // ⏱️ 데뷔 D-Day & 멤버 생일 계산 알고리즘
         function calculateDday() {
+            // 데뷔일 (2018년 1월 24일)
             const debutDate = new Date("2018-01-24");
             const today = new Date();
+            today.setHours(0, 0, 0, 0); // 시간 단위를 맞춤
+
             const diffTime = Math.abs(today - debutDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
             document.getElementById("debutDday").innerText = `D+${diffDays}`;
 
-            // 다음 데뷔 기념일(1월 24일) 계산
-            let nextAnniv = new Date(today.getFullYear(), 0, 24);
-            if (today > nextAnniv) {
-                nextAnniv.setFullYear(today.getFullYear() + 1);
-            }
-            const annivDiff = Math.ceil((nextAnniv - today) / (1000 * 60 * 60 * 24));
-            document.getElementById("nextAnniv").innerText = `D-${annivDiff}`;
+            // 다가오는 가장 가까운 생일 계산
+            let upcomingBdays = memberBirthdays.map(m => {
+                const [month, day] = m.date.split("-").map(Number);
+                let nextBday = new Date(today.getFullYear(), month - 1, day);
+                
+                // 올해 생일이 지나갔으면 내년으로 설정
+                if (today > nextBday) {
+                    nextBday.setFullYear(today.getFullYear() + 1);
+                }
+                
+                const dday = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
+                return { name: m.name, date: m.date, dday: dday };
+            });
+
+            // 가장 오름차순(D-Day 적은 순) 정렬
+            upcomingBdays.sort((a, b) => a.dday - b.dday);
+
+            const nearest = upcomingBdays[0];
+            const ddayText = nearest.dday === 0 ? "DAY 🎉" : `D-${nearest.dday}`;
+            document.getElementById("nextBdayInfo").innerText = `${nearest.name} 생일 ${ddayText}`;
+
+            // 클릭 시 전체 멤버 생일 일정 알림창 출력
+            document.getElementById("ddayBoard").onclick = function() {
+                let alertMsg = "🎂 멤버별 다가오는 생일 목록\n-----------------------\n";
+                upcomingBdays.forEach(m => {
+                    const status = m.dday === 0 ? "오늘 생일! 🎉" : `D-${m.dday}`;
+                    alertMsg += `• ${m.name} (${m.date.replace('-', '/')}) : ${status}\n`;
+                });
+                alert(alertMsg);
+            };
         }
         calculateDday();
 
@@ -350,7 +384,7 @@
 
             document.getElementById("albumImg").src = song.img;
             document.getElementById("mvLink").href = song.mv;
-            document.getElementById("fanchantLink").href = song.fanchant; // 응원법 링크 바인딩
+            document.getElementById("fanchantLink").href = song.fanchant;
             document.getElementById("songTitle").innerText = song.title; 
             document.getElementById("cardCategory").innerText = song.category;
             document.getElementById("releaseDate").innerText = song.release;
