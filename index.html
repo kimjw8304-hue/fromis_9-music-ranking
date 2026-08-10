@@ -132,9 +132,9 @@
                     <div class="rank-list">
                         <h3 style="margin-top:0; text-align:center; font-size:16px;">🏆 상세 성적 기록</h3>
                         <div class="rank-item"><span>📅 발매일</span><b id="releaseDate">-</b></div>
-                        <div class="rank-item"><span>🍈 멜론 순위</span><b id="melonRank">-</b></div>
-                        <div class="rank-item"><span>🧞 지니 순위</span><b id="genieRank">-</b></div>
-                        <div class="rank-item"><span>📺 음악방송</span><b id="trophyCount">-</b></div>
+                        <div class="rank-item"><span>🍈 멜론 최고 순위</span><b id="melonRank">-</b></div>
+                        <div class="rank-item"><span>🧞 지니 최고 순위</span><b id="genieRank">-</b></div>
+                        <div class="rank-item"><span>📺 음악방송 수상 내역</span><b id="trophyCount">-</b></div>
                     </div>
 
                     <div>
@@ -150,54 +150,79 @@
     </div>
 
     <script>
+        // 📌 작성해주신 원본 데이터 그대로 100% 보존
         const musicData = {
             "LOVEBOMB": { 
                 title: "LOVE BOMB", category: "TITLE", type: "TITLE", monthDay: "10-10",
                 img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=-SK6cvkK4c0",
-                release: "-", melon: "-", genie: "-", trophy: "-", alias: ["러브밤", "ㄹㅂㅂ"]
+                mv: "https://www.youtube.com/watch?v=-SK6cvkK4c0&list=RD-SK6cvkK4c0&start_radio=1",
+                release: "2018년 10월 10일",
+                melon: "일간 164위 / TOP 100 -위", 
+                genie: "일간 174위 / 실시간 83위", 
+                trophy: "음방 1위 후보 👏", alias: ["러브밤", "ㄹㅂㅂ"]
             },
             "FUN": { 
                 title: "FUN!", category: "TITLE", type: "TITLE", monthDay: "06-04",
                 img: "https://img.youtube.com/vi/zsRyyLtcXho/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=zsRyyLtcXho",
-                release: "-", melon: "-", genie: "-", trophy: "-", alias: ["펀", "ㅍ"]
+                mv: "https://www.youtube.com/watch?v=zsRyyLtcXho&list=RDzsRyyLtcXho&start_radio=1",
+                release: "2019년 6월 4일",
+                melon: "일간 167위 / TOP 100 -", 
+                genie: "일간 109위 / 실시간 30위", 
+                trophy: "음방 활동 곡 👏", alias: ["펀", "ㅍ"]
             },
             "WEGO": { 
                 title: "WE GO", category: "TITLE", type: "TITLE", monthDay: "05-17",
                 img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=HM6UpQZvbhY",
-                release: "-", melon: "-", genie: "-", trophy: "-", alias: ["위고", "ㅇㄱ"]
+                mv: "https://www.youtube.com/watch?v=HM6UpQZvbhY&list=RDHM6UpQZvbhY&start_radio=1",
+                release: "2021년 5월 17일",
+                melon: "일간 108위 / TOP 100 -위", 
+                genie: "일간 14위 / 실시간 4위", 
+                trophy: "음방 1위 후보 (커리어하이 달성)", alias: ["위고", "ㅇㄱ"]
             },
             "TALK&TALK": { 
                 title: "Talk & Talk", category: "SPECIAL", type: "SPECIAL", monthDay: "09-01",
                 img: "https://img.youtube.com/vi/BjmmvBMXbSU/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=BjmmvBMXbSU",
-                release: "-", melon: "-", genie: "-", trophy: "-", alias: ["톡앤톡", "ㅌㅇㅌ"]
+                mv: "https://www.youtube.com/watch?v=BjmmvBMXbSU&list=RDBjmmvBMXbSU&start_radio=1",
+                release: "2021년 9월 1일",
+                melon: "일간 204위 / TOP 100 -", 
+                genie: "일간 212위 / 실시간 80위", 
+                trophy: "총 1관왕 🏆<br>• 21.09.07 더쇼 1위", alias: ["톡앤톡", "ㅌㅇㅌ"]
             },
             "DM": { 
                 title: "DM", category: "TITLE", type: "TITLE", monthDay: "01-17",
                 img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=4gXmClk8rKI",
-                release: "-", melon: "-", genie: "-", trophy: "-", alias: ["디엠", "ㄷㅁ"]
+                mv: "https://www.youtube.com/watch?v=4gXmClk8rKI&list=RD4gXmClk8rKI&start_radio=1",
+                release: "2022년 1월 17일",
+                melon: "일간 66위 / TOP 100 52위", 
+                genie: "일간 137위 / 실시간 45위", 
+                trophy: "총 2관왕 🏆🏆<br>• 22.01.25 더쇼 1위<br>• 22.01.26 쇼챔피언 1위", alias: ["디엠", "ㄷㅁ"]
             },
             "STAYTHISWAY": { 
                 title: "Stay This Way", category: "TITLE", type: "TITLE", monthDay: "06-27",
                 img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=JC6budcACNE",
-                release: "-", melon: "-", genie: "-", trophy: "-", alias: ["스디웨", "ㅅㄷㅇ"]
+                mv: "https://www.youtube.com/watch?v=JC6budcACNE&list=RDJC6budcACNE&start_radio=1",
+                release: "2022년 6월 27일",
+                melon: "일간 100위 / TOP 100 86위", 
+                genie: "일간 142위 / 실시간 33위", 
+                trophy: "총 5관왕 🏆🏆🏆🏆🏆<br>• 22.07.05 더쇼 1위<br>• 22.07.06 쇼챔피언 1위<br>• 22.07.07 엠카운트다운 1위<br>• 22.07.08 뮤직뱅크 1위<br>• 22.07.09 음악중심 1위", alias: ["스디웨", "ㅅㄷㅇ"]
             },
             "MENOW": { 
                 title: "#menow", category: "TITLE", type: "TITLE", monthDay: "06-05",
                 img: "https://img.youtube.com/vi/QrYIOjs7K8E/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=QrYIOjs7K8E",
-                release: "-", melon: "-", genie: "-", trophy: "-", alias: ["미나우", "ㅁㄴㅇ"]
+                mv: "https://www.youtube.com/watch?v=QrYIOjs7K8E&list=RDQrYIOjs7K8E&start_radio=1",
+                release: "2023년 6월 5일",
+                melon: "일간 204위 / TOP 100 -위", 
+                genie: "일간 249위 / 실시간 79위", 
+                trophy: "총 1관왕 🏆<br>• 23.06.13 더쇼 1위", alias: ["미나우", "ㅁㄴㅇ"]
             },
             "SUPERSONIC": { 
                 title: "Supersonic", category: "TITLE", type: "TITLE", monthDay: "08-12",
                 img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=0LiQp7y8Wwc",
-                release: "-", melon: "-", genie: "-", trophy: "-", alias: ["슈퍼소닉", "ㅅㅍㅅㄴ"]
+                mv: "https://www.youtube.com/watch?v=0LiQp7y8Wwc&list=RD0LiQp7y8Wwc&start_radio=1",
+                release: "2024년 8월 12일",
+                melon: "일간 7위 / TOP 100 5위", 
+                genie: "일간 28위 / 실시간 20위", 
+                trophy: "총 4관왕 🏆🏆🏆🏆<br>• 24.08.20 더쇼 1위<br>• 24.08.22 엠카운트다운 1위<br>• 24.08.23 뮤직뱅크 1위<br>• 24.08.24 음악중심 1위", alias: ["슈퍼소닉", "ㅅㅍㅅㄴ"]
             }
         };
 
@@ -224,16 +249,16 @@
         }
         checkTodayRelease();
 
-        // 🎴 포토카드 뒤집기
+        // 🎴 포토카드 뒤집기 토글
         const card = document.getElementById("flipCard");
         card.addEventListener("click", function() {
             card.classList.toggle("flipped");
         });
 
-        // 🖼️ 앨범 목록 슈루룩 렌더링하는 함수
+        // 🖼️ 앨범 목록 슈루룩 렌더링
         function renderAlbumGrid(filterType) {
             const grid = document.getElementById("albumGrid");
-            grid.innerHTML = ""; // 기존 그리드 초기화
+            grid.innerHTML = "";
 
             for (let key in musicData) {
                 const song = musicData[key];
@@ -252,18 +277,18 @@
             }
         }
 
-        // 🗂️ 카테고리 필터링 클릭 시 앨범 슈루룩 전환
+        // 🗂️ 카테고리 필터링
         function filterCategory(type, btnElement) {
             currentFilter = type;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
-            renderAlbumGrid(type); // 그리드 다시 그리기
+            renderAlbumGrid(type);
         }
 
-        // 초기 화면에 전체 앨범 슈루룩 띄우기
+        // 초기 그리드 실행
         renderAlbumGrid("ALL");
 
-        // 🔍 검색 로직
+        // 🔍 검색 로직 (초성/한글/영어 모두 지원)
         function findSongKey(inputQuery) {
             const cleanQuery = inputQuery.replace(/\s+/g, '').toUpperCase();
             if (musicData[cleanQuery]) return cleanQuery;
@@ -280,7 +305,7 @@
 
         function displaySongData(key) {
             const song = musicData[key];
-            card.classList.remove("flipped"); // 카드 앞면으로 원복
+            card.classList.remove("flipped");
 
             document.getElementById("albumImg").src = song.img;
             document.getElementById("mvLink").href = song.mv;
@@ -296,14 +321,14 @@
             container.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // 검색 버튼 이벤트
+        // 검색 및 엔터키 이벤트
         document.getElementById("searchBtn").addEventListener("click", function() {
             const input = document.getElementById("songInput").value;
             if (!input) return alert("검색어를 입력해 주세요!");
 
             const matchedKey = findSongKey(input);
             if (matchedKey) displaySongData(matchedKey);
-            else alert("등록되지 않은 곡입니다!");
+            else alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, love bomb, fun)");
         });
 
         document.getElementById("songInput").addEventListener("keypress", function(e) {
@@ -321,7 +346,7 @@
             displaySongData(randomKey);
         });
 
-        // 📋 성적 복사
+        // 📋 성적 복사 버튼
         document.getElementById("copyBtn").addEventListener("click", function() {
             const title = document.getElementById("songTitle").innerText;
             const release = document.getElementById("releaseDate").innerText;
