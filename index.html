@@ -6,7 +6,7 @@
     <title>fromis_9 역대 곡 기록 & 커리어 아카이브</title>
     <style>
         body { font-family: 'Arial', sans-serif; background: #0f172a; color: white; text-align: center; padding: 40px 20px; margin: 0; }
-        .container { max-width: 500px; margin: 0 auto; }
+        .container { max-width: 550px; margin: 0 auto; }
         
         /* 📅 N년 전 오늘 배너 */
         .today-banner { background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 12px; padding: 12px 15px; margin-bottom: 20px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); display: none; }
@@ -19,16 +19,23 @@
         .stat-item strong { font-size: 15px; color: #facc15; }
 
         /* 🗂️ 카테고리 필터 버튼 */
-        .filter-group { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .filter-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid #475569; background: #1e293b; color: #94a3b8; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.2s; }
+        .filter-group { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .filter-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid #475569; background: #1e293b; color: #94a3b8; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s; }
         .filter-btn.active, .filter-btn:hover { background: #6366f1; color: white; border-color: #6366f1; }
+
+        /* 🖼️ 슈루룩 펼쳐지는 앨범 그리드 갤러리 */
+        .album-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; transition: all 0.3s ease-in-out; }
+        .album-item { background: #1e293b; border-radius: 12px; padding: 8px; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s, border-color 0.2s; }
+        .album-item:hover { transform: translateY(-5px); border-color: #6366f1; }
+        .album-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; display: block; }
+        .album-item p { margin: 6px 0 0 0; font-size: 12px; font-weight: bold; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .search-box { margin-bottom: 15px; display: flex; justify-content: center; gap: 8px; }
         input { padding: 12px 18px; width: 60%; border-radius: 20px; border: none; outline: none; font-size: 15px; }
         button { padding: 12px 18px; border-radius: 20px; border: none; background: #6366f1; color: white; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.2s; }
         button:hover { background: #4f46e5; }
         
-        .random-btn { background: #10b981; margin-bottom: 25px; width: 100%; border-radius: 12px; padding: 12px; font-size: 14px; }
+        .random-btn { background: #10b981; margin-bottom: 25px; width: 100%; border-radius: 12px; padding: 12px; font-size: 14px; border:none; color:white; font-weight:bold; cursor:pointer; }
         .random-btn:hover { background: #059669; }
 
         /* 🎴 3D Flip Card (포토카드 뒤집기) 스타일 */
@@ -88,10 +95,13 @@
 
         <!-- 🗂️ 카테고리 필터링 버튼 -->
         <div class="filter-group">
-            <button class="filter-btn active" onclick="filterCategory('ALL')">전체 곡</button>
-            <button class="filter-btn" onclick="filterCategory('TITLE')">타이틀곡</button>
-            <button class="filter-btn" onclick="filterCategory('SPECIAL')">스페셜/프로젝트</button>
+            <button class="filter-btn active" onclick="filterCategory('ALL', this)">전체 곡 목록</button>
+            <button class="filter-btn" onclick="filterCategory('TITLE', this)">타이틀곡만</button>
+            <button class="filter-btn" onclick="filterCategory('SPECIAL', this)">스페셜/프로젝트</button>
         </div>
+
+        <!-- 🖼️ 카테고리 선택 시 슈루룩 펼쳐지는 앨범 목록 그리드 -->
+        <div id="albumGrid" class="album-grid"></div>
 
         <!-- 🔍 검색 창 -->
         <div class="search-box">
@@ -107,7 +117,7 @@
             <div class="card-hint">🔄 카드를 터치/클릭하면 뒤집어집니다!</div>
             <div id="flipCard" class="flip-card">
                 
-                <!-- 카드 앞면 (앨범 아트 & 카테고리) -->
+                <!-- 카드 앞면 -->
                 <div class="card-front">
                     <span id="cardCategory" class="category-tag">TITLE</span>
                     <img id="albumImg" class="album-img" src="" alt="앨범 아트">
@@ -117,7 +127,7 @@
                     </div>
                 </div>
 
-                <!-- 카드 뒷면 (성적 & 상세 정보) -->
+                <!-- 카드 뒷면 -->
                 <div class="card-back">
                     <div class="rank-list">
                         <h3 style="margin-top:0; text-align:center; font-size:16px;">🏆 상세 성적 기록</h3>
@@ -193,7 +203,7 @@
 
         let currentFilter = "ALL";
 
-        // 📅 1. N년 전 오늘 배너 감지 로직
+        // 📅 N년 전 오늘 배너
         function checkTodayRelease() {
             const today = new Date();
             const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -214,11 +224,44 @@
         }
         checkTodayRelease();
 
-        // 🎴 2. 포토카드 뒤집기 클릭 토글
+        // 🎴 포토카드 뒤집기
         const card = document.getElementById("flipCard");
         card.addEventListener("click", function() {
             card.classList.toggle("flipped");
         });
+
+        // 🖼️ 앨범 목록 슈루룩 렌더링하는 함수
+        function renderAlbumGrid(filterType) {
+            const grid = document.getElementById("albumGrid");
+            grid.innerHTML = ""; // 기존 그리드 초기화
+
+            for (let key in musicData) {
+                const song = musicData[key];
+                
+                if (filterType === "ALL" || song.type === filterType) {
+                    const item = document.createElement("div");
+                    item.className = "album-item";
+                    item.onclick = function() { displaySongData(key); };
+                    
+                    item.innerHTML = `
+                        <img src="${song.img}" alt="${song.title}">
+                        <p>${song.title}</p>
+                    `;
+                    grid.appendChild(item);
+                }
+            }
+        }
+
+        // 🗂️ 카테고리 필터링 클릭 시 앨범 슈루룩 전환
+        function filterCategory(type, btnElement) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderAlbumGrid(type); // 그리드 다시 그리기
+        }
+
+        // 초기 화면에 전체 앨범 슈루룩 띄우기
+        renderAlbumGrid("ALL");
 
         // 🔍 검색 로직
         function findSongKey(inputQuery) {
@@ -235,23 +278,9 @@
             return null;
         }
 
-        // 🗂️ 3. 카테고리 필터링 로직
-        function filterCategory(type) {
-            currentFilter = type;
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-
         function displaySongData(key) {
             const song = musicData[key];
-            
-            // 필터링 적용 확인
-            if (currentFilter !== "ALL" && song.type !== currentFilter) {
-                alert(`현재 '${currentFilter === "TITLE" ? "타이틀곡" : "스페셜"}' 필터가 적용 중입니다. 전체 곡 보기로 변경해보세요!`);
-                return;
-            }
-
-            card.classList.remove("flipped"); // 새 검색 시 앞면으로 원복
+            card.classList.remove("flipped"); // 카드 앞면으로 원복
 
             document.getElementById("albumImg").src = song.img;
             document.getElementById("mvLink").href = song.mv;
@@ -267,7 +296,7 @@
             container.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // 검색 실행
+        // 검색 버튼 이벤트
         document.getElementById("searchBtn").addEventListener("click", function() {
             const input = document.getElementById("songInput").value;
             if (!input) return alert("검색어를 입력해 주세요!");
