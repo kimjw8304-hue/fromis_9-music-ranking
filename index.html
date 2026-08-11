@@ -5,245 +5,508 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fromis_9 역대 곡 기록 & 커리어 아카이브</title>
     <style>
-        :root {
-            --primary-color: #f7cac9; /* 프로미스나인 상징색과 어울리는 톤 */
-            --text-color: #333;
-            --bg-color: #f9f9f9;
-        }
+        body { font-family: 'Arial', sans-serif; background: #0f172a; color: white; text-align: center; padding: 40px 20px; margin: 0; }
+        .container { max-width: 550px; margin: 0 auto; }
+        
+        /* 🍀 데뷔 D+Day 배너 */
+        .debut-board { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 10px 15px; margin-bottom: 10px; font-size: 13px; color: #cbd5e1; }
+        .debut-board strong { color: #38bdf8; font-size: 15px; }
 
-        body {
-            font-family: 'Pretendard', -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        /* 🎂 8명 멤버 생일 한눈에 보기 카드 그리드 (수정됨: 4칸 2줄) */
+        .bday-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 20px; }
+        .bday-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 8px 4px; text-align: center; }
+        .bday-card.nearest { border-color: #f472b6; background: #2d1d36; box-shadow: 0 0 8px rgba(244, 114, 182, 0.3); }
+        .bday-card .name { font-size: 11px; color: #94a3b8; font-weight: bold; display: block; margin-bottom: 2px; }
+        .bday-card .dday { font-size: 12px; color: #f472b6; font-weight: bold; display: block; }
+        .bday-card.nearest .name { color: #f472b6; }
+        .bday-card.nearest .dday { color: #facc15; }
 
-        h1 {
-            text-align: center;
-            color: #ff6b6b;
-            margin-bottom: 30px;
-        }
+        /* 📅 N년 전 오늘 배너 */
+        .today-banner { background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 12px; padding: 12px 15px; margin-bottom: 20px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); display: none; }
 
-        /* 앨범 컨테이너 스타일 */
-        .album-container {
-            background: white;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
+        /* 🏆 커리어 하이 모듈 */
+        .career-high { background: linear-gradient(135deg, #1e1b4b, #312e81); border: 1px solid #4338ca; border-radius: 15px; padding: 18px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .career-high h3 { margin: 0 0 12px 0; font-size: 16px; color: #a5b4fc; }
+        .career-stats { display: flex; justify-content: space-around; text-align: center; }
+        .stat-item span { display: block; font-size: 11px; color: #cbd5e1; margin-bottom: 4px; }
+        .stat-item strong { font-size: 15px; color: #facc15; }
 
-        /* 앨범 제목 (클릭 영역) */
-        .album-header {
-            padding: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: white;
-            transition: background-color 0.2s;
-            font-weight: bold;
-            font-size: 1.1em;
-        }
+        /* 🗂️ 카테고리 필터 버튼 */
+        .filter-group { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .filter-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid #475569; background: #1e293b; color: #94a3b8; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s; }
+        .filter-btn.active, .filter-btn:hover { background: #6366f1; color: white; border-color: #6366f1; }
 
-        .album-header:hover {
-            background-color: #fff0f0;
+        /* 🖼️ 앨범 그리드 갤러리 */
+        .album-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; transition: all 0.3s ease-in-out; }
+        .album-item { 
+            background: #1e293b; 
+            border-radius: 12px; 
+            padding: 8px; 
+            cursor: pointer; 
+            border: 2px solid transparent; 
+            transition: transform 0.2s, border-color 0.2s; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            overflow: hidden; 
         }
+        .album-item:hover { transform: translateY(-5px); border-color: #6366f1; }
+        .album-item img { 
+            width: 100%; 
+            height: 90px; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            display: block; 
+        }
+        .album-item p { margin: 6px 0 0 0; font-size: 12px; font-weight: bold; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
 
-        .album-info {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
+        .search-box { margin-bottom: 15px; display: flex; justify-content: center; gap: 8px; }
+        input { padding: 12px 18px; width: 60%; border-radius: 20px; border: none; outline: none; font-size: 15px; }
+        button { padding: 12px 18px; border-radius: 20px; border: none; background: #6366f1; color: white; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.2s; }
+        button:hover { background: #4f46e5; }
+        
+        .random-btn { background: #10b981; margin-bottom: 25px; width: 100%; border-radius: 12px; padding: 12px; font-size: 14px; border:none; color:white; font-weight:bold; cursor:pointer; }
+        .random-btn:hover { background: #059669; }
 
-        .release-date {
-            font-size: 0.8em;
-            color: #888;
-            font-weight: normal;
-        }
+        /* 🎴 3D Flip Card */
+        .flip-card-container { perspective: 1000px; margin-top: 20px; display: none; }
+        .flip-card { width: 100%; height: 560px; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .flip-card.flipped { transform: rotateY(180deg); }
+        .card-hint { font-size: 12px; color: #a5b4fc; margin-bottom: 8px; font-weight: bold; }
 
-        /* 화살표 애니메이션 */
-        .arrow {
-            transition: transform 0.3s ease;
-        }
-        .album-container.active .arrow {
-            transform: rotate(180deg);
-        }
+        .card-front, .card-back { width: 100%; height: 100%; position: absolute; backface-visibility: hidden; border-radius: 20px; padding: 25px; box-sizing: border-box; box-shadow: 0 10px 25px rgba(0,0,0,0.4); text-align: left; }
 
-        /* 솨라락 애니메이션 핵심 (CSS Grid 활용) */
-        .album-content-wrapper {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.3s ease-out;
-        }
+        /* 카드 앞면 */
+        .card-front { background: #1e293b; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid #3b82f6; }
+        .card-front .album-img { width: 100%; height: 320px; object-fit: cover; border-radius: 15px; }
+        .card-front h2 { margin: 15px 0 5px 0; text-align: center; }
+        .card-front .category-tag { text-align: center; font-size: 12px; background: #3b82f6; color: white; padding: 3px 10px; border-radius: 10px; width: fit-content; margin: 0 auto; }
 
-        .album-container.active .album-content-wrapper {
-            grid-template-rows: 1fr;
-        }
+        /* 카드 뒷면 */
+        .card-back { background: #0f172a; border: 2px solid #8b5cf6; transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: space-between; }
+        
+        .btn-group { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .mv-btn { display: block; width: 100%; text-align: center; background: #ff0000; color: white; text-decoration: none; font-weight: bold; padding: 10px 0; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        .fanchant-btn { display: block; width: 100%; text-align: center; background: #ec4899; color: white; text-decoration: none; font-weight: bold; padding: 10px 0; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        .copy-btn { display: block; width: 100%; text-align: center; background: #334155; color: #f1f5f9; border: 1px solid #475569; font-weight: bold; padding: 10px 0; border-radius: 8px; cursor: pointer; font-size: 14px; }
 
-        .album-content {
-            overflow: hidden;
-        }
-
-        /* 수록곡 리스트 스타일 */
-        .track-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            border-top: 1px solid #eee;
-        }
-
-        .track-item {
-            padding: 15px 20px;
-            border-bottom: 1px solid #f1f1f1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .track-item:last-child {
-            border-bottom: none;
-        }
-
-        .track-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .title-badge {
-            background-color: #ff6b6b;
-            color: white;
-            font-size: 0.7em;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-weight: bold;
-        }
-
-        .track-stats {
-            font-size: 0.85em;
-            color: #666;
-            text-align: right;
-        }
+        .rank-list { background: #1e293b; padding: 15px 20px; border-radius: 10px; }
+        .rank-item { display: flex; justify-content: space-between; align-items: flex-start; margin: 10px 0; border-bottom: 1px solid #334155; padding-bottom: 8px; font-size: 14px; }
+        .rank-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .rank-item span { font-weight: bold; min-width: 120px; }
+        .rank-item b { text-align: right; line-height: 1.4; font-weight: normal; }
+        .copyright { font-size: 12px; color: #64748b; margin-top: 30px; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-    <h1>🍀 fromis_9 커리어 아카이브</h1>
-    <div id="archive-container"></div>
+    <div class="container">
+        <h1>🎵 fromis_9 곡 기록 검색</h1>
+        
+        <!-- 🍀 데뷔 D+Day -->
+        <div class="debut-board">
+            🍀 데뷔 <strong id="debutDday">D+0000</strong>
+        </div>
+
+        <!-- 🎂 8명 멤버 생일 한눈에 보기 카드 -->
+        <div class="bday-grid" id="bdayGrid"></div>
+
+        <!-- 📅 N년 전 오늘 발매 배너 -->
+        <div id="todayBanner" class="today-banner"></div>
+
+        <!-- 🏆 커리어 하이 모듈 -->
+        <div class="career-high">
+            <h3>👑 fromis_9 CAREER HIGH</h3>
+            <div class="career-stats">
+                <div class="stat-item">
+                    <span>최다 관왕</span>
+                    <strong>Stay This Way (5관왕)</strong>
+                </div>
+                <div class="stat-item">
+                    <span>멜론 최고 순위</span>
+                    <strong>Supersonic (5위)</strong>
+                </div>
+                <div class="stat-item">
+                    <span>총 트로피</span>
+                    <strong>13개 🏆</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🗂️ 카테고리 필터링 버튼 -->
+        <div class="filter-group">
+            <button class="filter-btn active" onclick="filterCategory('ALL', this)">전체 곡 목록</button>
+            <button class="filter-btn" onclick="filterCategory('TITLE', this)">타이틀곡만</button>
+            <button class="filter-btn" onclick="filterCategory('SPECIAL', this)">스페셜/프로젝트</button>
+        </div>
+
+        <!-- 🖼️ 앨범 목록 그리드 (발매순 정렬) -->
+        <div id="albumGrid" class="album-grid"></div>
+
+        <!-- 🔍 검색 창 -->
+        <div class="search-box">
+            <input type="text" id="songInput" placeholder="곡 제목 또는 초성 (예: dm, ㅅㅍㅅㄴ, 랔큐베)">
+            <button id="searchBtn">검색</button>
+        </div>
+
+        <!-- 🎲 오늘 무슨 곡 들을까? (랜덤 추천 버튼) -->
+        <button id="randomBtn" class="random-btn">🎲 오늘 무슨 곡 들을까? (랜덤 뽑기)</button>
+
+        <!-- 🎴 3D 포토카드 결과 영역 -->
+        <div id="flipCardContainer" class="flip-card-container">
+            <div class="card-hint">🔄 카드를 터치/클릭하면 뒤집어집니다!</div>
+            <div id="flipCard" class="flip-card">
+                
+                <!-- 카드 앞면 -->
+                <div class="card-front">
+                    <span id="cardCategory" class="category-tag">TITLE</span>
+                    <img id="albumImg" class="album-img" src="" alt="앨범 아트">
+                    <div>
+                        <h2 id="songTitle">곡 제목</h2>
+                        <div class="artist" style="color:#94a3b8; text-align:center;">fromis_9 (프로미스나인)</div>
+                    </div>
+                </div>
+
+                <!-- 카드 뒷면 -->
+                <div class="card-back">
+                    <div class="rank-list">
+                        <h3 style="margin-top:0; text-align:center; font-size:16px;">🏆 상세 성적 기록</h3>
+                        <div class="rank-item"><span>📅 발매일</span><b id="releaseDate">-</b></div>
+                        <div class="rank-item"><span>🍈 멜론 최고 순위</span><b id="melonRank">-</b></div>
+                        <div class="rank-item"><span>🧞 지니 최고 순위</span><b id="genieRank">-</b></div>
+                        <div class="rank-item"><span>📺 음악방송 수상 내역</span><b id="trophyCount">-</b></div>
+                    </div>
+
+                    <div class="btn-group">
+                        <a id="mvLink" class="mv-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎬 뮤직비디오 보기</a>
+                        <a id="fanchantLink" class="fanchant-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎤 응원법 & 가사 보기</a>
+                        <button id="copyBtn" class="copy-btn" onclick="event.stopPropagation()">📋 기록 복사하기</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <p class="copyright">본 사이트는 비상업적 팬 아카이브 사이트입니다.</p>
+    </div>
 
     <script>
-        // 앨범 단위로 데이터 구조 개편 (수록곡 포함)
-        const musicData = [
-            {
-                albumName: "Supersonic (3rd Single Album)",
-                releaseDate: "2024.08.12",
-                tracks: [
-                    { title: "Supersonic", isTitle: true, melonRank: "Top 100", trophies: 4, mvLink: "...", cheerLink: "...", alias: ["슈퍼소닉", "슈소"] },
-                    { title: "Beat the Heat", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["비더힛"] },
-                    { title: "Take A Chance", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["테이크어찬스"] }
-                ]
+        // 📌 발매 순서대로 정렬된 musicData
+        const musicData = {
+            "GLASS_SHOES": {
+                title: "유리구두", category: "PRE-DEBUT", type: "SPECIAL", monthDay: "11-30",
+                img: "https://img.youtube.com/vi/n2TtQYuFfWw/maxresdefault.jpg",
+                mv: "https://youtu.be/n2TtQYuFfWw?si=SB9hNdRstFd3k3Bo", fanchant: "", release: "2017년 11월 30일",
+                melon: "-", genie: "-", trophy: "-", alias: ["유리구두", "ㅇㄹㄱㄷ"]
             },
-            {
-                albumName: "Unlock My World (1st Studio Album)",
-                releaseDate: "2023.06.05",
-                tracks: [
-                    { title: "Attitude", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["애티튜드"] },
-                    { title: "#menow", isTitle: true, melonRank: "Top 100", trophies: 1, mvLink: "...", cheerLink: "...", alias: ["미나우", "샵미나우"] },
-                    { title: "Wishlist", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["위시리스트"] },
-                    { title: "In the Mirror", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["인더미러"] },
-                    { title: "Don't Care", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["돈케어"] },
-                    { title: "Prom Night", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["프롬나이트"] },
-                    { title: "Bring It On", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["브링잇온"] },
-                    { title: "What I Want", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["왓아이원트"] },
-                    { title: "My Night Routine", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["마이나이트루틴"] },
-                    { title: "눈맞춤", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["아이컨택"] }
-                ]
+            "TO_HEART": {
+                title: "To Heart", category: "TITLE", type: "TITLE", monthDay: "01-24",
+                img: "https://img.youtube.com/vi/iFUHS1Ei7qw/maxresdefault.jpg",
+                mv: "https://youtu.be/iFUHS1Ei7qw?si=2ABIGMJRlmXYIBCh", fanchant: "", release: "2018년 1월 24일",
+                melon: "-", genie: "-", trophy: "-", alias: ["투하트", "ㅌㅎㅌ"]
             },
-            {
-                albumName: "from our Memento Box (5th Mini Album)",
-                releaseDate: "2022.06.27",
-                tracks: [
-                    { title: "Up And", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["업앤"] },
-                    { title: "Stay This Way", isTitle: true, melonRank: "Top 100", trophies: 5, mvLink: "...", cheerLink: "...", alias: ["스테이디스웨이", "스디웨"] },
-                    { title: "Blind Letter", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["블라인드레터"] },
-                    { title: "Cheese", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["치즈"] },
-                    { title: "Rewind", isTitle: false, melonRank: "-", trophies: 0, mvLink: "", cheerLink: "", alias: ["리와인드"] }
-                ]
+            "DKDK": {
+                title: "두근두근 (DKDK)", category: "TITLE", type: "TITLE", monthDay: "06-05",
+                img: "https://img.youtube.com/vi/B3KuJqe3Epg/maxresdefault.jpg",
+                mv: "https://youtu.be/B3KuJqe3Epg?si=gwFihsRlUxVh_MiR", fanchant: "", release: "2018년 6월 5일",
+                melon: "-", genie: "-", trophy: "-", alias: ["두근두근", "ㄷㄱㄷㄱ"]
+            },
+            "LOVEBOMB": { 
+                title: "LOVE BOMB", category: "TITLE", type: "TITLE", monthDay: "10-10",
+                img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=-SK6cvkK4c0",
+                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+LOVE+BOMB+응원법",
+                release: "2018년 10월 10일",
+                melon: "일간 164위 / TOP 100 -위", 
+                genie: "일간 174위 / 실시간 83위", 
+                trophy: "음방 1위 후보 👏", alias: ["러브밤", "ㄹㅂㅂ"]
+            },
+            "FUN": { 
+                title: "FUN!", category: "TITLE", type: "TITLE", monthDay: "06-04",
+                img: "https://img.youtube.com/vi/zsRyyLtcXho/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=zsRyyLtcXho",
+                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+FUN+응원법",
+                release: "2019년 6월 4일",
+                melon: "일간 167위 / TOP 100 -", 
+                genie: "일간 109위 / 실시간 30위", 
+                trophy: "음방 활동 곡 👏", alias: ["펀", "ㅍ"]
+            },
+            "FEEL_GOOD": {
+                title: "Feel Good (SECRET CODE)", category: "TITLE", type: "TITLE", monthDay: "09-16",
+                img: "https://img.youtube.com/vi/jLmJhjCzOTw/maxresdefault.jpg",
+                mv: "https://youtu.be/jLmJhjCzOTw?si=vL80aiUNGTpdlG9e", fanchant: "", release: "2020년 9월 16일",
+                melon: "-", genie: "-", trophy: "-", alias: ["필굿", "ㅍㄱ"]
+            },
+            "WEGO": { 
+                title: "WE GO", category: "TITLE", type: "TITLE", monthDay: "05-17",
+                img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=HM6UpQZvbhY",
+                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+WE+GO+응원법",
+                release: "2021년 5월 17일",
+                melon: "일간 108위 / TOP 100 -위", 
+                genie: "일간 14위 / 실시간 4위", 
+                trophy: "음방 1위 후보 (커리어하이 달성)", alias: ["위고", "ㅇㄱ"]
+            },
+            "TALK&TALK": { 
+                title: "Talk & Talk", category: "SPECIAL", type: "SPECIAL", monthDay: "09-01",
+                img: "https://img.youtube.com/vi/BjmmvBMXbSU/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=BjmmvBMXbSU",
+                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Talk+and+Talk+응원법",
+                release: "2021년 9월 1일",
+                melon: "일간 204위 / TOP 100 -", 
+                genie: "일간 212위 / 실시간 80위", 
+                trophy: "총 1관왕 🏆<br>• 21.09.07 더쇼 1위", alias: ["톡앤톡", "ㅌㅇㅌ"]
+            },
+            "DM": { 
+                title: "DM", category: "TITLE", type: "TITLE", monthDay: "01-17",
+                img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=4gXmClk8rKI",
+                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+DM+응원법",
+                release: "2022년 1월 17일",
+                melon: "일간 66위 / TOP 100 52위", 
+                genie: "일간 137위 / 실시간 45위", 
+                trophy: "총 2관왕 🏆🏆<br>• 22.01.25 더쇼 1위<br>• 22.01.26 쇼챔피언 1위", alias: ["디엠", "ㄷㅁ"]
+            },
+            "STAYTHISWAY": { 
+                title: "Stay This Way", category: "TITLE", type: "TITLE", monthDay: "06-27",
+                img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=JC6budcACNE",
+                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Stay+This+Way+응원법",
+                release: "2022년 6월 27일",
+                melon: "일간 100위 / TOP 100 86위", 
+                genie: "일간 142위 / 실시간 33위", 
+                trophy: "총 5관왕 🏆🏆🏆🏆🏆<br>• 22.07.05 더쇼 1위<br>• 22.07.06 쇼챔피언 1위<br>• 22.07.07 엠카운트다운 1위<br>• 22.07.08 뮤직뱅크 1위<br>• 22.07.09 음악중심 1위", alias: ["스디웨", "ㅅㄷㅇ"]
+            },
+            "WHITE_MEMORIES": {
+                title: "하얀 그리움", category: "SPECIAL", type: "SPECIAL", monthDay: "12-30",
+                img: "https://img.youtube.com/vi/5ZB9JLfIw_Q/maxresdefault.jpg",
+                mv: "https://youtu.be/5ZB9JLfIw_Q?si=p_waAdPh5IX-uPhB", fanchant: "", release: "2022년 12월 30일",
+                melon: "-", genie: "-", trophy: "총 2관왕 🏆🏆", alias: ["하얀그리움", "ㅎㅇㄱㄹㅇ"]
+            },
+            "MENOW": { 
+                title: "#menow", category: "TITLE", type: "TITLE", monthDay: "06-05",
+                img: "https://img.youtube.com/vi/QrYIOjs7K8E/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=QrYIOjs7K8E",
+                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+menow+응원법",
+                release: "2023년 6월 5일",
+                melon: "일간 204위 / TOP 100 -위", 
+                genie: "일간 249위 / 실시간 79위", 
+                trophy: "총 1관왕 🏆<br>• 23.06.13 더쇼 1위", alias: ["미나우", "ㅁㄴㅇ"]
+            },
+            "SUPERSONIC": { 
+                title: "Supersonic", category: "TITLE", type: "TITLE", monthDay: "08-12",
+                img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=0LiQp7y8Wwc",
+                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Supersonic+응원법",
+                release: "2024년 8월 12일",
+                melon: "일간 7위 / TOP 100 5위", 
+                genie: "일간 28위 / 실시간 20위", 
+                trophy: "총 4관왕 🏆🏆🏆🏆<br>• 24.08.20 더쇼 1위<br>• 24.08.22 엠카운트다운 1위<br>• 24.08.23 뮤직뱅크 1위<br>• 24.08.24 음악중심 1위", alias: ["슈퍼소닉", "ㅅㅍㅅㄴ"]
+            },
+            "LIKE_YOU_BETTER": {
+                title: "Like You Better", category: "TITLE", type: "TITLE", monthDay: "08-12",
+                img: "https://img.youtube.com/vi/r1QapH1SIAI/maxresdefault.jpg",
+                mv: "https://youtu.be/r1QapH1SIAI?si=SZ6BDg-xfrVDlVgP", fanchant: "", release: "2024년 8월 12일",
+                melon: "-", genie: "-", trophy: "총 1관왕 🏆", alias: ["라이큐베럴", "랔큐베", "ㄹㅇㅋㅂㅌ", "라이크유베터"]
             }
-            // 이후 앨범(Midnight Guest, 9 WAY TICKET 등)도 이 구조로 추가하면 됩니다!
+        };
+
+        // 🎂 프로미스나인 8인 멤버 생일 데이터 (누락 멤버 복구 및 순서 정렬)
+        const memberBirthdays = [
+            { name: "이새롬", date: "01-07" },
+            { name: "이서연", date: "01-22" },
+            { name: "박지원", date: "03-20" },
+            { name: "백지헌", date: "04-17" },
+            { name: "이채영", date: "05-14" },
+            { name: "이나경", date: "06-01" },
+            { name: "송하영", date: "09-29" },
+            { name: "노지선", date: "11-23" }
         ];
 
-        function renderAlbums() {
-            const container = document.getElementById('archive-container');
-            
-            musicData.forEach((album, index) => {
-                // 1. 앨범 컨테이너 생성
-                const albumDiv = document.createElement('div');
-                albumDiv.className = 'album-container';
+        // ⏱️ 데뷔 D-Day & 멤버 생일 한눈에 보기 계산
+        function calculateDday() {
+            const debutDate = new Date("2018-01-24");
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-                // 2. 앨범 헤더 (클릭되는 부분)
-                const headerDiv = document.createElement('div');
-                headerDiv.className = 'album-header';
-                headerDiv.innerHTML = `
-                    <div class="album-info">
-                        <span>${album.albumName}</span>
-                        <span class="release-date">${album.releaseDate}</span>
-                    </div>
-                    <div class="arrow">▼</div>
-                `;
+            const diffTime = Math.abs(today - debutDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById("debutDday").innerText = `D+${diffDays}`;
 
-                // 3. 수록곡 리스트 래퍼 (솨라락 애니메이션용)
-                const contentWrapper = document.createElement('div');
-                contentWrapper.className = 'album-content-wrapper';
+            let calculated = memberBirthdays.map(m => {
+                const [month, day] = m.date.split("-").map(Number);
+                let nextBday = new Date(today.getFullYear(), month - 1, day);
+                if (today > nextBday) {
+                    nextBday.setFullYear(today.getFullYear() + 1);
+                }
+                const dday = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
+                return { ...m, dday: dday };
+            });
 
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'album-content';
+            const minDday = Math.min(...calculated.map(c => c.dday));
 
-                const trackList = document.createElement('ul');
-                trackList.className = 'track-list';
+            const grid = document.getElementById("bdayGrid");
+            grid.innerHTML = "";
 
-                // 4. 수록곡 데이터 삽입
-                album.tracks.forEach(track => {
-                    const li = document.createElement('li');
-                    li.className = 'track-item';
-                    
-                    const titleHtml = track.isTitle 
-                        ? `<div class="track-title"><span class="title-badge">TITLE</span> ${track.title}</div>`
-                        : `<div class="track-title">${track.title}</div>`;
-
-                    const statsHtml = track.isTitle
-                        ? `<div class="track-stats">🏆 ${track.trophies}관왕</div>`
-                        : `<div class="track-stats">-</div>`;
-
-                    li.innerHTML = titleHtml + statsHtml;
-                    trackList.appendChild(li);
-                });
-
-                contentDiv.appendChild(trackList);
-                contentWrapper.appendChild(contentDiv);
+            calculated.forEach(m => {
+                const card = document.createElement("div");
+                const isNearest = m.dday === minDday;
+                card.className = `bday-card ${isNearest ? 'nearest' : ''}`;
                 
-                albumDiv.appendChild(headerDiv);
-                albumDiv.appendChild(contentWrapper);
-
-                // 5. 클릭 이벤트 추가 (아코디언 토글)
-                headerDiv.addEventListener('click', () => {
-                    // 열려있는 다른 앨범을 닫고 싶다면 아래 코드를 활성화하세요
-                    // document.querySelectorAll('.album-container').forEach(el => {
-                    //     if(el !== albumDiv) el.classList.remove('active');
-                    // });
-                    
-                    albumDiv.classList.toggle('active');
-                });
-
-                container.appendChild(albumDiv);
+                const ddayStr = m.dday === 0 ? "🎉 오늘!" : `D-${m.dday}`;
+                card.innerHTML = `
+                    <span class="name">${m.name}</span>
+                    <span class="dday">${ddayStr}</span>
+                `;
+                grid.appendChild(card);
             });
         }
+        calculateDday();
 
-        // 페이지 로드 시 렌더링 실행
-        window.onload = renderAlbums;
+        let currentFilter = "ALL";
+
+        // 📅 N년 전 오늘 배너
+        function checkTodayRelease() {
+            const today = new Date();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const todayMD = `${month}-${day}`;
+
+            for (let key in musicData) {
+                if (musicData[key].monthDay === todayMD) {
+                    const releaseYear = parseInt(musicData[key].release.substring(0, 4));
+                    const yearsAgo = today.getFullYear() - releaseYear;
+                    const banner = document.getElementById("todayBanner");
+                    
+                    banner.innerHTML = `🎉 오늘(${month}월 ${day}일)은 <b>${musicData[key].title}</b> 발매 ${yearsAgo > 0 ? yearsAgo + '주년' : '일'}입니다! 💖`;
+                    banner.style.display = "block";
+                    break;
+                }
+            }
+        }
+        checkTodayRelease();
+
+        // 🎴 포토카드 뒤집기 토글
+        const card = document.getElementById("flipCard");
+        card.addEventListener("click", function() {
+            card.classList.toggle("flipped");
+        });
+
+        // 🖼️ 앨범 목록 슈루룩 렌더링
+        function renderAlbumGrid(filterType) {
+            const grid = document.getElementById("albumGrid");
+            grid.innerHTML = "";
+
+            for (let key in musicData) {
+                const song = musicData[key];
+                
+                if (filterType === "ALL" || song.type === filterType) {
+                    const item = document.createElement("div");
+                    item.className = "album-item";
+                    item.onclick = function() { displaySongData(key); };
+                    
+                    item.innerHTML = `
+                        <img src="${song.img}" alt="${song.title}">
+                        <p>${song.title}</p>
+                    `;
+                    grid.appendChild(item);
+                }
+            }
+        }
+
+        // 🗂️ 카테고리 필터링
+        function filterCategory(type, btnElement) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderAlbumGrid(type);
+        }
+
+        renderAlbumGrid("ALL");
+
+        // 🔍 초성 및 약칭 검색 지원
+        function findSongKey(inputQuery) {
+            const cleanQuery = inputQuery.replace(/\s+/g, '').toUpperCase();
+            if (musicData[cleanQuery]) return cleanQuery;
+
+            for (let key in musicData) {
+                if (musicData[key].alias) {
+                    for (let alias of musicData[key].alias) {
+                        if (alias.replace(/\s+/g, '').toUpperCase() === cleanQuery) return key;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function displaySongData(key) {
+            const song = musicData[key];
+            card.classList.remove("flipped");
+
+            document.getElementById("albumImg").src = song.img;
+            
+            // 빈 데이터 보완 처리
+            const mvBtn = document.getElementById("mvLink");
+            mvBtn.href = song.mv || "#";
+            mvBtn.style.opacity = song.mv ? "1" : "0.5";
+
+            const fcBtn = document.getElementById("fanchantLink");
+            fcBtn.href = song.fanchant || "#";
+            fcBtn.style.opacity = song.fanchant ? "1" : "0.5";
+
+            document.getElementById("songTitle").innerText = song.title; 
+            document.getElementById("cardCategory").innerText = song.category;
+            document.getElementById("releaseDate").innerText = song.release;
+            document.getElementById("melonRank").innerText = song.melon || "-";
+            document.getElementById("genieRank").innerText = song.genie || "-";
+            document.getElementById("trophyCount").innerHTML = song.trophy || "-";
+            
+            const container = document.getElementById("flipCardContainer");
+            container.style.display = "block";
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 검색 및 엔터키 이벤트
+        document.getElementById("searchBtn").addEventListener("click", function() {
+            const input = document.getElementById("songInput").value;
+            if (!input) return alert("검색어를 입력해 주세요!");
+
+            const matchedKey = findSongKey(input);
+            if (matchedKey) displaySongData(matchedKey);
+            else alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, love bomb, fun, 랔큐베)");
+        });
+
+        document.getElementById("songInput").addEventListener("keypress", function(e) {
+            if (e.key === 'Enter') document.getElementById("searchBtn").click();
+        });
+
+        // 🎲 오늘의 추천 곡 (랜덤 뽑기) - [복구 완료된 부분]
+        document.getElementById("randomBtn").addEventListener("click", function() {
+            const keys = Object.keys(musicData);
+            const randomKey = keys[Math.floor(Math.random() * keys.length)];
+            displaySongData(randomKey);
+        });
+
+        // 📋 기록 복사하기 - [복구 완료된 부분]
+        document.getElementById("copyBtn").addEventListener("click", function(e) {
+            e.stopPropagation();
+            
+            const title = document.getElementById("songTitle").innerText;
+            const release = document.getElementById("releaseDate").innerText;
+            const melon = document.getElementById("melonRank").innerText;
+            const genie = document.getElementById("genieRank").innerText;
+            // innerText를 사용하면 <br> 태그가 자연스럽게 줄바꿈으로 처리됩니다.
+            const trophy = document.getElementById("trophyCount").innerText; 
+            
+            const copyText = `[fromis_9 - ${title}] 역대 기록 🍀\n\n📅 발매일: ${release}\n🍈 멜론 최고 순위: ${melon}\n🧞 지니 최고 순위: ${genie}\n📺 수상 내역:\n${trophy}`;
+            
+            navigator.clipboard.writeText(copyText).then(() => {
+                alert(`'${title}' 기록이 클립보드에 복사되었습니다! 💖\n원하시는 커뮤니티나 메모장에 붙여넣기 하세요.`);
+            }).catch(err => {
+                alert("기록 복사에 실패했습니다. 브라우저 설정을 확인해 주세요.");
+            });
+        });
+
     </script>
 </body>
 </html>
