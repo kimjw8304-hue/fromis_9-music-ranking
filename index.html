@@ -172,7 +172,7 @@
 
         <!-- 🔍 검색 창 -->
         <div class="search-box">
-            <input type="text" id="songInput" placeholder="곡 제목 또는 초성 (예: dm, ㅅㅍㅅㄴ, 랔큐베, 환상)">
+            <input type="text" id="songInput" placeholder="곡 제목 또는 초성 (예: dm, ㅅㅍㅅㄴ, 랔큐베, ㅎㅇㄱㄹㅇ)">
             <button id="searchBtn">검색</button>
         </div>
 
@@ -214,11 +214,11 @@
             </div>
         </div>
 
-        <p class="copyright">본 사이트는 비상업적 팬 아카이브 사이트입니다.<br>(OST 곡은 데이터베이스에서 제외되어 있습니다.)</p>
+        <p class="copyright">본 사이트는 비상업적 팬 아카이브 사이트입니다.<br>(OST 곡은 제외되어 있습니다.)</p>
     </div>
 
     <script>
-        // 📌 앨범 데이터베이스 (OST 제외, 정규/미니/싱글 앨범 단위)
+        // 📌 앨범 데이터베이스 (OST 제외, 정규/미니/싱글/스페셜)
         const albumsData = {
             "PRE_GLASS": {
                 name: "유리구두 (Pre-Debut Single)", date: "2017년 11월 30일",
@@ -278,11 +278,21 @@
             "SUPERSONIC": {
                 name: "Supersonic (3rd Single Album)", date: "2024년 8월 12일",
                 img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg",
-                tracks: ["SUPERSONIC", "LIKE_YOU_BETTER", "BEAT_THE_HEAT"]
+                tracks: ["SUPERSONIC", "BEAT_THE_HEAT"]
+            },
+            "LIKE_YOU_BETTER": {
+                name: "LIKE YOU BETTER (Single)", date: "2025년 6월 25일",
+                img: "https://img.youtube.com/vi/r1QapH1SIAI/maxresdefault.jpg",
+                tracks: ["LIKE_YOU_BETTER"]
+            },
+            "WHITE_MEMORIES": {
+                name: "하얀 그리움 (Special Single)", date: "2025년 12월 2일",
+                img: "https://img.youtube.com/vi/5ww-0cQllIc/maxresdefault.jpg",
+                tracks: ["WHITE_MEMORIES"]
             }
         };
 
-        // 📌 상세 곡 데이터베이스 (타이틀곡 + 대표 수록곡)
+        // 📌 상세 곡 데이터베이스 (타이틀곡 + 대표 수록곡 + 스페셜)
         const musicData = {
             "GLASS_SHOES": {
                 title: "유리구두", category: "PRE-DEBUT", type: "SPECIAL", monthDay: "11-30",
@@ -470,17 +480,28 @@
                 melon: "일간 7위 / TOP 100 5위", genie: "일간 28위", 
                 trophy: "총 4관왕 🏆🏆🏆🏆<br>• 더쇼, 엠카, 뮤뱅, 음중 1위", alias: ["슈퍼소닉", "ㅅㅍㅅㄴ"]
             },
-            "LIKE_YOU_BETTER": {
-                title: "Like You Better", category: "TITLE", type: "TITLE", monthDay: "08-12",
-                img: "https://img.youtube.com/vi/r1QapH1SIAI/maxresdefault.jpg",
-                mv: "https://youtu.be/r1QapH1SIAI?si=SZ6BDg-xfrVDlVgP", fanchant: "", release: "2024년 8월 12일",
-                melon: "-", genie: "-", trophy: "수록곡 👏", alias: ["라이큐베럴", "랔큐베", "ㄹㅇㅋㅂㅌ"]
-            },
             "BEAT_THE_HEAT": {
                 title: "Ahren (Beat the Heat)", category: "B-SIDE", type: "BSIDE", monthDay: "08-12",
                 img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg",
                 mv: "", fanchant: "", release: "2024년 8월 12일",
                 melon: "-", genie: "-", trophy: "-", alias: ["비트더히트", "ㅂㅌㄷㅎㅌ"]
+            },
+            "LIKE_YOU_BETTER": { 
+                title: "LIKE YOU BETTER", category: "TITLE", type: "TITLE", monthDay: "06-25",
+                img: "https://img.youtube.com/vi/r1QapH1SIAI/maxresdefault.jpg",
+                mv: "https://youtu.be/r1QapH1SIAI?si=SZ6BDg-xfrVDlVgP", 
+                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+LIKE+YOU+BETTER+응원법", 
+                release: "2025년 6월 25일",
+                melon: "TOP 100 3위", genie: "일간 22위", 
+                trophy: "음방 1위 🏆", alias: ["라이큐베럴", "랔큐베", "ㄹㅇㅋㅂㅌ"]
+            },
+            "WHITE_MEMORIES": {
+                title: "하얀 그리움", category: "SPECIAL", type: "SPECIAL", monthDay: "12-02",
+                img: "https://img.youtube.com/vi/5ww-0cQllIc/maxresdefault.jpg",
+                mv: "https://www.youtube.com/watch?v=5ww-0cQllIc",
+                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+하얀+그리움+응원법",
+                release: "2025년 12월 2일",
+                melon: "-", genie: "-", trophy: "스페셜 싱글 ❄️", alias: ["하얀그리움", "ㅎㅇㄱㄹㅇ"]
             }
         };
 
@@ -569,7 +590,6 @@
             detailBox.style.display = "none";
 
             if (filterType === "ALBUM") {
-                // 💿 앨범 모아보기
                 for (let key in albumsData) {
                     const alb = albumsData[key];
                     const item = document.createElement("div");
@@ -584,7 +604,6 @@
                     grid.appendChild(item);
                 }
             } else {
-                // 🎵 개별 곡 모아보기
                 for (let key in musicData) {
                     const song = musicData[key];
                     
@@ -698,7 +717,7 @@
 
             const matchedKey = findSongKey(input);
             if (matchedKey) displaySongData(matchedKey);
-            else alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, love bomb, fun, 랔큐베, 환상)");
+            else alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, love bomb, 랔큐베, ㅎㅇㄱㄹㅇ)");
         });
 
         document.getElementById("songInput").addEventListener("keypress", function(e) {
