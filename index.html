@@ -31,6 +31,22 @@
         .stat-item span { display: block; font-size: 11px; color: #cbd5e1; margin-bottom: 4px; }
         .stat-item strong { font-size: 15px; color: #facc15; }
 
+        /* ⚽ 이상형 월드컵 진입 배너 */
+        .worldcup-banner { background: linear-gradient(135deg, #f43f5e, #fb7185); border-radius: 15px; padding: 18px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(244,63,94,0.3); }
+        .worldcup-banner h3 { margin: 0 0 8px 0; font-size: 18px; color: white; }
+        .worldcup-banner p { margin: 0 0 14px 0; font-size: 13px; color: #ffe4e6; }
+        .wc-start-btn { background: white; color: #e11d48; border: none; padding: 10px 24px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .wc-start-btn:hover { background: #f1f5f9; }
+
+        /* ⚽ 월드컵 플레이 모달/영역 스타일 */
+        .worldcup-arena { background: #1e293b; border: 2px solid #f43f5e; border-radius: 15px; padding: 20px; margin-bottom: 25px; display: none; }
+        .wc-round-title { font-size: 16px; color: #fb7185; font-weight: bold; margin-bottom: 15px; }
+        .wc-match-container { display: flex; justify-content: space-around; gap: 15px; }
+        .wc-card { background: #0f172a; border: 2px solid #334155; border-radius: 12px; padding: 10px; width: 45%; cursor: pointer; transition: 0.2s; }
+        .wc-card:hover { border-color: #f43f5e; transform: translateY(-3px); }
+        .wc-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; }
+        .wc-card p { margin: 8px 0 0 0; font-size: 13px; font-weight: bold; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
         /* 🗂️ 카테고리 필터 버튼 */
         .filter-group { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
         .filter-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid #475569; background: #1e293b; color: #94a3b8; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s; }
@@ -131,6 +147,29 @@
                     <strong>13개 🏆</strong>
                 </div>
             </div>
+        </div>
+
+        <!-- ⚽ 타이틀곡 이상형 월드컵 배너 -->
+        <div class="worldcup-banner">
+            <h3>🏆 fromis_9 타이틀곡 이상형 월드컵</h3>
+            <p>내 최애 타이틀곡을 찾아보세요!</p>
+            <button class="wc-start-btn" onclick="startWorldCup()">월드컵 시작하기</button>
+        </div>
+
+        <!-- ⚽ 월드컵 진행 아레나 -->
+        <div id="worldcupArena" class="worldcup-arena">
+            <div id="wcRoundTitle" class="wc-round-title">16강 (1/8)</div>
+            <div class="wc-match-container">
+                <div class="wc-card" onclick="selectWCChoice(0)">
+                    <img id="wcImg1" src="" alt="곡1">
+                    <p id="wcTitle1">곡 제목 1</p>
+                </div>
+                <div class="wc-card" onclick="selectWCChoice(1)">
+                    <img id="wcImg2" src="" alt="곡2">
+                    <p id="wcTitle2">곡 제목 2</p>
+                </div>
+            </div>
+            <button onclick="closeWorldCup()" style="margin-top:15px; background:#475569; padding:6px 14px; font-size:12px;">그만하기</button>
         </div>
 
         <!-- 🗂️ 카테고리 필터링 버튼 -->
@@ -490,6 +529,79 @@
                 alert("기록 복사에 실패했습니다.");
             });
         });
+
+        // ⚽ 이상형 월드컵 로직
+        let wcList = [];
+        let nextRoundList = [];
+        let currentMatchIndex = 0;
+        let currentPair = [];
+
+        function startWorldCup() {
+            // 타이틀곡 위주로 16강 구성 (데이터에서 TITLE 타입 추출 후 부족하면 전체에서 채움)
+            let titleKeys = Object.keys(musicData).filter(k => musicData[k].type === "TITLE");
+            // 16강을 맞추기 위해 섞고 16개 자르기 (곡이 11개이므로 랜덤으로 중복 포함하거나 있는 만큼 채움)
+            let pool = [...titleKeys];
+            while(pool.length < 16) {
+                pool.push(titleKeys[Math.floor(Math.random() * titleKeys.length)]);
+            }
+            
+            // 셔플
+            wcList = pool.sort(() => Math.random() - 0.5).slice(0, 16);
+            nextRoundList = [];
+            currentMatchIndex = 0;
+
+            document.getElementById("worldcupArena").style.display = "block";
+            document.getElementById("worldcupArena").scrollIntoView({ behavior: 'smooth' });
+            loadWCMatch();
+        }
+
+        function loadWCMatch() {
+            if (currentMatchIndex >= wcList.length) {
+                if (nextRoundList.length === 1) {
+                    // 우승!
+                    const winnerKey = nextRoundList[0];
+                    const winner = musicData[winnerKey];
+                    document.getElementById("wcRoundTitle").innerText = `🎉 최종 우승 곡! 🎉`;
+                    document.getElementById("wcImg1").src = winner.img;
+                    document.getElementById("wcTitle1").innerText = `👑 ${winner.title}`;
+                    document.getElementById("wcImg2").src = winner.img;
+                    document.getElementById("wcTitle2").innerText = `👑 ${winner.title}`;
+                    return;
+                }
+                wcList = [...nextRoundList];
+                nextRoundList = [];
+                currentMatchIndex = 0;
+            }
+
+            let totalRound = wcList.length;
+            let roundName = totalRound === 16 ? "16강" : totalRound === 8 ? "8강" : totalRound === 4 ? "준결승" : "결승";
+            let matchNum = (currentMatchIndex / 2) + 1;
+            let totalMatch = totalRound / 2;
+
+            document.getElementById("wcRoundTitle").innerText = `${roundName} (${matchNum}/${totalMatch})`;
+
+            currentPair = [wcList[currentMatchIndex], wcList[currentMatchIndex + 1]];
+            
+            document.getElementById("wcImg1").src = musicData[currentPair[0]].img;
+            document.getElementById("wcTitle1").innerText = musicData[currentPair[0]].title;
+            
+            document.getElementById("wcImg2").src = musicData[currentPair[1]].img;
+            document.getElementById("wcTitle2").innerText = musicData[currentPair[1]].title;
+        }
+
+        function selectWCChoice(choiceIndex) {
+            if (nextRoundList.length === 0 && currentMatchIndex >= wcList.length) {
+                startWorldCup(); // 우승 후 클릭시 재시작
+                return;
+            }
+            nextRoundList.push(currentPair[choiceIndex]);
+            currentMatchIndex += 2;
+            loadWCMatch();
+        }
+
+        function closeWorldCup() {
+            document.getElementById("worldcupArena").style.display = "none";
+        }
     </script>
 </body>
 </html>
