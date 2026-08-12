@@ -47,16 +47,6 @@
         .wc-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; }
         .wc-card p { margin: 8px 0 0 0; font-size: 13px; font-weight: bold; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* 👑 랭킹보드 스타일 */
-        .ranking-board { background: #1e293b; border: 1px solid #334155; border-radius: 15px; padding: 18px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-align: left; }
-        .ranking-board h3 { margin: 0 0 12px 0; font-size: 16px; color: #f43f5e; text-align: center; }
-        .ranking-list { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; }
-        .ranking-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 8px 12px; border-radius: 8px; font-size: 13px; }
-        .ranking-item .rank-info { display: flex; align-items: center; gap: 10px; }
-        .ranking-item .rank-num { font-weight: bold; color: #f43f5e; min-width: 20px; }
-        .ranking-item .song-name { font-weight: bold; color: #f1f5f9; }
-        .ranking-item .win-count { color: #facc15; font-size: 12px; }
-
         /* 🗂️ 카테고리 필터 버튼 */
         .filter-group { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
         .filter-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid #475569; background: #1e293b; color: #94a3b8; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s; }
@@ -123,37 +113,6 @@
         .rank-item b { text-align: right; line-height: 1.4; font-weight: normal; }
         .copyright { font-size: 12px; color: #64748b; margin-top: 30px; line-height: 1.4; }
     </style>
-
-    <!-- 🔥 Firebase SDK (실시간 데이터 공유용) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        // 퍼블릭 테스트용 Firebase 설정 (실시간 공유 데이터베이스)
-        const firebaseConfig = {
-            databaseURL: "https://fromis9-archive-default-rtdb.firebaseio.com/"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // 전역 객체로 등록하여 스크립트에서 사용
-        window.db = db;
-        window.dbRef = ref;
-        window.onValue = onValue;
-        window.runTransaction = runTransaction;
-
-        // 실시간 랭킹 데이터 불러오기 및 리스너 등록
-        document.addEventListener("DOMContentLoaded", () => {
-            const rankingRef = ref(db, 'worldcup_stats');
-            onValue(rankingRef, (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    renderRankingBoard(data);
-                }
-            });
-        });
-    </script>
 </head>
 <body>
 
@@ -211,14 +170,6 @@
                 </div>
             </div>
             <button onclick="closeWorldCup()" style="margin-top:15px; background:#475569; padding:6px 14px; font-size:12px;">그만하기</button>
-        </div>
-
-        <!-- 👑 실시간 글로벌 팬들의 선택 월드컵 랭킹보드 -->
-        <div class="ranking-board">
-            <h3>🏆 월드컵 명예의 전당 (실시간 랭킹)</h3>
-            <div id="rankingList" class="ranking-list">
-                <div style="text-align:center; color:#94a3b8; padding:10px;">데이터 불러오는 중...</div>
-            </div>
         </div>
 
         <!-- 🗂️ 카테고리 필터링 버튼 -->
@@ -579,26 +530,31 @@
             });
         });
 
-        // 👑 실시간 랭킹보드 렌더링 함수
-        function renderRankingBoard(stats) {
-            const listEl = document.getElementById("rankingList");
-            listEl.innerHTML = "";
-
-            let sortedSongs = Object.keys(musicData).map(key => {
-                return { key: key, title: musicData[key].title, wins: stats[key] || 0 };
-            }).sort((a, b) => b.wins - a.wins);
-
-            sortedSongs.forEach((item, index) => {
-                const row = document.createElement("div");
-                row.className = "ranking-item";
-                row.innerHTML = `
-                    <div class="rank-info">
-                        <span class="rank-num">${index + 1}</span>
-                        <span class="song-name">${item.title}</span>
-                    </div>
-                    <span class="win-count">🏆 ${item.wins}회 우승</span>
-                `;
-                listEl.appendChild(row);
+        // 🏆 SheetDB를 이용한 우승 기록 전송 함수
+        function recordWinner(songName) {
+            const API_URL = "https://sheetdb.io/api/v1/nqbvga0zuf7zn";
+            
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    data: [
+                        {
+                            "SongName": songName,
+                            "WinnerCount": 1
+                        }
+                    ]
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("시트 기록 성공!", data);
+            })
+            .catch(error => {
+                console.error("시트 기록 실패:", error);
             });
         }
 
@@ -635,35 +591,8 @@
                     document.getElementById("wcImg2").src = winner.img;
                     document.getElementById("wcTitle2").innerText = `👑 ${winner.title}`;
 
-                    // 🔥 실시간 서버(Firebase)에 내 투표 결과 반영 (이전 투표 곡 차감 + 새 곡 가산)
-                    if (window.db && window.dbRef && window.runTransaction) {
-                        const statsRef = window.dbRef(window.db, 'worldcup_stats');
-                        let lastWinnerKey = localStorage.getItem("fromis_last_winner");
-
-                        window.runTransaction(statsRef, (currentStats) => {
-                            if (!currentStats) {
-                                currentStats = {};
-                                Object.keys(musicData).forEach(k => currentStats[k] = 0);
-                            }
-
-                            // 이전 투표 곡이 있으면 점수 차감 (-1)
-                            if (lastWinnerKey && currentStats[lastWinnerKey] !== undefined) {
-                                if (currentStats[lastWinnerKey] > 0) {
-                                    currentStats[lastWinnerKey] -= 1;
-                                }
-                            }
-
-                            // 새 우승 곡 점수 가산 (+1)
-                            currentStats[winnerKey] = (currentStats[winnerKey] || 0) + 1;
-
-                            return currentStats;
-                        }).then(() => {
-                            // 내 최근 투표 기록 갱신
-                            localStorage.setItem("fromis_last_winner", winnerKey);
-                        }).catch((error) => {
-                            console.error("투표 반영 중 오류 발생: ", error);
-                        });
-                    }
+                    // 🚀 구글 시트(SheetDB)로 우승 기록 전송 실행!
+                    recordWinner(winner.title);
                     return;
                 }
                 // 다음 라운드로 진출
@@ -689,7 +618,7 @@
         }
 
         function selectWCChoice(choiceIndex) {
-            if (isFinished) return; // 우승 화면에서는 클릭 무시
+            if (isFinished) return;
 
             nextRoundList.push(currentPair[choiceIndex]);
             currentMatchIndex += 2;
