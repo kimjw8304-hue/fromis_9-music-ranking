@@ -123,6 +123,37 @@
         .rank-item b { text-align: right; line-height: 1.4; font-weight: normal; }
         .copyright { font-size: 12px; color: #64748b; margin-top: 30px; line-height: 1.4; }
     </style>
+
+    <!-- 🔥 Firebase SDK (실시간 데이터 공유용) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // 퍼블릭 테스트용 Firebase 설정 (실시간 공유 데이터베이스)
+        const firebaseConfig = {
+            databaseURL: "https://fromis9-archive-default-rtdb.firebaseio.com/"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // 전역 객체로 등록하여 스크립트에서 사용
+        window.db = db;
+        window.dbRef = ref;
+        window.onValue = onValue;
+        window.runTransaction = runTransaction;
+
+        // 실시간 랭킹 데이터 불러오기 및 리스너 등록
+        document.addEventListener("DOMContentLoaded", () => {
+            const rankingRef = ref(db, 'worldcup_stats');
+            onValue(rankingRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    renderRankingBoard(data);
+                }
+            });
+        });
+    </script>
 </head>
 <body>
 
@@ -182,11 +213,11 @@
             <button onclick="closeWorldCup()" style="margin-top:15px; background:#475569; padding:6px 14px; font-size:12px;">그만하기</button>
         </div>
 
-        <!-- 👑 팬들의 선택 월드컵 랭킹보드 -->
+        <!-- 👑 실시간 글로벌 팬들의 선택 월드컵 랭킹보드 -->
         <div class="ranking-board">
-            <h3>🏆 월드컵 명예의 전당 (랭킹보드)</h3>
+            <h3>🏆 월드컵 명예의 전당 (실시간 랭킹)</h3>
             <div id="rankingList" class="ranking-list">
-                <!-- 자바스크립트로 동적 생성 -->
+                <div style="text-align:center; color:#94a3b8; padding:10px;">데이터 불러오는 중...</div>
             </div>
         </div>
 
@@ -548,36 +579,11 @@
             });
         });
 
-        // ⚽ 이상형 월드컵 & 랭킹보드 로직
-        let wcList = [];
-        let nextRoundList = [];
-        let currentMatchIndex = 0;
-        let currentPair = [];
-        let isFinished = false;
-
-        // 로컬스토리지에서 우승 데이터 불러오기 (없으면 초기화)
-        function getWCStats() {
-            let stats = localStorage.getItem("fromis_wc_stats");
-            if (!stats) {
-                stats = {};
-                Object.keys(musicData).forEach(k => stats[k] = 0);
-                localStorage.setItem("fromis_wc_stats", JSON.stringify(stats));
-                return stats;
-            }
-            return JSON.parse(stats);
-        }
-
-        function saveWCStats(stats) {
-            localStorage.setItem("fromis_wc_stats", JSON.stringify(stats));
-        }
-
-        // 랭킹보드 렌더링 함수
-        function renderRankingBoard() {
-            const stats = getWCStats();
+        // 👑 실시간 랭킹보드 렌더링 함수
+        function renderRankingBoard(stats) {
             const listEl = document.getElementById("rankingList");
             listEl.innerHTML = "";
 
-            // 우승 횟수 기준 내림차순 정렬
             let sortedSongs = Object.keys(musicData).map(key => {
                 return { key: key, title: musicData[key].title, wins: stats[key] || 0 };
             }).sort((a, b) => b.wins - a.wins);
@@ -595,7 +601,13 @@
                 listEl.appendChild(row);
             });
         }
-        renderRankingBoard(); // 페이지 로딩 시 실행
+
+        // ⚽ 이상형 월드컵 로직
+        let wcList = [];
+        let nextRoundList = [];
+        let currentMatchIndex = 0;
+        let currentPair = [];
+        let isFinished = false;
 
         function startWorldCup() {
             isFinished = false;
@@ -623,19 +635,35 @@
                     document.getElementById("wcImg2").src = winner.img;
                     document.getElementById("wcTitle2").innerText = `👑 ${winner.title}`;
 
-                    // 🏆 우승 데이터 반영 (이전에 내가 투표했던 곡이 있다면 점수 차감 후 새 곡 반영)
-                    let stats = getWCStats();
-                    let lastWinnerKey = localStorage.getItem("fromis_last_winner");
+                    // 🔥 실시간 서버(Firebase)에 내 투표 결과 반영 (이전 투표 곡 차감 + 새 곡 가산)
+                    if (window.db && window.dbRef && window.runTransaction) {
+                        const statsRef = window.dbRef(window.db, 'worldcup_stats');
+                        let lastWinnerKey = localStorage.getItem("fromis_last_winner");
 
-                    if (lastWinnerKey && stats[lastWinnerKey] !== undefined) {
-                        if (stats[lastWinnerKey] > 0) stats[lastWinnerKey] -= 1; // 이전 기록 차감
+                        window.runTransaction(statsRef, (currentStats) => {
+                            if (!currentStats) {
+                                currentStats = {};
+                                Object.keys(musicData).forEach(k => currentStats[k] = 0);
+                            }
+
+                            // 이전 투표 곡이 있으면 점수 차감 (-1)
+                            if (lastWinnerKey && currentStats[lastWinnerKey] !== undefined) {
+                                if (currentStats[lastWinnerKey] > 0) {
+                                    currentStats[lastWinnerKey] -= 1;
+                                }
+                            }
+
+                            // 새 우승 곡 점수 가산 (+1)
+                            currentStats[winnerKey] = (currentStats[winnerKey] || 0) + 1;
+
+                            return currentStats;
+                        }).then(() => {
+                            // 내 최근 투표 기록 갱신
+                            localStorage.setItem("fromis_last_winner", winnerKey);
+                        }).catch((error) => {
+                            console.error("투표 반영 중 오류 발생: ", error);
+                        });
                     }
-
-                    stats[winnerKey] = (stats[winnerKey] || 0) + 1; // 새 우승 곡 가산
-                    saveWCStats(stats);
-                    localStorage.setItem("fromis_last_winner", winnerKey); // 내 최근 투표 기록 저장
-
-                    renderRankingBoard(); // 랭킹보드 즉시 갱신!
                     return;
                 }
                 // 다음 라운드로 진출
