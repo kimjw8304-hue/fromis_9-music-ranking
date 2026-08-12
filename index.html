@@ -530,23 +530,18 @@
             });
         });
 
-        // ⚽ 이상형 월드컵 로직
+        // ⚽ 이상형 월드컵 로직 (버그 수정 버전)
         let wcList = [];
         let nextRoundList = [];
         let currentMatchIndex = 0;
         let currentPair = [];
+        let isFinished = false;
 
         function startWorldCup() {
-            // 타이틀곡 위주로 16강 구성 (데이터에서 TITLE 타입 추출 후 부족하면 전체에서 채움)
-            let titleKeys = Object.keys(musicData).filter(k => musicData[k].type === "TITLE");
-            // 16강을 맞추기 위해 섞고 16개 자르기 (곡이 11개이므로 랜덤으로 중복 포함하거나 있는 만큼 채움)
-            let pool = [...titleKeys];
-            while(pool.length < 16) {
-                pool.push(titleKeys[Math.floor(Math.random() * titleKeys.length)]);
-            }
-            
-            // 셔플
-            wcList = pool.sort(() => Math.random() - 0.5).slice(0, 16);
+            isFinished = false;
+            let allKeys = Object.keys(musicData);
+            // 16개를 고르기 위해 전체 곡을 랜덤으로 섞고 정확히 16개 추출 (중복 없음)
+            wcList = [...allKeys].sort(() => Math.random() - 0.5).slice(0, 16);
             nextRoundList = [];
             currentMatchIndex = 0;
 
@@ -558,7 +553,8 @@
         function loadWCMatch() {
             if (currentMatchIndex >= wcList.length) {
                 if (nextRoundList.length === 1) {
-                    // 우승!
+                    // 최종 우승 확정!
+                    isFinished = true;
                     const winnerKey = nextRoundList[0];
                     const winner = musicData[winnerKey];
                     document.getElementById("wcRoundTitle").innerText = `🎉 최종 우승 곡! 🎉`;
@@ -568,6 +564,7 @@
                     document.getElementById("wcTitle2").innerText = `👑 ${winner.title}`;
                     return;
                 }
+                // 다음 라운드로 진출
                 wcList = [...nextRoundList];
                 nextRoundList = [];
                 currentMatchIndex = 0;
@@ -590,10 +587,8 @@
         }
 
         function selectWCChoice(choiceIndex) {
-            if (nextRoundList.length === 0 && currentMatchIndex >= wcList.length) {
-                startWorldCup(); // 우승 후 클릭시 재시작
-                return;
-            }
+            if (isFinished) return; // 우승 화면에서는 클릭 무시
+
             nextRoundList.push(currentPair[choiceIndex]);
             currentMatchIndex += 2;
             loadWCMatch();
