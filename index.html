@@ -151,6 +151,13 @@
 
         <!-- ⚽ 타이틀곡 이상형 월드컵 배너 -->
         <div class="worldcup-banner">
+            <!-- 🏆 실시간 우승 랭킹보드 추가 -->
+<div class="rank-list" style="margin-bottom: 25px;">
+    <h3 style="margin-top:0; text-align:center; font-size:16px;">👑 실시간 타이틀곡 우승 랭킹</h3>
+    <div id="liveRankingBoard">
+        <p style="font-size:13px; color:#94a3b8;">랭킹 데이터를 불러오는 중...</p>
+    </div>
+</div>
             <h3>🏆 fromis_9 타이틀곡 이상형 월드컵</h3>
             <p>내 최애 타이틀곡을 찾아보세요!</p>
             <button class="wc-start-btn" onclick="startWorldCup()">월드컵 시작하기</button>
@@ -628,6 +635,57 @@
         function closeWorldCup() {
             document.getElementById("worldcupArena").style.display = "none";
         }
+        // 📊 SheetDB에서 랭킹 데이터를 가져와서 화면에 보여주는 함수
+function loadRankingBoard() {
+    const API_URL = "https://sheetdb.io/api/v1/nqbvga0zuf7zn";
+    
+    fetch(API_URL)
+        .then(response => response.json())
+        .then(data => {
+            const board = document.getElementById("liveRankingBoard");
+            if (!data || data.length === 0) {
+                board.innerHTML = "<p style='font-size:13px; color:#94a3b8;'>아직 기록된 우승 데이터가 없습니다.</p>";
+                return;
+            }
+
+            // 곡별 우승 횟수 합치기
+            let scoreMap = {};
+            data.forEach(row => {
+                let name = row.SongName;
+                let count = parseInt(row.WinnerCount) || 1;
+                if (scoreMap[name]) {
+                    scoreMap[name] += count;
+                } else {
+                    scoreMap[name] = count;
+                }
+            });
+
+            // 점수가 높은 순으로 정렬
+            let sortedSongs = Object.keys(scoreMap).sort((a, b) => scoreMap[b] - scoreMap[a]);
+
+            // HTML로 변환해서 출력
+            let html = "";
+            sortedSongs.forEach((song, index) => {
+                html += `
+                    <div class="rank-item" style="display: flex; justify-content: space-between; margin: 8px 0; border-bottom: 1px solid #334155; padding-bottom: 6px; font-size: 14px;">
+                        <span>${index + 1위. ${song}</span>
+                        <b>${scoreMap[song]}회 우승 🏆</b>
+                    </div>
+                `;
+            });
+            board.innerHTML = html;
+        })
+        .catch(error => {
+            console.error("랭킹 불러오기 실패:", error);
+            document.getElementById("liveRankingBoard").innerHTML = "<p style='font-size:13px; color:#ef4444;'>랭킹을 불러오지 못했습니다.</p>";
+        });
+}
+
+// 페이지가 켜지자마자 랭킹 한번 불러오기
+loadRankingBoard();
+
+// 우승 기록이 성공했을 때도 랭킹판이 바로 갱신되도록 recordWinner 함수 안에 추가
+// (아까 그 recordWinner 함수의 .then 안쪽에 loadRankingBoard(); 를 넣어주시면 됩니다!)
     </script>
 </body>
 </html>
