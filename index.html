@@ -101,21 +101,6 @@
 <body>
 
     <div class="container">
-        <!-- 기존 코드들... -->
-<div class="container">
-    <!-- 검색창이나 기존 카드 리스트 -->
-</div>
-
-<!-- 여기에 월드컵 전용 영역 추가 -->
-<div id="worldCupArea" style="display:none; text-align:center; padding:50px; background:rgba(0,0,0,0.8); position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; overflow-y:auto;">
-    <h2 style="color:white;">🏆 fromis_9 곡 월드컵</h2>
-    <div id="matchContainer" style="display:flex; justify-content:center; align-items:center; gap:50px; margin-top:50px; flex-wrap:wrap;">
-        <!-- 카드가 이 자리에 들어옵니다 -->
-    </div>
-</div>
-
-<!-- 시작 버튼은 기존 버튼들 사이에 추가 -->
-<button onclick="startWorldCup()" style="margin:20px; padding:15px; font-size:18px;">🏆 월드컵 시작하기</button>
         <h1>🎵 fromis_9 곡 기록 검색</h1>
         
         <!-- 🍀 데뷔 D+Day -->
@@ -206,7 +191,6 @@
     </div>
 
     <script>
-        // 📌 발매 순서대로 정렬된 musicData
         const musicData = {
             "GLASS_SHOES": {
                 title: "유리구두", category: "PRE-DEBUT", type: "SPECIAL", monthDay: "11-30",
@@ -326,7 +310,6 @@
             }
         };
 
-        // 🎂 요청하신 5명의 멤버 생일 데이터 (송하영, 박지원, 이채영, 이나경, 백지헌)
         const memberBirthdays = [
             { name: "송하영", date: "09-29" },
             { name: "박지원", date: "03-20" },
@@ -335,7 +318,6 @@
             { name: "백지헌", date: "04-17" }
         ];
 
-        // ⏱️ 데뷔 D-Day & 멤버 생일 한눈에 보기 계산
         function calculateDday() {
             const debutDate = new Date("2018-01-24");
             const today = new Date();
@@ -356,7 +338,6 @@
             });
 
             const minDday = Math.min(...calculated.map(c => c.dday));
-
             const grid = document.getElementById("bdayGrid");
             grid.innerHTML = "";
 
@@ -364,7 +345,6 @@
                 const card = document.createElement("div");
                 const isNearest = m.dday === minDday;
                 card.className = `bday-card ${isNearest ? 'nearest' : ''}`;
-                
                 const ddayStr = m.dday === 0 ? "🎉 오늘!" : `D-${m.dday}`;
                 card.innerHTML = `
                     <span class="name">${m.name}</span>
@@ -377,7 +357,6 @@
 
         let currentFilter = "ALL";
 
-        // 📅 N년 전 오늘 배너
         function checkTodayRelease() {
             const today = new Date();
             const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -398,20 +377,17 @@
         }
         checkTodayRelease();
 
-        // 🎴 포토카드 뒤집기 토글
         const card = document.getElementById("flipCard");
         card.addEventListener("click", function() {
             card.classList.toggle("flipped");
         });
 
-        // 🖼️ 앨범 목록 슈루룩 렌더링
         function renderAlbumGrid(filterType) {
             const grid = document.getElementById("albumGrid");
             grid.innerHTML = "";
 
             for (let key in musicData) {
                 const song = musicData[key];
-                
                 if (filterType === "ALL" || song.type === filterType) {
                     const item = document.createElement("div");
                     item.className = "album-item";
@@ -426,7 +402,6 @@
             }
         }
 
-        // 🗂️ 카테고리 필터링
         function filterCategory(type, btnElement) {
             currentFilter = type;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -436,7 +411,6 @@
 
         renderAlbumGrid("ALL");
 
-        // 🔍 초성 및 약칭 검색 지원
         function findSongKey(inputQuery) {
             const cleanQuery = inputQuery.replace(/\s+/g, '').toUpperCase();
             if (musicData[cleanQuery]) return cleanQuery;
@@ -457,7 +431,6 @@
 
             document.getElementById("albumImg").src = song.img;
             
-            // 빈 데이터 보완 처리
             const mvBtn = document.getElementById("mvLink");
             mvBtn.href = song.mv || "#";
             mvBtn.style.opacity = song.mv ? "1" : "0.5";
@@ -478,7 +451,6 @@
             container.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // 검색 및 엔터키 이벤트
         document.getElementById("searchBtn").addEventListener("click", function() {
             const input = document.getElementById("songInput").value;
             if (!input) return alert("검색어를 입력해 주세요!");
@@ -492,7 +464,6 @@
             if (e.key === 'Enter') document.getElementById("searchBtn").click();
         });
 
-        // 🎲 오늘의 추천 곡 (랜덤 뽑기)
         document.getElementById("randomBtn").addEventListener("click", function() {
             let keys = Object.keys(musicData);
             if (currentFilter !== "ALL") {
@@ -503,10 +474,8 @@
             displaySongData(randomKey);
         });
 
-        // 📋 기록 간편 복사
         document.getElementById("copyBtn").addEventListener("click", function(e) {
             e.stopPropagation();
-            
             const title = document.getElementById("songTitle").innerText;
             const release = document.getElementById("releaseDate").innerText;
             const melon = document.getElementById("melonRank").innerText;
@@ -520,62 +489,7 @@
             }).catch(err => {
                 alert("기록 복사에 실패했습니다.");
             });
-        });// --- [fromis_9 곡 월드컵 기능 추가] ---
-
-// 월드컵을 위한 별도의 데이터 배열 및 상태 변수
-let worldCupPool = [];
-let nextRoundPool = [];
-let currentPair = [];
-
-// 1. 월드컵 시작 버튼 생성 (기존 레이아웃을 해치지 않기 위해 하단에 버튼 하나 추가)
-const worldCupBtn = document.createElement("button");
-worldCupBtn.innerText = "🏆 fromis_9 곡 월드컵 시작";
-worldCupBtn.style.marginTop = "20px";
-worldCupBtn.style.padding = "10px";
-worldCupBtn.style.width = "100%";
-worldCupBtn.onclick = startWorldCup;
-document.body.appendChild(worldCupBtn); // body 하단에 버튼 추가
-
-// 2. 월드컵 로직
-function startWorldCup() {
-    worldCupPool = Object.keys(musicData);
-    // 곡 순서 섞기
-    worldCupPool.sort(() => Math.random() - 0.5);
-    nextRoundPool = [];
-    
-    alert("fromis_9 곡 월드컵을 시작합니다! 더 좋아하는 곡을 선택해주세요.");
-    runMatch();
-}
-
-function runMatch() {
-    // 다음 라운드 진행 로직
-    if (worldCupPool.length < 2) {
-        if (nextRoundPool.length === 0) {
-            alert("우승곡이 결정되었습니다!");
-            return;
-        }
-        worldCupPool = nextRoundPool;
-        nextRoundPool = [];
-        if (worldCupPool.length === 1) {
-            alert(`🏆 최종 우승 곡: ${musicData[worldCupPool[0]].title}`);
-            return;
-        }
-    }
-
-    const item1 = worldCupPool.shift();
-    const item2 = worldCupPool.shift();
-
-    const choice = confirm(`[월드컵] 어떤 곡이 더 좋나요?\n\n1. ${musicData[item1].title}\n2. ${musicData[item2].title}`);
-    
-    if (choice) {
-        nextRoundPool.push(item1);
-    } else {
-        nextRoundPool.push(item2);
-    }
-    
-    // 다음 대결 진행
-    setTimeout(runMatch, 100);
-}
+        });
     </script>
 </body>
 </html>
