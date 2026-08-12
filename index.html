@@ -505,7 +505,62 @@
             }).catch(err => {
                 alert("기록 복사에 실패했습니다.");
             });
-        });
+        });// --- [fromis_9 곡 월드컵 기능 추가] ---
+
+// 월드컵을 위한 별도의 데이터 배열 및 상태 변수
+let worldCupPool = [];
+let nextRoundPool = [];
+let currentPair = [];
+
+// 1. 월드컵 시작 버튼 생성 (기존 레이아웃을 해치지 않기 위해 하단에 버튼 하나 추가)
+const worldCupBtn = document.createElement("button");
+worldCupBtn.innerText = "🏆 fromis_9 곡 월드컵 시작";
+worldCupBtn.style.marginTop = "20px";
+worldCupBtn.style.padding = "10px";
+worldCupBtn.style.width = "100%";
+worldCupBtn.onclick = startWorldCup;
+document.body.appendChild(worldCupBtn); // body 하단에 버튼 추가
+
+// 2. 월드컵 로직
+function startWorldCup() {
+    worldCupPool = Object.keys(musicData);
+    // 곡 순서 섞기
+    worldCupPool.sort(() => Math.random() - 0.5);
+    nextRoundPool = [];
+    
+    alert("fromis_9 곡 월드컵을 시작합니다! 더 좋아하는 곡을 선택해주세요.");
+    runMatch();
+}
+
+function runMatch() {
+    // 다음 라운드 진행 로직
+    if (worldCupPool.length < 2) {
+        if (nextRoundPool.length === 0) {
+            alert("우승곡이 결정되었습니다!");
+            return;
+        }
+        worldCupPool = nextRoundPool;
+        nextRoundPool = [];
+        if (worldCupPool.length === 1) {
+            alert(`🏆 최종 우승 곡: ${musicData[worldCupPool[0]].title}`);
+            return;
+        }
+    }
+
+    const item1 = worldCupPool.shift();
+    const item2 = worldCupPool.shift();
+
+    const choice = confirm(`[월드컵] 어떤 곡이 더 좋나요?\n\n1. ${musicData[item1].title}\n2. ${musicData[item2].title}`);
+    
+    if (choice) {
+        nextRoundPool.push(item1);
+    } else {
+        nextRoundPool.push(item2);
+    }
+    
+    // 다음 대결 진행
+    setTimeout(runMatch, 100);
+}
     </script>
 </body>
 </html>
