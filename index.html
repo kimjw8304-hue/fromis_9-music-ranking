@@ -31,7 +31,7 @@
         .stat-item span { display: block; font-size: 11px; color: #cbd5e1; margin-bottom: 4px; }
         .stat-item strong { font-size: 15px; color: #facc15; }
 
-        /* ⚽ 이상형 월드컵 진입 배너 */
+        /* ⚽ 타이틀곡 이상형 월드컵 배너 */
         .worldcup-banner { background: linear-gradient(135deg, #f43f5e, #fb7185); border-radius: 15px; padding: 18px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(244,63,94,0.3); }
         .worldcup-banner h3 { margin: 0 0 8px 0; font-size: 18px; color: white; }
         .worldcup-banner p { margin: 0 0 14px 0; font-size: 13px; color: #ffe4e6; }
@@ -112,6 +112,54 @@
         .rank-item span { font-weight: bold; min-width: 120px; }
         .rank-item b { text-align: right; line-height: 1.4; font-weight: normal; }
         .copyright { font-size: 12px; color: #64748b; margin-top: 30px; line-height: 1.4; }
+
+        /* 🎁 시간별 시크릿 포카 이스터에그 스타일 */
+        #secretPocaPopup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            width: 280px;
+            background: #1e293b;
+            border: 3px solid #f472b6;
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 15px 35px rgba(244, 114, 182, 0.4);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #secretPocaPopup.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        #secretPocaPopup.docked {
+            transform: none;
+            top: 80%;
+            left: auto;
+            right: -240px;
+            width: 260px;
+            opacity: 0.85;
+            border-color: #38bdf8;
+            cursor: pointer;
+            transition: right 0.4s ease-in-out, opacity 0.2s;
+        }
+
+        #secretPocaPopup.docked:hover {
+            right: -10px;
+            opacity: 1;
+        }
+
+        .secret-poca-img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
     </style>
 </head>
 <body>
@@ -151,7 +199,6 @@
 
         <!-- ⚽ 타이틀곡 이상형 월드컵 배너 -->
         <div class="worldcup-banner">
-            <!-- 🏆 실시간 우승 랭킹보드 추가 -->
             <div class="rank-list" style="margin-bottom: 25px;">
                 <h3 style="margin-top:0; text-align:center; font-size:16px;">👑 실시간 타이틀곡 우승 랭킹</h3>
                 <div id="liveRankingBoard">
@@ -234,6 +281,16 @@
         </div>
 
         <p class="copyright">본 사이트는 비상업적 팬 아카이브 사이트입니다.</p>
+    </div>
+
+    <!-- 🎁 시간별 시크릿 포카 이스터에그 팝업 -->
+    <div id="secretPocaPopup" onclick="toggleDockPoca()">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span id="secretPocaTitle" style="font-size:13px; font-weight:bold; color:#f472b6;">✨ 시크릿 포카 등장!</span>
+            <button onclick="event.stopPropagation(); dockPoca();" style="background:none; border:none; color:#94a3b8; font-size:12px; cursor:pointer;">➡️ 옆으로 숨기기</button>
+        </div>
+        <img id="secretPocaImg" class="secret-poca-img" src="" alt="시크릿 포카">
+        <p style="font-size:11px; color:#cbd5e1; margin:8px 0 0 0;">💡 클릭해서 열거나 모서리를 눌러보세요!</p>
     </div>
 
     <script>
@@ -326,7 +383,7 @@
                 title: "하얀 그리움", category: "SPECIAL", type: "SPECIAL", monthDay: "12-30",
                 img: "https://img.youtube.com/vi/5ZB9JLfIw_Q/maxresdefault.jpg",
                 mv: "https://youtu.be/5ZB9JLfIw_Q?si=p_waAdPh5IX-uPhB", fanchant: "", release: "2022년 12월 30일",
-                melon: "일간 9위 / TOP 100 5위", genie: "일간 12위 / 실시간 8위", trophy: "총 2관왕 🏆🏆", alias: ["하얀그리움", "ㅎㅇㄱㄹㅇ"]
+                melon: "-", genie: "-", trophy: "총 2관왕 🏆🏆", alias: ["하얀그리움", "ㅎㅇㄱㄹㅇ"]
             },
             "MENOW": { 
                 title: "#menow", category: "TITLE", type: "TITLE", monthDay: "06-05",
@@ -352,7 +409,7 @@
                 title: "Like You Better", category: "TITLE", type: "TITLE", monthDay: "08-12",
                 img: "https://img.youtube.com/vi/r1QapH1SIAI/maxresdefault.jpg",
                 mv: "https://youtu.be/r1QapH1SIAI?si=SZ6BDg-xfrVDlVgP", fanchant: "", release: "2024년 8월 12일",
-                melon: "일간 27위 / TOP 100 18위", genie: "일간 64위 / 실시간 30위", trophy: "총 1관왕 🏆", alias: ["라이큐베럴", "랔큐베", "ㄹㅇㅋㅂㅌ", "라이크유베터"]
+                melon: "-", genie: "-", trophy: "총 1관왕 🏆", alias: ["라이큐베럴", "랔큐베", "ㄹㅇㅋㅂㅌ", "라이크유베터"]
             }
         };
 
@@ -537,7 +594,6 @@
             });
         });
 
-        // 📊 SheetDB 실시간 랭킹보드 불러오기 함수
         function loadRankingBoard() {
             const API_URL = "https://sheetdb.io/api/v1/nqbvga0zuf7zn";
             
@@ -580,10 +636,8 @@
                 });
         }
 
-        // 페이지 켜지자마자 랭킹 불러오기 실행
         loadRankingBoard();
 
-        // 🏆 SheetDB를 이용한 우승 기록 전송 함수
         function recordWinner(songName) {
             const API_URL = "https://sheetdb.io/api/v1/nqbvga0zuf7zn";
             
@@ -605,14 +659,13 @@
             .then(response => response.json())
             .then(data => {
                 console.log("시트 기록 성공!", data);
-                loadRankingBoard(); // 우승 기록 성공 후 랭킹판 즉시 새로고침!
+                loadRankingBoard();
             })
             .catch(error => {
                 console.error("시트 기록 실패:", error);
             });
         }
 
-        // ⚽ 이상형 월드컵 로직
         let wcList = [];
         let nextRoundList = [];
         let currentMatchIndex = 0;
@@ -634,7 +687,6 @@
         function loadWCMatch() {
             if (currentMatchIndex >= wcList.length) {
                 if (nextRoundList.length === 1) {
-                    // 최종 우승 확정!
                     isFinished = true;
                     const winnerKey = nextRoundList[0];
                     const winner = musicData[winnerKey];
@@ -645,11 +697,9 @@
                     document.getElementById("wcImg2").src = winner.img;
                     document.getElementById("wcTitle2").innerText = `👑 ${winner.title}`;
 
-                    // 구글 시트(SheetDB)로 우승 기록 전송 실행!
                     recordWinner(winner.title);
                     return;
                 }
-                // 다음 라운드로 진출
                 wcList = [...nextRoundList];
                 nextRoundList = [];
                 currentMatchIndex = 0;
@@ -682,6 +732,54 @@
 
         function closeWorldCup() {
             document.getElementById("worldcupArena").style.display = "none";
+        }
+
+        // 🎁 시간별 시크릿 포카 이스터에그 로직 (32.0초, 41.7초, 51.4초, 60.1초, 92.9초)
+        const secretPocas = [
+            { time: 32.0, title: "💖 32.0초의 설렘", img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg" },
+            { time: 41.7, title: "🍀 41.7초의 기적", img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg" },
+            { time: 51.4, title: "✨ 51.4초의 시크릿", img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg" },
+            { time: 60.1, title: "🌙 60.1초의 무드", img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg" },
+            { time: 92.9, title: "👑 92.9초 레전드 하영 포카", img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg" }
+        ];
+
+        let triggeredList = {};
+        const startTime = Date.now();
+
+        setInterval(() => {
+            let elapsedSeconds = (Date.now() - startTime) / 1000;
+
+            secretPocas.forEach(item => {
+                if (!triggeredList[item.time] && elapsedSeconds >= item.time) {
+                    triggeredList[item.time] = true;
+                    showSecretPoca(item);
+                }
+            });
+        }, 500);
+
+        function showSecretPoca(item) {
+            document.getElementById("secretPocaTitle").innerText = item.title;
+            document.getElementById("secretPocaImg").src = item.img;
+            
+            const popup = document.getElementById("secretPocaPopup");
+            popup.classList.remove("docked");
+            popup.classList.add("show");
+        }
+
+        function dockPoca() {
+            const popup = document.getElementById("secretPocaPopup");
+            popup.classList.remove("show");
+            popup.classList.add("docked");
+        }
+
+        function toggleDockPoca() {
+            const popup = document.getElementById("secretPocaPopup");
+            if (popup.classList.contains("docked")) {
+                popup.classList.remove("docked");
+                popup.classList.add("show");
+            } else {
+                dockPoca();
+            }
         }
     </script>
 </body>
