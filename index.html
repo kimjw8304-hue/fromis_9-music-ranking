@@ -799,7 +799,50 @@
             } else {
                 dockPoca();
             }
+        }const secretPocas = [
+    { time: 30, title: "💖 30초의 설렘", img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg" },
+    { time: 41.7, title: "🍀 41.7초의 기적", img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg" },
+    { time: 51.4, title: "✨ 51.4초의 시크릿", img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg" },
+    { time: 60.1, title: "🌙 60.1초의 무드", img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg" },
+    { time: 92.9, title: "👑 92.9초 레전드 하영 포카", img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg" }
+];
+
+let triggeredList = {};
+const startTime = Date.now();
+
+setInterval(() => {
+    let elapsedSeconds = (Date.now() - startTime) / 1000;
+    secretPocas.forEach(item => {
+        if (!triggeredList[item.time] && elapsedSeconds >= item.time) {
+            triggeredList[item.time] = true;
+            showSecretPoca(item);
         }
+    });
+}, 500);
+
+function showSecretPoca(item) {
+    document.getElementById("secretPocaTitle").innerText = item.title;
+    document.getElementById("secretPocaImg").src = item.img;
+    const popup = document.getElementById("secretPocaPopup");
+    popup.classList.remove("docked");
+    popup.classList.add("show");
+}
+
+function dockPoca() {
+    const popup = document.getElementById("secretPocaPopup");
+    popup.classList.remove("show");
+    popup.classList.add("docked");
+}
+
+function toggleDockPoca() {
+    const popup = document.getElementById("secretPocaPopup");
+    if (popup.classList.contains("docked")) {
+        popup.classList.remove("docked");
+        popup.classList.add("show");
+    } else {
+        dockPoca();
+    }
+}
     </script><!-- 🎁 시크릿 포카 팝업 -->
 <div id="secretPocaPopup" onclick="toggleDockPoca()">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
