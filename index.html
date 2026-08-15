@@ -113,8 +113,8 @@
         .rank-item b { text-align: right; line-height: 1.4; font-weight: normal; }
         .copyright { font-size: 12px; color: #64748b; margin-top: 30px; line-height: 1.4; }
 
-        /* 🎁 시간별 시크릿 포카 이스터에그 스타일 */
-        #secretPocaPopup {
+        /* 🎁 시간별 시크릿 포카 이스터에그 팝업 모달 */
+        #secretPocaModal {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -131,27 +131,10 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        #secretPocaPopup.show {
+        #secretPocaModal.show {
             opacity: 1;
             pointer-events: auto;
             transform: translate(-50%, -50%) scale(1);
-        }
-
-        #secretPocaPopup.docked {
-            transform: none;
-            top: 80%;
-            left: auto;
-            right: -240px;
-            width: 260px;
-            opacity: 0.85;
-            border-color: #38bdf8;
-            cursor: pointer;
-            transition: right 0.4s ease-in-out, opacity 0.2s;
-        }
-
-        #secretPocaPopup.docked:hover {
-            right: -10px;
-            opacity: 1;
         }
 
         .secret-poca-img {
@@ -160,9 +143,47 @@
             object-fit: cover;
             border-radius: 12px;
         }
+
+        /* 🗄️ 우측에 누적 저장되는 포카 보관함 독 (Dock) 영역 */
+        #pocaDock {
+            position: fixed;
+            top: 20px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 998;
+        }
+
+        .docked-poca-item {
+            width: 55px;
+            height: 75px;
+            border-radius: 8px;
+            border: 2px solid #38bdf8;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            background: #1e293b;
+            transition: transform 0.2s, border-color 0.2s;
+            position: relative;
+        }
+
+        .docked-poca-item:hover {
+            transform: scale(1.1);
+            border-color: #f472b6;
+        }
+
+        .docked-poca-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
+
+    <!-- 우측에 포카가 차곡차곡 쌓이는 보관함 영역 -->
+    <div id="pocaDock"></div>
 
     <div class="container">
         <h1>🎵 fromis_9 곡 기록 검색</h1>
@@ -283,14 +304,14 @@
         <p class="copyright">본 사이트는 비상업적 팬 아카이브 사이트입니다.</p>
     </div>
 
-    <!-- 🎁 시간별 시크릿 포카 이스터에그 팝업 -->
-    <div id="secretPocaPopup" onclick="toggleDockPoca()">
+    <!-- 🎁 시간별 시크릿 포카 팝업 모달 -->
+    <div id="secretPocaModal">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <span id="secretPocaTitle" style="font-size:13px; font-weight:bold; color:#f472b6;">✨ 시크릿 포카 등장!</span>
-            <button onclick="event.stopPropagation(); dockPoca();" style="background:none; border:none; color:#94a3b8; font-size:12px; cursor:pointer;">➡️ 옆으로 숨기기</button>
+            <button onclick="closeSecretModal()" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer;">✖</button>
         </div>
         <img id="secretPocaImg" class="secret-poca-img" src="" alt="시크릿 포카">
-        <p style="font-size:11px; color:#cbd5e1; margin:8px 0 0 0;">💡 클릭해서 열거나 모서리를 눌러보세요!</p>
+        <p style="font-size:11px; color:#cbd5e1; margin:8px 0 0 0;">💡 우측 보관함에 자동 저장되었습니다!</p>
     </div>
 
     <script>
@@ -734,7 +755,7 @@
             document.getElementById("worldcupArena").style.display = "none";
         }
 
-        // 🎁 5장 순차 등장 시크릿 포카 이스터에그 로직 (버그 수정 완료 버전)
+        // 🎁 5장 순차 등장 및 우측 누적 저장 시크릿 포카 로직
         const secretPocas = [
             { time: 32.0, title: "💖 32.0초의 설렘", img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg" },
             { time: 41.7, title: "🍀 41.7초의 기적", img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg" },
@@ -752,34 +773,41 @@
             secretPocas.forEach(item => {
                 if (!triggeredList[item.time] && elapsedSeconds >= item.time) {
                     triggeredList[item.time] = true;
-                    showSecretPoca(item);
+                    triggerSecretPoca(item);
                 }
             });
         }, 500);
 
-        function showSecretPoca(item) {
-            document.getElementById("secretPocaTitle").innerText = item.title;
-            document.getElementById("secretPocaImg").src = item.img;
+        function triggerSecretPoca(item) {
+            // 1. 큰 팝업창으로 먼저 띄워줌
+            showSecretModal(item.title, item.img);
+
+            // 2. 우측 보관함(Dock)에 아이콘 형태로 추가
+            const dock = document.getElementById("pocaDock");
+            const pocaIcon = document.createElement("div");
+            pocaIcon.className = "docked-poca-item";
+            pocaIcon.title = item.title;
+            pocaIcon.innerHTML = `<img src="${item.img}" alt="포카">`;
             
-            const popup = document.getElementById("secretPocaPopup");
-            popup.classList.remove("docked");
-            popup.classList.add("show");
+            // 아이콘을 누르면 언제든 다시 큰 창으로 띄움
+            pocaIcon.onclick = function() {
+                showSecretModal(item.title, item.img);
+            };
+
+            dock.appendChild(pocaIcon);
         }
 
-        function dockPoca() {
-            const popup = document.getElementById("secretPocaPopup");
-            popup.classList.remove("show");
-            popup.classList.add("docked");
+        function showSecretModal(title, imgUrl) {
+            document.getElementById("secretPocaTitle").innerText = title;
+            document.getElementById("secretPocaImg").src = imgUrl;
+            
+            const modal = document.getElementById("secretPocaModal");
+            modal.classList.add("show");
         }
 
-        function toggleDockPoca() {
-            const popup = document.getElementById("secretPocaPopup");
-            if (popup.classList.contains("docked")) {
-                popup.classList.remove("docked");
-                popup.classList.add("show");
-            } else {
-                dockPoca();
-            }
+        function closeSecretModal() {
+            const modal = document.getElementById("secretPocaModal");
+            modal.classList.remove("show");
         }
     </script>
 </body>
