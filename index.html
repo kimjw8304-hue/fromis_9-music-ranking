@@ -159,7 +159,24 @@
             height: 350px;
             object-fit: cover;
             border-radius: 12px;
-        }
+        }/* 🎁 시크릿 포카 스타일 */
+#secretPocaPopup {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    width: 280px; background: #1e293b; border: 3px solid #f472b6;
+    border-radius: 20px; padding: 15px;
+    box-shadow: 0 15px 35px rgba(244, 114, 182, 0.4);
+    z-index: 9999; opacity: 0; pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#secretPocaPopup.show { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
+#secretPocaPopup.docked {
+    transform: none; top: 80%; left: auto; right: -240px;
+    width: 260px; opacity: 0.85; border-color: #38bdf8;
+    cursor: pointer; transition: right 0.4s ease-in-out, opacity 0.2s;
+}
+#secretPocaPopup.docked:hover { right: -10px; opacity: 1; }
+.secret-poca-img { width: 100%; height: 350px; object-fit: cover; border-radius: 12px; }
     </style>
 </head>
 <body>
@@ -783,6 +800,14 @@
                 dockPoca();
             }
         }
-    </script>
+    </script><!-- 🎁 시크릿 포카 팝업 -->
+<div id="secretPocaPopup" onclick="toggleDockPoca()">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span id="secretPocaTitle" style="font-size:13px; font-weight:bold; color:#f472b6;">✨ 시크릿 포카 등장!</span>
+        <button onclick="event.stopPropagation(); dockPoca();" style="background:none; border:none; color:#94a3b8; font-size:12px; cursor:pointer;">➡️ 옆으로 숨기기</button>
+    </div>
+    <img id="secretPocaImg" class="secret-poca-img" src="https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg" alt="시크릿 포카">
+    <p style="font-size:11px; color:#cbd5e1; margin:8px 0 0 0;">💡 클릭해서 열거나 모서리를 눌러보세요!</p>
+</div>
 </body>
 </html>
