@@ -76,15 +76,14 @@
         .flip-card { width: 100%; height: 560px; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
         .flip-card.flipped { transform: rotateY(180deg); }
         
-        /* 5가지 등급별 아우라 테두리 & 그림자 효과 */
-        .flip-card.SILVER { box-shadow: 0 0 25px rgba(226, 232, 240, 0.6); }
+        /* 등급별 아우라 테두리 & 그림자 효과 */
         .flip-card.GOLD { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); }
+        .flip-card.SILVER { box-shadow: 0 0 25px rgba(226, 232, 240, 0.6); }
         .flip-card.PLATINUM { box-shadow: 0 0 25px rgba(56, 189, 248, 0.7); }
-        .flip-card.SECRET { box-shadow: 0 0 30px rgba(192, 132, 252, 0.8); }
-        .flip-card.DIAMOND { box-shadow: 0 0 35px rgba(52, 211, 153, 0.9); animation: diamondAura 2s infinite alternate; }
-        @keyframes diamondAura {
-            0% { box-shadow: 0 0 20px rgba(52, 211, 153, 0.6); }
-            100% { box-shadow: 0 0 40px rgba(56, 189, 248, 0.9); }
+        .flip-card.SECRET { box-shadow: 0 0 30px rgba(192, 132, 252, 0.8); animation: secretAura 2s infinite alternate; }
+        @keyframes secretAura {
+            0% { box-shadow: 0 0 20px rgba(192, 132, 252, 0.6); }
+            100% { box-shadow: 0 0 35px rgba(236, 72, 153, 0.9); }
         }
 
         .card-hint { font-size: 12px; color: #a5b4fc; margin-bottom: 8px; font-weight: bold; }
@@ -134,7 +133,7 @@
             left: 50%;
             transform: translate(-50%, -50%) scale(0.9);
             width: 320px;
-            max-height: 85vh; 
+            max-height: 85vh; /* 화면을 넘지 않도록 최대 높이 설정 */
             background: #1e293b;
             border: 3px solid #a855f7;
             border-radius: 20px;
@@ -154,11 +153,12 @@
             grid-template-columns: repeat(3, 1fr); 
             gap: 10px; 
             margin: 15px 0; 
-            overflow-y: auto; 
+            overflow-y: auto; /* 🌟 도감 내부 스크롤 가능하도록 수정 완료 */
             max-height: 380px; 
             padding-right: 5px; 
         }
         
+        /* 스크롤바 디자인 예쁘게 */
         .poca-grid::-webkit-scrollbar { width: 6px; }
         .poca-grid::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
 
@@ -191,8 +191,8 @@
         #secretPocaModal {
             position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%) scale(0.7);
-            width: 280px; background: #1e293b; border: 3px solid #34d399;
-            border-radius: 20px; padding: 15px; box-shadow: 0 15px 35px rgba(52, 211, 153, 0.4);
+            width: 280px; background: #1e293b; border: 3px solid #f472b6;
+            border-radius: 20px; padding: 15px; box-shadow: 0 15px 35px rgba(244, 114, 182, 0.4);
             z-index: 2500; opacity: 0; pointer-events: none;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -203,7 +203,7 @@
 <body>
 
     <!-- 📚 우측 상단 도감 버튼 -->
-    <div id="pocaBookBtn" onclick="toggleBookModal()">📚 포카 도감 (0/17)</div>
+    <div id="pocaBookBtn" onclick="toggleBookModal()">📚 포카 도감 (0/15)</div>
 
     <div class="container">
         <h1>🎵 fromis_9 곡 기록 검색</h1>
@@ -327,10 +327,10 @@
     <!-- 📚 도감 모달 창 -->
     <div id="bookModal">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-            <h3 style="margin:0; font-size:16px; color:#c084fc;">📖 프로미스나인 포카 도감 (17슬롯)</h3>
+            <h3 style="margin:0; font-size:16px; color:#c084fc;">📖 프로미스나인 포카 도감</h3>
             <button onclick="toggleBookModal()" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer; padding:0;">✖</button>
         </div>
-        <p id="bookStatusText" style="font-size:12px; color:#94a3b8; margin:0 0 5px 0; text-align:left;">수집 현황: 0 / 17개 완료</p>
+        <p id="bookStatusText" style="font-size:12px; color:#94a3b8; margin:0 0 5px 0; text-align:left;">수집 현황: 0 / 15개 완료</p>
         <div class="poca-grid" id="bookGrid"></div>
         <button onclick="toggleBookModal()" style="width:100%; margin-top:5px; background:#475569; padding:8px; font-size:13px; border-radius:10px; border:none; color:white; cursor:pointer;">닫기</button>
     </div>
@@ -338,7 +338,7 @@
     <!-- 🎁 시간별 시크릿 포카 팝업 모달 -->
     <div id="secretPocaModal">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span id="secretPocaTitle" style="font-size:13px; font-weight:bold; color:#34d399;">💎 다이아몬드 시크릿 포카 발견!</span>
+            <span id="secretPocaTitle" style="font-size:13px; font-weight:bold; color:#f472b6;">✨ 시크릿 포카 등장!</span>
             <button onclick="closeSecretModal()" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer;">✖</button>
         </div>
         <img id="secretPocaImg" class="secret-poca-img" src="" alt="시크릿 포카">
@@ -346,7 +346,6 @@
     </div>
 
     <script>
-        // 🎵 일반 곡 포카 데이터 (12개)
         const musicData = {
             "GLASS_SHOES": {
                 title: "유리구두", category: "PRE-DEBUT", type: "SPECIAL", monthDay: "11-30", grade: "SILVER",
@@ -420,6 +419,13 @@
                 release: "2022년 6월 27일", melon: "일간 100위 / TOP 100 86위", genie: "일간 142위 / 실시간 33위", 
                 trophy: "총 5관왕 🏆🏆🏆🏆🏆<br>• 22.07.05 더쇼 1위<br>• 22.07.06 쇼챔피언 1위<br>• 22.07.07 엠카운트다운 1위<br>• 22.07.08 뮤직뱅크 1위<br>• 22.07.09 음악중심 1위", alias: ["스디웨", "ㅅㄷㅇ"]
             },
+            "WHITE_MEMORIES": {
+                title: "하얀 그리움", category: "SPECIAL", type: "SPECIAL", monthDay: "12-30", grade: "PLATINUM",
+                img: "https://img.youtube.com/vi/5ZB9JLfIw_Q/maxresdefault.jpg",
+                mv: "https://youtu.be/5ZB9JLfIw_Q?si=p_waAdPh5IX-uPhB", fanchant: "", release: "2022년 12월 30일",
+                melon: "일간 9위 / TOP 100 5위", genie: "일간 12위 / 실시간 8위", 
+                trophy: "총 2관왕 🏆🏆<br>• 22.12.30 뮤직뱅크 1위<br>• 22.12.31 음악중심 1위", alias: ["하얀그리움", "ㅎㅇㄱㄹㅇ"]
+            },
             "MENOW": { 
                 title: "#menow", category: "TITLE", type: "TITLE", monthDay: "06-05", grade: "GOLD",
                 img: "https://img.youtube.com/vi/QrYIOjs7K8E/maxresdefault.jpg",
@@ -435,20 +441,17 @@
                 fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Supersonic+응원법",
                 release: "2024년 8월 12일", melon: "일간 7위 / TOP 100 5위", genie: "일간 28위 / 실시간 20위", 
                 trophy: "총 4관왕 🏆🏆🏆🏆<br>• 24.08.20 더쇼 1위<br>• 24.08.22 엠카운트다운 1위<br>• 24.08.23 뮤직뱅크 1위<br>• 24.08.24 음악중심 1위", alias: ["슈퍼소닉", "ㅅㅍㅅㄴ"]
+            },
+            "LIKE_YOU_BETTER": {
+                title: "Like You Better", category: "TITLE", type: "TITLE", monthDay: "08-12", grade: "GOLD",
+                img: "https://img.youtube.com/vi/r1QapH1SIAI/maxresdefault.jpg",
+                mv: "https://youtu.be/r1QapH1SIAI?si=SZ6BDg-xfrVDlVgP", fanchant: "", release: "2024년 8월 12일",
+                melon: "일간 27위 / TOP 100 18위", genie: "일간 64위 / 실시간 30위", 
+                trophy: "총 1관왕 🏆<br>• 24.08.25 더쇼 1위", alias: ["라이큐베럴", "랔큐베", "ㄹㅇㅋㅂㅌ", "라이크유베터"]
             }
         };
 
-        // 💎 시간 체류 시크릿 포카 데이터 (5개, 등급: DIAMOND)
-        const secretPocas = [
-            { time: 32.0, title: "💖 32.0초 설렘 포카", img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg", key: "SEC_32", grade: "DIAMOND", release: "시크릿 체류 보상", melon: "SPECIAL", genie: "SPECIAL", trophy: "✨ 32.0초 달성 보상" },
-            { time: 41.7, title: "🍀 41.7초 기적 포카", img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg", key: "SEC_41", grade: "DIAMOND", release: "시크릿 체류 보상", melon: "SPECIAL", genie: "SPECIAL", trophy: "✨ 41.7초 달성 보상" },
-            { time: 51.4, title: "✨ 51.4초 시크릿 포카", img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg", key: "SEC_51", grade: "DIAMOND", release: "시크릿 체류 보상", melon: "SPECIAL", genie: "SPECIAL", trophy: "✨ 51.4초 달성 보상" },
-            { time: 60.1, title: "🌙 60.1초 무드 포카", img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg", key: "SEC_60", grade: "DIAMOND", release: "시크릿 체류 보상", melon: "SPECIAL", genie: "SPECIAL", trophy: "✨ 60.1초 달성 보상" },
-            { time: 92.9, title: "👑 92.9초 레전드 하영 포카", img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg", key: "SEC_92", grade: "DIAMOND", release: "시크릿 체류 보상", melon: "SPECIAL", genie: "SPECIAL", trophy: "✨ 92.9초 달성 보상" }
-        ];
-
-        // 도감 전체 17슬롯 구성을 위한 통합 키 배열 (일반 12개 + 시크릿 5개)
-        const allSlotKeys = [...Object.keys(musicData), ...secretPocas.map(s => s.key)];
+        const allPocaKeys = Object.keys(musicData);
         let collectedPocas = [];
 
         const memberBirthdays = [
@@ -556,36 +559,21 @@
         }
 
         function displaySongData(key) {
-            let song = musicData[key];
-            if (!song) {
-                song = secretPocas.find(s => s.key === key);
-            }
-            if (!song) return;
-
+            const song = musicData[key];
             card.classList.remove("flipped");
 
             document.getElementById("albumImg").src = song.img;
             
             const mvBtn = document.getElementById("mvLink");
-            if (song.mv) {
-                mvBtn.href = song.mv;
-                mvBtn.style.opacity = "1";
-                mvBtn.style.display = "block";
-            } else {
-                mvBtn.style.display = "none";
-            }
+            mvBtn.href = song.mv || "#";
+            mvBtn.style.opacity = song.mv ? "1" : "0.5";
 
             const fcBtn = document.getElementById("fanchantLink");
-            if (song.fanchant) {
-                fcBtn.href = song.fanchant;
-                fcBtn.style.opacity = "1";
-                fcBtn.style.display = "block";
-            } else {
-                fcBtn.style.display = "none";
-            }
+            fcBtn.href = song.fanchant || "#";
+            fcBtn.style.opacity = song.fanchant ? "1" : "0.5";
 
             document.getElementById("songTitle").innerText = song.title; 
-            document.getElementById("cardCategory").innerText = `${song.category || 'SECRET'} • [${song.grade}]`;
+            document.getElementById("cardCategory").innerText = `${song.category} • [${song.grade}]`;
             document.getElementById("releaseDate").innerText = song.release;
             document.getElementById("melonRank").innerText = song.melon || "-";
             document.getElementById("genieRank").innerText = song.genie || "-";
@@ -608,7 +596,7 @@
         }
 
         function updateBookUI() {
-            const totalSlots = allSlotKeys.length; // 17개 슬롯
+            const totalSlots = 15; 
             document.getElementById("pocaBookBtn").innerText = `📚 도감 (${collectedPocas.length}/${totalSlots})`;
             document.getElementById("bookStatusText").innerText = `수집 현황: ${collectedPocas.length} / ${totalSlots}개 완료`;
 
@@ -617,18 +605,18 @@
 
             for (let i = 0; i < totalSlots; i++) {
                 const slot = document.createElement("div");
-                const slotKey = allSlotKeys[i];
+                const songKey = allPocaKeys[i];
 
-                if (collectedPocas.includes(slotKey)) {
-                    let item = musicData[slotKey] || secretPocas.find(s => s.key === slotKey);
+                if (i < allPocaKeys.length && songKey && collectedPocas.includes(songKey)) {
+                    const song = musicData[songKey];
                     slot.className = "poca-slot found";
                     slot.innerHTML = `
-                        <img src="${item.img}" alt="${item.title}">
-                        <span style="font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${item.title}</span>
+                        <img src="${song.img}" alt="${song.title}">
+                        <span style="font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${song.title}</span>
                     `;
                     slot.onclick = function() {
                         toggleBookModal();
-                        displaySongData(slotKey);
+                        displaySongData(songKey);
                     };
                 } else {
                     slot.className = "poca-slot";
@@ -787,19 +775,27 @@
             document.getElementById("worldcupArena").style.display = "none";
         }
 
-        // 🎁 정밀 시간별 시크릿 포카 체류 로직 (32.0초, 41.7초, 51.4초, 60.1초, 92.9초)
+        // 🎁 시간별 시크릿 포카 이스터에그 로직 (우측 하단 미니 독 제거 및 도감 자동 등록 유지)
+        const secretPocas = [
+            { time: 32.0, title: "💖 32.0초의 설렘", img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg", key: "STAYTHISWAY" },
+            { time: 41.7, title: "🍀 41.7초의 기적", img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg", key: "SUPERSONIC" },
+            { time: 51.4, title: "✨ 51.4초의 시크릿", img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg", key: "LOVEBOMB" },
+            { time: 60.1, title: "🌙 60.1초의 무드", img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg", key: "WEGO" },
+            { time: 92.9, title: "👑 92.9초 레전드 하영 포카", img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg", key: "DM" }
+        ];
+
         let triggeredList = {};
         const startTime = Date.now();
 
         setInterval(() => {
             let elapsedSeconds = (Date.now() - startTime) / 1000;
             secretPocas.forEach(item => {
-                if (!triggeredList[item.key] && elapsedSeconds >= item.time) {
-                    triggeredList[item.key] = true;
+                if (!triggeredList[item.time] && elapsedSeconds >= item.time) {
+                    triggeredList[item.time] = true;
                     triggerSecretPoca(item);
                 }
             });
-        }, 200);
+        }, 500);
 
         function triggerSecretPoca(item) {
             showSecretModal(item.title, item.img);
