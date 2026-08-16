@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fromis_9 역대 곡 기록 & 커리어 아카이브</title>
+    <title>fromis_9 역대 곡 기록 & 포카 도감 아카이브</title>
     <style>
         body { font-family: 'Arial', sans-serif; background: #0f172a; color: white; text-align: center; padding: 40px 20px; margin: 0; }
         .container { max-width: 550px; margin: 0 auto; }
@@ -52,28 +52,15 @@
         .filter-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid #475569; background: #1e293b; color: #94a3b8; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s; }
         .filter-btn.active, .filter-btn:hover { background: #6366f1; color: white; border-color: #6366f1; }
 
-        /* 🖼️ 앨범 목록 그리드 (발매순 정렬) */
-        .album-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; transition: all 0.3s ease-in-out; }
+        /* 🖼️ 앨범 목록 그리드 */
+        .album-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
         .album-item { 
-            background: #1e293b; 
-            border-radius: 12px; 
-            padding: 8px; 
-            cursor: pointer; 
-            border: 2px solid transparent; 
-            transition: transform 0.2s, border-color 0.2s; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            overflow: hidden; 
+            background: #1e293b; border-radius: 12px; padding: 8px; cursor: pointer; 
+            border: 2px solid transparent; transition: transform 0.2s, border-color 0.2s; 
+            display: flex; flex-direction: column; align-items: center; overflow: hidden; 
         }
         .album-item:hover { transform: translateY(-5px); border-color: #6366f1; }
-        .album-item img { 
-            width: 100%; 
-            height: 90px; 
-            object-fit: cover; 
-            border-radius: 8px; 
-            display: block; 
-        }
+        .album-item img { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; display: block; }
         .album-item p { margin: 6px 0 0 0; font-size: 12px; font-weight: bold; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
 
         .search-box { margin-bottom: 15px; display: flex; justify-content: center; gap: 8px; }
@@ -84,26 +71,34 @@
         .random-btn { background: #10b981; margin-bottom: 25px; width: 100%; border-radius: 12px; padding: 12px; font-size: 14px; border:none; color:white; font-weight:bold; cursor:pointer; }
         .random-btn:hover { background: #059669; }
 
-        /* 🎴 3D Flip Card */
+        /* 🎴 3D Flip Card & 등급별 아우라 효과 */
         .flip-card-container { perspective: 1000px; margin-top: 20px; display: none; }
         .flip-card { width: 100%; height: 560px; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
         .flip-card.flipped { transform: rotateY(180deg); }
+        
+        /* 등급별 아우라 테두리 & 그림자 효과 */
+        .flip-card.GOLD { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); }
+        .flip-card.SILVER { box-shadow: 0 0 25px rgba(226, 232, 240, 0.6); }
+        .flip-card.PLATINUM { box-shadow: 0 0 25px rgba(56, 189, 248, 0.7); }
+        .flip-card.SECRET { box-shadow: 0 0 30px rgba(192, 132, 252, 0.8); animation: secretAura 2s infinite alternate; }
+        @keyframes secretAura {
+            0% { box-shadow: 0 0 20px rgba(192, 132, 252, 0.6); }
+            100% { box-shadow: 0 0 35px rgba(236, 72, 153, 0.9); }
+        }
+
         .card-hint { font-size: 12px; color: #a5b4fc; margin-bottom: 8px; font-weight: bold; }
+        .card-front, .card-back { width: 100%; height: 100%; position: absolute; backface-visibility: hidden; border-radius: 20px; padding: 25px; box-sizing: border-box; text-align: left; }
 
-        .card-front, .card-back { width: 100%; height: 100%; position: absolute; backface-visibility: hidden; border-radius: 20px; padding: 25px; box-sizing: border-box; box-shadow: 0 10px 25px rgba(0,0,0,0.4); text-align: left; }
-
-        /* 카드 앞면 */
         .card-front { background: #1e293b; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid #3b82f6; }
         .card-front .album-img { width: 100%; height: 320px; object-fit: cover; border-radius: 15px; }
         .card-front h2 { margin: 15px 0 5px 0; text-align: center; }
         .card-front .category-tag { text-align: center; font-size: 12px; background: #3b82f6; color: white; padding: 3px 10px; border-radius: 10px; width: fit-content; margin: 0 auto; }
 
-        /* 카드 뒷면 */
         .card-back { background: #0f172a; border: 2px solid #8b5cf6; transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: space-between; }
         
         .btn-group { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-        .mv-btn { display: block; width: 100%; text-align: center; background: #ff0000; color: white; text-decoration: none; font-weight: bold; padding: 10px 0; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-        .fanchant-btn { display: block; width: 100%; text-align: center; background: #ec4899; color: white; text-decoration: none; font-weight: bold; padding: 10px 0; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        .mv-btn { display: block; width: 100%; text-align: center; background: #ff0000; color: white; text-decoration: none; font-weight: bold; padding: 10px 0; border-radius: 8px; font-size: 14px; }
+        .fanchant-btn { display: block; width: 100%; text-align: center; background: #ec4899; color: white; text-decoration: none; font-weight: bold; padding: 10px 0; border-radius: 8px; font-size: 14px; }
         .copy-btn { display: block; width: 100%; text-align: center; background: #334155; color: #f1f5f9; border: 1px solid #475569; font-weight: bold; padding: 10px 0; border-radius: 8px; cursor: pointer; font-size: 14px; }
 
         .rank-list { background: #1e293b; padding: 15px 20px; border-radius: 10px; }
@@ -113,76 +108,92 @@
         .rank-item b { text-align: right; line-height: 1.4; font-weight: normal; }
         .copyright { font-size: 12px; color: #64748b; margin-top: 30px; line-height: 1.4; }
 
-        /* 🎁 시간별 시크릿 포카 이스터에그 팝업 모달 */
-        #secretPocaModal {
+        /* 📚 우측 상단 포카 도감 버튼 및 모달 스타일 */
+        #pocaBookBtn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            z-index: 1000;
+            border: 1px solid #c084fc;
+            transition: 0.2s;
+        }
+        #pocaBookBtn:hover { transform: scale(1.05); }
+
+        #bookModal {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.7);
-            width: 280px;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 320px;
             background: #1e293b;
-            border: 3px solid #f472b6;
+            border: 3px solid #a855f7;
             border-radius: 20px;
-            padding: 15px;
-            box-shadow: 0 15px 35px rgba(244, 114, 182, 0.4);
-            z-index: 9999;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            z-index: 2000;
+            display: none;
             opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease;
         }
+        #bookModal.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
 
-        #secretPocaModal.show {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .secret-poca-img {
-            width: 100%;
-            height: 350px;
-            object-fit: cover;
-            border-radius: 12px;
-        }
-
-        /* 🗄️ 우측에 누적 저장되는 포카 보관함 독 (Dock) 영역 */
-        #pocaDock {
-            position: fixed;
-            top: 20px;
-            right: 15px;
+        .poca-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; max-height: 300px; overflow-y: auto; padding: 5px; }
+        .poca-slot {
+            background: #0f172a;
+            border: 2px dashed #475569;
+            border-radius: 10px;
+            aspect-ratio: 3/4;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            z-index: 998;
-        }
-
-        .docked-poca-item {
-            width: 55px;
-            height: 75px;
-            border-radius: 8px;
-            border: 2px solid #38bdf8;
-            overflow: hidden;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            background: #1e293b;
-            transition: transform 0.2s, border-color 0.2s;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            font-size: 11px;
+            color: #64748b;
+            text-align: center;
             position: relative;
+            overflow: hidden;
         }
+        .poca-slot.found {
+            border: 2px solid #38bdf8;
+            background: #1e293b;
+            color: #f1f5f9;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+        .poca-slot img { width: 100%; height: 75%; object-fit: cover; border-radius: 6px; margin-bottom: 4px; }
 
-        .docked-poca-item:hover {
-            transform: scale(1.1);
-            border-color: #f472b6;
+        /* 🎁 시간별 시크릿 포카 팝업 모달 */
+        #secretPocaModal {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            width: 280px; background: #1e293b; border: 3px solid #f472b6;
+            border-radius: 20px; padding: 15px; box-shadow: 0 15px 35px rgba(244, 114, 182, 0.4);
+            z-index: 2500; opacity: 0; pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        #secretPocaModal.show { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
+        .secret-poca-img { width: 100%; height: 320px; object-fit: cover; border-radius: 12px; }
 
-        .docked-poca-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        /* 우측 하단 미니 독 (획득 아이콘 나열) */
+        #pocaDock { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 8px; z-index: 998; flex-wrap: wrap; max-width: 150px; justify-content: flex-end; }
+        .docked-item { width: 40px; height: 55px; border-radius: 6px; border: 2px solid #38bdf8; overflow: hidden; cursor: pointer; background: #1e293b; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .docked-item img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
 
-    <!-- 우측에 포카가 차곡차곡 쌓이는 보관함 영역 -->
+    <!-- 📚 우측 상단 도감 버튼 -->
+    <div id="pocaBookBtn" onclick="toggleBookModal()">📚 포카 도감 (0/15)</div>
+
+    <!-- 우측 하단 미니 독 -->
     <div id="pocaDock"></div>
 
     <div class="container">
@@ -254,7 +265,7 @@
             <button class="filter-btn" onclick="filterCategory('SPECIAL', this)">스페셜/프로젝트</button>
         </div>
 
-        <!-- 🖼️ 앨범 목록 그리드 (발매순 정렬) -->
+        <!-- 🖼️ 앨범 목록 그리드 -->
         <div id="albumGrid" class="album-grid"></div>
 
         <!-- 🔍 검색 창 -->
@@ -263,7 +274,7 @@
             <button id="searchBtn">검색</button>
         </div>
 
-        <!-- 🎲 오늘 무슨 곡 들을까? (랜덤 추천 버튼) -->
+        <!-- 🎲 랜덤 추천 버튼 -->
         <button id="randomBtn" class="random-btn">🎲 오늘 무슨 곡 들을까? (랜덤 뽑기)</button>
 
         <!-- 🎴 3D 포토카드 결과 영역 -->
@@ -304,6 +315,17 @@
         <p class="copyright">본 사이트는 비상업적 팬 아카이브 사이트입니다.</p>
     </div>
 
+    <!-- 📚 도감 모달 창 -->
+    <div id="bookModal">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0; font-size:16px; color:#c084fc;">📖 프로미스나인 포카 도감</h3>
+            <button onclick="toggleBookModal()" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer; padding:0;">✖</button>
+        </div>
+        <p id="bookStatusText" style="font-size:12px; color:#94a3b8; margin:0 0 10px 0; text-align:left;">수집 현황: 0 / 15개 완료</p>
+        <div class="pocaGrid" id="bookGrid"></div>
+        <button onclick="toggleBookModal()" style="width:100%; margin-top:5px; background:#475569; padding:8px; font-size:13px;">닫기</button>
+    </div>
+
     <!-- 🎁 시간별 시크릿 포카 팝업 모달 -->
     <div id="secretPocaModal">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -311,128 +333,118 @@
             <button onclick="closeSecretModal()" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer;">✖</button>
         </div>
         <img id="secretPocaImg" class="secret-poca-img" src="" alt="시크릿 포카">
-        <p style="font-size:11px; color:#cbd5e1; margin:8px 0 0 0;">💡 우측 보관함에 자동 저장되었습니다!</p>
+        <p style="font-size:11px; color:#cbd5e1; margin:8px 0 0 0;">💡 도감 및 우측 하단에 자동 저장되었습니다!</p>
     </div>
 
     <script>
         const musicData = {
             "GLASS_SHOES": {
-                title: "유리구두", category: "PRE-DEBUT", type: "SPECIAL", monthDay: "11-30",
+                title: "유리구두", category: "PRE-DEBUT", type: "SPECIAL", monthDay: "11-30", grade: "SILVER",
                 img: "https://img.youtube.com/vi/n2TtQYuFfWw/maxresdefault.jpg",
                 mv: "https://youtu.be/n2TtQYuFfWw?si=SB9hNdRstFd3k3Bo", fanchant: "", release: "2017년 11월 30일",
                 melon: "-", genie: "-", trophy: "-", alias: ["유리구두", "ㅇㄹㄱㄷ"]
             },
             "TO_HEART": {
-                title: "To Heart", category: "TITLE", type: "TITLE", monthDay: "01-24",
+                title: "To Heart", category: "TITLE", type: "TITLE", monthDay: "01-24", grade: "SILVER",
                 img: "https://img.youtube.com/vi/iFUHS1Ei7qw/maxresdefault.jpg",
                 mv: "https://youtu.be/iFUHS1Ei7qw?si=2ABIGMJRlmXYIBCh", fanchant: "", release: "2018년 1월 24일",
                 melon: "-", genie: "-", trophy: "-", alias: ["투하트", "ㅌㅎㅌ"]
             },
             "DKDK": {
-                title: "두근두근 (DKDK)", category: "TITLE", type: "TITLE", monthDay: "06-05",
+                title: "두근두근 (DKDK)", category: "TITLE", type: "TITLE", monthDay: "06-05", grade: "SILVER",
                 img: "https://img.youtube.com/vi/B3KuJqe3Epg/maxresdefault.jpg",
                 mv: "https://youtu.be/B3KuJqe3Epg?si=gwFihsRlUxVh_MiR", fanchant: "", release: "2018년 6월 5일",
                 melon: "-", genie: "-", trophy: "-", alias: ["두근두근", "ㄷㄱㄷㄱ"]
             },
             "LOVEBOMB": { 
-                title: "LOVE BOMB", category: "TITLE", type: "TITLE", monthDay: "10-10",
+                title: "LOVE BOMB", category: "TITLE", type: "TITLE", monthDay: "10-10", grade: "GOLD",
                 img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg",
                 mv: "https://www.youtube.com/watch?v=-SK6cvkK4c0",
                 fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+LOVE+BOMB+응원법",
-                release: "2018년 10월 10일",
-                melon: "일간 164위 / TOP 100 -위", 
-                genie: "일간 174위 / 실시간 83위", 
+                release: "2018년 10월 10일", melon: "일간 164위 / TOP 100 -위", genie: "일간 174위 / 실시간 83위", 
                 trophy: "음방 1위 후보 👏", alias: ["러브밤", "ㄹㅂㅂ"]
             },
             "FUN": { 
-                title: "FUN!", category: "TITLE", type: "TITLE", monthDay: "06-04",
+                title: "FUN!", category: "TITLE", type: "TITLE", monthDay: "06-04", grade: "SILVER",
                 img: "https://img.youtube.com/vi/zsRyyLtcXho/maxresdefault.jpg",
                 mv: "https://www.youtube.com/watch?v=zsRyyLtcXho",
                 fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+FUN+응원법",
-                release: "2019년 6월 4일",
-                melon: "일간 167위 / TOP 100 -", 
-                genie: "일간 109위 / 실시간 30위", 
+                release: "2019년 6월 4일", melon: "일간 167위 / TOP 100 -", genie: "일간 109위 / 실시간 30위", 
                 trophy: "음방 활동 곡 👏", alias: ["펀", "ㅍ"]
             },
             "FEEL_GOOD": {
-                title: "Feel Good (SECRET CODE)", category: "TITLE", type: "TITLE", monthDay: "09-16",
+                title: "Feel Good (SECRET CODE)", category: "TITLE", type: "TITLE", monthDay: "09-16", grade: "SILVER",
                 img: "https://img.youtube.com/vi/jLmJhjCzOTw/maxresdefault.jpg",
                 mv: "https://youtu.be/jLmJhjCzOTw?si=vL80aiUNGTpdlG9e", fanchant: "", release: "2020년 9월 16일",
                 melon: "-", genie: "-", trophy: "-", alias: ["필굿", "ㅍㄱ"]
             },
             "WEGO": { 
-                title: "WE GO", category: "TITLE", type: "TITLE", monthDay: "05-17",
+                title: "WE GO", category: "TITLE", type: "TITLE", monthDay: "05-17", grade: "PLATINUM",
                 img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg",
                 mv: "https://www.youtube.com/watch?v=HM6UpQZvbhY",
                 fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+WE+GO+응원법",
-                release: "2021년 5월 17일",
-                melon: "일간 108위 / TOP 100 -위", 
-                genie: "일간 14위 / 실시간 4위", 
+                release: "2021년 5월 17일", melon: "일간 108위 / TOP 100 -위", genie: "일간 14위 / 실시간 4위", 
                 trophy: "음방 1위 후보 (커리어하이 달성)", alias: ["위고", "ㅇㄱ"]
             },
             "TALK&TALK": { 
-                title: "Talk & Talk", category: "SPECIAL", type: "SPECIAL", monthDay: "09-01",
+                title: "Talk & Talk", category: "SPECIAL", type: "SPECIAL", monthDay: "09-01", grade: "GOLD",
                 img: "https://img.youtube.com/vi/BjmmvBMXbSU/maxresdefault.jpg",
                 mv: "https://www.youtube.com/watch?v=BjmmvBMXbSU",
                 fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Talk+and+Talk+응원법",
-                release: "2021년 9월 1일",
-                melon: "일간 204위 / TOP 100 -", 
-                genie: "일간 212위 / 실시간 80위", 
+                release: "2021년 9월 1일", melon: "일간 204위 / TOP 100 -", genie: "일간 212위 / 실시간 80위", 
                 trophy: "총 1관왕 🏆<br>• 21.09.07 더쇼 1위", alias: ["톡앤톡", "ㅌㅇㅌ"]
             },
             "DM": { 
-                title: "DM", category: "TITLE", type: "TITLE", monthDay: "01-17",
+                title: "DM", category: "TITLE", type: "TITLE", monthDay: "01-17", grade: "PLATINUM",
                 img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg",
                 mv: "https://www.youtube.com/watch?v=4gXmClk8rKI",
                 fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+DM+응원법",
-                release: "2022년 1월 17일",
-                melon: "일간 66위 / TOP 100 52위", 
-                genie: "일간 137위 / 실시간 45위", 
+                release: "2022년 1월 17일", melon: "일간 66위 / TOP 100 52위", genie: "일간 137위 / 실시간 45위", 
                 trophy: "총 2관왕 🏆🏆<br>• 22.01.25 더쇼 1위<br>• 22.01.26 쇼챔피언 1위", alias: ["디엠", "ㄷㅁ"]
             },
             "STAYTHISWAY": { 
-                title: "Stay This Way", category: "TITLE", type: "TITLE", monthDay: "06-27",
+                title: "Stay This Way", category: "TITLE", type: "TITLE", monthDay: "06-27", grade: "SECRET",
                 img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg",
                 mv: "https://www.youtube.com/watch?v=JC6budcACNE",
                 fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Stay+This+Way+응원법",
-                release: "2022년 6월 27일",
-                melon: "일간 100위 / TOP 100 86위", 
-                genie: "일간 142위 / 실시간 33위", 
+                release: "2022년 6월 27일", melon: "일간 100위 / TOP 100 86위", genie: "일간 142위 / 실시간 33위", 
                 trophy: "총 5관왕 🏆🏆🏆🏆🏆<br>• 22.07.05 더쇼 1위<br>• 22.07.06 쇼챔피언 1위<br>• 22.07.07 엠카운트다운 1위<br>• 22.07.08 뮤직뱅크 1위<br>• 22.07.09 음악중심 1위", alias: ["스디웨", "ㅅㄷㅇ"]
             },
             "WHITE_MEMORIES": {
-                title: "하얀 그리움", category: "SPECIAL", type: "SPECIAL", monthDay: "12-30",
+                title: "하얀 그리움", category: "SPECIAL", type: "SPECIAL", monthDay: "12-30", grade: "PLATINUM",
                 img: "https://img.youtube.com/vi/5ZB9JLfIw_Q/maxresdefault.jpg",
                 mv: "https://youtu.be/5ZB9JLfIw_Q?si=p_waAdPh5IX-uPhB", fanchant: "", release: "2022년 12월 30일",
-                melon: "일간 9위 / TOP 100 5위", genie: "일간 12위 / 실시간 8위", trophy: "총 2관왕 🏆🏆", alias: ["하얀그리움", "ㅎㅇㄱㄹㅇ"]
+                melon: "일간 9위 / TOP 100 5위", genie: "일간 12위 / 실시간 8위", 
+                trophy: "총 2관왕 🏆🏆<br>• 22.12.30 뮤직뱅크 1위<br>• 22.12.31 음악중심 1위", alias: ["하얀그리움", "ㅎㅇㄱㄹㅇ"]
             },
             "MENOW": { 
-                title: "#menow", category: "TITLE", type: "TITLE", monthDay: "06-05",
+                title: "#menow", category: "TITLE", type: "TITLE", monthDay: "06-05", grade: "GOLD",
                 img: "https://img.youtube.com/vi/QrYIOjs7K8E/maxresdefault.jpg",
                 mv: "https://www.youtube.com/watch?v=QrYIOjs7K8E",
                 fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+menow+응원법",
-                release: "2023년 6월 5일",
-                melon: "일간 204위 / TOP 100 -위", 
-                genie: "일간 249위 / 실시간 79위", 
+                release: "2023년 6월 5일", melon: "일간 204위 / TOP 100 -위", genie: "일간 249위 / 실시간 79위", 
                 trophy: "총 1관왕 🏆<br>• 23.06.13 더쇼 1위", alias: ["미나우", "ㅁㄴㅇ"]
             },
             "SUPERSONIC": { 
-                title: "Supersonic", category: "TITLE", type: "TITLE", monthDay: "08-12",
+                title: "Supersonic", category: "TITLE", type: "TITLE", monthDay: "08-12", grade: "SECRET",
                 img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg",
                 mv: "https://www.youtube.com/watch?v=0LiQp7y8Wwc",
                 fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Supersonic+응원법",
-                release: "2024년 8월 12일",
-                melon: "일간 7위 / TOP 100 5위", 
-                genie: "일간 28위 / 실시간 20위", 
+                release: "2024년 8월 12일", melon: "일간 7위 / TOP 100 5위", genie: "일간 28위 / 실시간 20위", 
                 trophy: "총 4관왕 🏆🏆🏆🏆<br>• 24.08.20 더쇼 1위<br>• 24.08.22 엠카운트다운 1위<br>• 24.08.23 뮤직뱅크 1위<br>• 24.08.24 음악중심 1위", alias: ["슈퍼소닉", "ㅅㅍㅅㄴ"]
             },
             "LIKE_YOU_BETTER": {
-                title: "Like You Better", category: "TITLE", type: "TITLE", monthDay: "08-12",
+                title: "Like You Better", category: "TITLE", type: "TITLE", monthDay: "08-12", grade: "GOLD",
                 img: "https://img.youtube.com/vi/r1QapH1SIAI/maxresdefault.jpg",
                 mv: "https://youtu.be/r1QapH1SIAI?si=SZ6BDg-xfrVDlVgP", fanchant: "", release: "2024년 8월 12일",
-                melon: "일간 27위 / TOP 100 18위", genie: "일간 64위 / 실시간 30위", trophy: "총 1관왕 🏆", alias: ["라이큐베럴", "랔큐베", "ㄹㅇㅋㅂㅌ", "라이크유베터"]
+                melon: "일간 27위 / TOP 100 18위", genie: "일간 64위 / 실시간 30위", 
+                trophy: "총 1관왕 🏆<br>• 24.08.25 더쇼 1위", alias: ["라이큐베럴", "랔큐베", "ㄹㅇㅋㅂㅌ", "라이크유베터"]
             }
         };
+
+        // 도감에 등록될 전체 포카 목록 키 배열 (총 14곡 + 시크릿 포카 1개 = 15칸)
+        const allPocaKeys = Object.keys(musicData);
+        let collectedPocas = []; // 획득한 곡 키 목록
 
         const memberBirthdays = [
             { name: "송하영", date: "09-29" },
@@ -454,9 +466,7 @@
             let calculated = memberBirthdays.map(m => {
                 const [month, day] = m.date.split("-").map(Number);
                 let nextBday = new Date(today.getFullYear(), month - 1, day);
-                if (today > nextBday) {
-                    nextBday.setFullYear(today.getFullYear() + 1);
-                }
+                if (today > nextBday) nextBday.setFullYear(today.getFullYear() + 1);
                 const dday = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
                 return { ...m, dday: dday };
             });
@@ -470,10 +480,7 @@
                 const isNearest = m.dday === minDday;
                 cardElem.className = `bday-card ${isNearest ? 'nearest' : ''}`;
                 const ddayStr = m.dday === 0 ? "🎉 오늘!" : `D-${m.dday}`;
-                cardElem.innerHTML = `
-                    <span class="name">${m.name}</span>
-                    <span class="dday">${ddayStr}</span>
-                `;
+                cardElem.innerHTML = `<span class="name">${m.name}</span><span class="dday">${ddayStr}</span>`;
                 grid.appendChild(cardElem);
             });
         }
@@ -492,7 +499,6 @@
                     const releaseYear = parseInt(musicData[key].release.substring(0, 4));
                     const yearsAgo = today.getFullYear() - releaseYear;
                     const banner = document.getElementById("todayBanner");
-                    
                     banner.innerHTML = `🎉 오늘(${month}월 ${day}일)은 <b>${musicData[key].title}</b> 발매 ${yearsAgo > 0 ? yearsAgo + '주년' : '일'}입니다! 💖`;
                     banner.style.display = "block";
                     break;
@@ -516,11 +522,7 @@
                     const item = document.createElement("div");
                     item.className = "album-item";
                     item.onclick = function() { displaySongData(key); };
-                    
-                    item.innerHTML = `
-                        <img src="${song.img}" alt="${song.title}">
-                        <p>${song.title}</p>
-                    `;
+                    item.innerHTML = `<img src="${song.img}" alt="${song.title}"><p>${song.title}</p>`;
                     grid.appendChild(item);
                 }
             }
@@ -532,7 +534,6 @@
             btnElement.classList.add('active');
             renderAlbumGrid(type);
         }
-
         renderAlbumGrid("ALL");
 
         function findSongKey(inputQuery) {
@@ -564,15 +565,65 @@
             fcBtn.style.opacity = song.fanchant ? "1" : "0.5";
 
             document.getElementById("songTitle").innerText = song.title; 
-            document.getElementById("cardCategory").innerText = song.category;
+            document.getElementById("cardCategory").innerText = `${song.category} • [${song.grade}]`;
             document.getElementById("releaseDate").innerText = song.release;
             document.getElementById("melonRank").innerText = song.melon || "-";
             document.getElementById("genieRank").innerText = song.genie || "-";
             document.getElementById("trophyCount").innerHTML = song.trophy || "-";
             
+            // 카드 등급별 아우라 적용
+            card.className = `flip-card ${song.grade}`;
+
             const container = document.getElementById("flipCardContainer");
             container.style.display = "block";
             container.scrollIntoView({ behavior: 'smooth' });
+
+            // 획득 시 도감에 자동 추가
+            registerCollection(key);
+        }
+
+        // 도감 등록 함수
+        function registerCollection(key) {
+            if (!collectedPocas.includes(key)) {
+                collectedPocas.push(key);
+                updateBookUI();
+            }
+        }
+
+        function updateBookUI() {
+            const totalSlots = 15; // 전체 도감 슬롯 칸 수
+            document.getElementById("pocaBookBtn").innerText = `📚 도감 (${collectedPocas.length}/${totalSlots})`;
+            document.getElementById("bookStatusText").innerText = `수집 현황: ${collectedPocas.length} / ${totalSlots}개 완료`;
+
+            const grid = document.getElementById("bookGrid");
+            grid.innerHTML = "";
+
+            for (let i = 0; i < totalSlots; i++) {
+                const slot = document.createElement("div");
+                const songKey = allPocaKeys[i];
+
+                if (i < allPocaKeys.length && songKey && collectedPocas.includes(songKey)) {
+                    const song = musicData[songKey];
+                    slot.className = "poca-slot found";
+                    slot.innerHTML = `
+                        <img src="${song.img}" alt="${song.title}">
+                        <span style="font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${song.title}</span>
+                    `;
+                    slot.onclick = function() {
+                        toggleBookModal();
+                        displaySongData(songKey);
+                    };
+                } else {
+                    slot.className = "poca-slot";
+                    slot.innerHTML = `<span style="font-size:16px; margin-bottom:2px;">🔒</span><span>???</span>`;
+                }
+                grid.appendChild(slot);
+            }
+        }
+
+        function toggleBookModal() {
+            const modal = document.getElementById("bookModal");
+            modal.classList.toggle("show");
         }
 
         document.getElementById("searchBtn").addEventListener("click", function() {
@@ -581,7 +632,7 @@
 
             const matchedKey = findSongKey(input);
             if (matchedKey) displaySongData(matchedKey);
-            else alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, love bomb, fun, 랔큐베)");
+            else alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, love bomb, 랔큐베)");
         });
 
         document.getElementById("songInput").addEventListener("keypress", function(e) {
@@ -590,9 +641,7 @@
 
         document.getElementById("randomBtn").addEventListener("click", function() {
             let keys = Object.keys(musicData);
-            if (currentFilter !== "ALL") {
-                keys = keys.filter(k => musicData[k].type === currentFilter);
-            }
+            if (currentFilter !== "ALL") keys = keys.filter(k => musicData[k].type === currentFilter);
             const randomKey = keys[Math.floor(Math.random() * keys.length)];
             document.getElementById("songInput").value = musicData[randomKey].title;
             displaySongData(randomKey);
@@ -617,7 +666,6 @@
 
         function loadRankingBoard() {
             const API_URL = "https://sheetdb.io/api/v1/nqbvga0zuf7zn";
-            
             fetch(API_URL)
                 .then(response => response.json())
                 .then(data => {
@@ -626,20 +674,13 @@
                         board.innerHTML = "<p style='font-size:13px; color:#94a3b8;'>아직 기록된 우승 데이터가 없습니다.</p>";
                         return;
                     }
-
                     let scoreMap = {};
                     data.forEach(row => {
                         let name = row.SongName;
                         let count = parseInt(row.WinnerCount) || 1;
-                        if (scoreMap[name]) {
-                            scoreMap[name] += count;
-                        } else {
-                            scoreMap[name] = count;
-                        }
+                        scoreMap[name] = (scoreMap[name] || 0) + count;
                     });
-
                     let sortedSongs = Object.keys(scoreMap).sort((a, b) => scoreMap[b] - scoreMap[a]);
-
                     let html = "";
                     sortedSongs.forEach((song, index) => {
                         html += `
@@ -652,46 +693,21 @@
                     board.innerHTML = html;
                 })
                 .catch(error => {
-                    console.error("랭킹 불러오기 실패:", error);
                     document.getElementById("liveRankingBoard").innerHTML = "<p style='font-size:13px; color:#ef4444;'>랭킹을 불러오지 못했습니다.</p>";
                 });
         }
-
         loadRankingBoard();
 
         function recordWinner(songName) {
             const API_URL = "https://sheetdb.io/api/v1/nqbvga0zuf7zn";
-            
             fetch(API_URL, {
                 method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    data: [
-                        {
-                            "SongName": songName,
-                            "WinnerCount": 1
-                        }
-                    ]
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("시트 기록 성공!", data);
-                loadRankingBoard();
-            })
-            .catch(error => {
-                console.error("시트 기록 실패:", error);
-            });
+                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data: [{ "SongName": songName, "WinnerCount": 1 }] })
+            }).then(() => loadRankingBoard()).catch(err => console.error(err));
         }
 
-        let wcList = [];
-        let nextRoundList = [];
-        let currentMatchIndex = 0;
-        let currentPair = [];
-        let isFinished = false;
+        let wcList = [], nextRoundList = [], currentMatchIndex = 0, currentPair = [], isFinished = false;
 
         function startWorldCup() {
             isFinished = false;
@@ -745,8 +761,7 @@
 
         function selectWCChoice(choiceIndex) {
             if (isFinished) return;
-            const chosenKey = currentPair[choiceIndex];
-            nextRoundList.push(chosenKey);
+            nextRoundList.push(currentPair[choiceIndex]);
             currentMatchIndex += 2;
             loadWCMatch();
         }
@@ -755,13 +770,13 @@
             document.getElementById("worldcupArena").style.display = "none";
         }
 
-        // 🎁 5장 순차 등장 및 우측 누적 저장 시크릿 포카 로직
+        // 🎁 시간별 시크릿 포카 이스터에그 로직
         const secretPocas = [
-            { time: 32.0, title: "💖 32.0초의 설렘", img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg" },
-            { time: 41.7, title: "🍀 41.7초의 기적", img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg" },
-            { time: 51.4, title: "✨ 51.4초의 시크릿", img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg" },
-            { time: 60.1, title: "🌙 60.1초의 무드", img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg" },
-            { time: 92.9, title: "👑 92.9초 레전드 하영 포카", img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg" }
+            { time: 32.0, title: "💖 32.0초의 설렘", img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg", key: "STAYTHISWAY" },
+            { time: 41.7, title: "🍀 41.7초의 기적", img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg", key: "SUPERSONIC" },
+            { time: 51.4, title: "✨ 51.4초의 시크릿", img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg", key: "LOVEBOMB" },
+            { time: 60.1, title: "🌙 60.1초의 무드", img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg", key: "WEGO" },
+            { time: 92.9, title: "👑 92.9초 레전드 하영 포카", img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg", key: "DM" }
         ];
 
         let triggeredList = {};
@@ -769,7 +784,6 @@
 
         setInterval(() => {
             let elapsedSeconds = (Date.now() - startTime) / 1000;
-
             secretPocas.forEach(item => {
                 if (!triggeredList[item.time] && elapsedSeconds >= item.time) {
                     triggeredList[item.time] = true;
@@ -779,36 +793,30 @@
         }, 500);
 
         function triggerSecretPoca(item) {
-            // 1. 큰 팝업창으로 먼저 띄워줌
             showSecretModal(item.title, item.img);
+            registerCollection(item.key); // 도감에 자동 등록
 
-            // 2. 우측 보관함(Dock)에 아이콘 형태로 추가
             const dock = document.getElementById("pocaDock");
-            const pocaIcon = document.createElement("div");
-            pocaIcon.className = "docked-poca-item";
-            pocaIcon.title = item.title;
-            pocaIcon.innerHTML = `<img src="${item.img}" alt="포카">`;
-            
-            // 아이콘을 누르면 언제든 다시 큰 창으로 띄움
-            pocaIcon.onclick = function() {
-                showSecretModal(item.title, item.img);
-            };
-
-            dock.appendChild(pocaIcon);
+            const dockItem = document.createElement("div");
+            dockItem.className = "docked-item";
+            dockItem.title = item.title;
+            dockItem.innerHTML = `<img src="${item.img}" alt="포카">`;
+            dockItem.onclick = function() { showSecretModal(item.title, item.img); };
+            dock.appendChild(dockItem);
         }
 
         function showSecretModal(title, imgUrl) {
             document.getElementById("secretPocaTitle").innerText = title;
             document.getElementById("secretPocaImg").src = imgUrl;
-            
-            const modal = document.getElementById("secretPocaModal");
-            modal.classList.add("show");
+            document.getElementById("secretPocaModal").classList.add("show");
         }
 
         function closeSecretModal() {
-            const modal = document.getElementById("secretPocaModal");
-            modal.classList.remove("show");
+            document.getElementById("secretPocaModal").classList.remove("show");
         }
+
+        // 초기 도감 UI 세팅
+        updateBookUI();
     </script>
 </body>
 </html>
