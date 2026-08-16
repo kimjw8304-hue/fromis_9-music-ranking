@@ -3,816 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fromis_9 역대 곡 기록 & 포카 도감 아카이브</title>
+    <title>fromis_9 아카이브 & 포카 도감</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background: #0f172a; color: white; text-align: center; padding: 40px 20px; margin: 0; }
-        .container { max-width: 550px; margin: 0 auto; }
+        /* 기본 스타일 세팅 */
+        body { font-family: 'Pretendard', sans-serif; background-color: #fcf8f9; margin: 0; padding: 20px; color: #333; }
+        h1, h2, h3 { color: #ff6b81; text-align: center; }
+        button { background-color: #ff6b81; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; margin: 5px; }
+        button:hover { background-color: #ff4757; }
         
-        /* 🍀 데뷔 D+Day 배너 */
-        .debut-board { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 10px 15px; margin-bottom: 10px; font-size: 13px; color: #cbd5e1; }
-        .debut-board strong { color: #38bdf8; font-size: 15px; }
-
-        /* 🎂 5명 멤버 생일 한눈에 보기 카드 그리드 (5열 배치) */
-        .bday-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 20px; }
-        .bday-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 8px 4px; text-align: center; }
-        .bday-card.nearest { border-color: #f472b6; background: #2d1d36; box-shadow: 0 0 8px rgba(244, 114, 182, 0.3); }
-        .bday-card .name { font-size: 11px; color: #94a3b8; font-weight: bold; display: block; margin-bottom: 2px; }
-        .bday-card .dday { font-size: 12px; color: #f472b6; font-weight: bold; display: block; }
-        .bday-card.nearest .name { color: #f472b6; }
-        .bday-card.nearest .dday { color: #facc15; }
-
-        /* 📅 N년 전 오늘 배너 */
-        .today-banner { background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 12px; padding: 12px 15px; margin-bottom: 20px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); display: none; }
-
-        /* 🏆 커리어 하이 모듈 */
-        .career-high { background: linear-gradient(135deg, #1e1b4b, #312e81); border: 1px solid #4338ca; border-radius: 15px; padding: 18px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
-        .career-high h3 { margin: 0 0 12px 0; font-size: 16px; color: #a5b4fc; }
-        .career-stats { display: flex; justify-content: space-around; text-align: center; }
-        .stat-item span { display: block; font-size: 11px; color: #cbd5e1; margin-bottom: 4px; }
-        .stat-item strong { font-size: 15px; color: #facc15; }
-
-        /* ⚽ 타이틀곡 이상형 월드컵 배너 */
-        .worldcup-banner { background: linear-gradient(135deg, #f43f5e, #fb7185); border-radius: 15px; padding: 18px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(244,63,94,0.3); }
-        .worldcup-banner h3 { margin: 0 0 8px 0; font-size: 18px; color: white; }
-        .worldcup-banner p { margin: 0 0 14px 0; font-size: 13px; color: #ffe4e6; }
-        .wc-start-btn { background: white; color: #e11d48; border: none; padding: 10px 24px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
-        .wc-start-btn:hover { background: #f1f5f9; }
-
-        /* ⚽ 월드컵 플레이 모달/영역 스타일 */
-        .worldcup-arena { background: #1e293b; border: 2px solid #f43f5e; border-radius: 15px; padding: 20px; margin-bottom: 25px; display: none; }
-        .wc-round-title { font-size: 16px; color: #fb7185; font-weight: bold; margin-bottom: 15px; }
-        .wc-match-container { display: flex; justify-content: space-around; gap: 15px; }
-        .wc-card { background: #0f172a; border: 2px solid #334155; border-radius: 12px; padding: 10px; width: 45%; cursor: pointer; transition: 0.2s; }
-        .wc-card:hover { border-color: #f43f5e; transform: translateY(-3px); }
-        .wc-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; }
-        .wc-card p { margin: 8px 0 0 0; font-size: 13px; font-weight: bold; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        /* 🗂️ 카테고리 필터 버튼 */
-        .filter-group { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .filter-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid #475569; background: #1e293b; color: #94a3b8; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s; }
-        .filter-btn.active, .filter-btn:hover { background: #6366f1; color: white; border-color: #6366f1; }
-
-        /* 🖼️ 앨범 목록 그리드 */
-        .album-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
-        .album-item { 
-            background: #1e293b; border-radius: 12px; padding: 8px; cursor: pointer; 
-            border: 2px solid transparent; transition: transform 0.2s, border-color 0.2s; 
-            display: flex; flex-direction: column; align-items: center; overflow: hidden; 
-        }
-        .album-item:hover { transform: translateY(-5px); border-color: #6366f1; }
-        .album-item img { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; display: block; }
-        .album-item p { margin: 6px 0 0 0; font-size: 12px; font-weight: bold; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
-
-        .search-box { margin-bottom: 15px; display: flex; justify-content: center; gap: 8px; }
-        input { padding: 12px 18px; width: 60%; border-radius: 20px; border: none; outline: none; font-size: 15px; }
-        button { padding: 12px 18px; border-radius: 20px; border: none; background: #6366f1; color: white; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.2s; }
-        button:hover { background: #4f46e5; }
+        /* 컨트롤 패널 (검색, 랜덤, 도감 버튼) */
+        .controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .search-input { padding: 10px; border-radius: 8px; border: 1px solid #ccc; width: 200px; }
         
-        .random-btn { background: #10b981; margin-bottom: 25px; width: 100%; border-radius: 12px; padding: 12px; font-size: 14px; border:none; color:white; font-weight:bold; cursor:pointer; }
-        .random-btn:hover { background: #059669; }
-
-        /* 🎴 3D 포토카드 결과 영역 */
-        .flip-card-container { perspective: 1000px; margin-top: 20px; display: none; }
-        .flip-card { width: 100%; height: 560px; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        /* 앨범 그리드 */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; max-width: 800px; margin: 0 auto; }
+        .card { background: white; padding: 10px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); }
+        .card img { width: 100%; border-radius: 8px; aspect-ratio: 1/1; object-fit: cover; }
+        .card h4 { margin: 10px 0 5px 0; font-size: 14px; }
+        
+        /* 3D 포토카드 (뒤집기 효과) */
+        .flip-card-container { display: none; text-align: center; margin: 30px auto; perspective: 1000px; }
+        .flip-card { width: 250px; height: 350px; margin: 0 auto; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
         .flip-card.flipped { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .flip-card-front { background: white; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; }
+        .flip-card-front img { width: 100%; border-radius: 10px; }
+        .flip-card-back { background: #ff6b81; color: white; transform: rotateY(180deg); padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; }
+        .flip-card-back p { margin: 8px 0; font-size: 14px; }
         
-        /* 등급별 아우라 테두리 & 그림자 효과 */
-        .flip-card.GOLD { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); }
-        .flip-card.SILVER { box-shadow: 0 0 25px rgba(226, 232, 240, 0.6); }
-        .flip-card.PLATINUM { box-shadow: 0 0 25px rgba(56, 189, 248, 0.7); }
-        .flip-card.SECRET { box-shadow: 0 0 30px rgba(192, 132, 252, 0.8); animation: secretAura 2s infinite alternate; }
-        @keyframes secretAura {
-            0% { box-shadow: 0 0 20px rgba(192, 132, 252, 0.6); }
-            100% { box-shadow: 0 0 35px rgba(236, 72, 153, 0.9); }
-        }
-
-        .card-hint { font-size: 12px; color: #a5b4fc; margin-bottom: 8px; font-weight: bold; }
-        .card-front, .card-back { width: 100%; height: 100%; position: absolute; backface-visibility: hidden; border-radius: 20px; padding: 25px; box-sizing: border-box; text-align: left; }
-
-        .card-front { background: #1e293b; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid #3b82f6; }
-        .card-front .album-img { width: 100%; height: 320px; object-fit: cover; border-radius: 15px; }
-        .card-front h2 { margin: 15px 0 5px 0; text-align: center; }
-        .card-front .category-tag { text-align: center; font-size: 12px; background: #3b82f6; color: white; padding: 3px 10px; border-radius: 10px; width: fit-content; margin: 0 auto; }
-
-        .card-back { background: #0f172a; border: 2px solid #8b5cf6; transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: space-between; }
+        /* 모달 (도감 및 시크릿 카드) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 80%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .book-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 15px; max-height: 300px; overflow-y: auto; }
+        .book-item { background: #eee; padding: 5px 10px; border-radius: 20px; font-size: 12px; color: #888; }
+        .book-item.collected { background: #ff6b81; color: white; font-weight: bold; }
         
-        .btn-group { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-        .mv-btn { display: block; width: 100%; text-align: center; background: #ff0000; color: white; text-decoration: none; font-weight: bold; padding: 10px 0; border-radius: 8px; font-size: 14px; }
-        .fanchant-btn { display: block; width: 100%; text-align: center; background: #ec4899; color: white; text-decoration: none; font-weight: bold; padding: 10px 0; border-radius: 8px; font-size: 14px; }
-        .copy-btn { display: block; width: 100%; text-align: center; background: #334155; color: #f1f5f9; border: 1px solid #475569; font-weight: bold; padding: 10px 0; border-radius: 8px; cursor: pointer; font-size: 14px; }
-
-        .rank-list { background: #1e293b; padding: 15px 20px; border-radius: 10px; }
-        .rank-item { display: flex; justify-content: space-between; align-items: flex-start; margin: 10px 0; border-bottom: 1px solid #334155; padding-bottom: 8px; font-size: 14px; }
-        .rank-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .rank-item span { font-weight: bold; min-width: 120px; }
-        .rank-item b { text-align: right; line-height: 1.4; font-weight: normal; }
-        .copyright { font-size: 12px; color: #64748b; margin-top: 30px; line-height: 1.4; }
-
-        /* 📚 우측 상단 포카 도감 버튼 및 모달 스타일 */
-        #pocaBookBtn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            color: white;
-            padding: 10px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-            z-index: 1000;
-            border: 1px solid #c084fc;
-            transition: 0.2s;
-        }
-        #pocaBookBtn:hover { transform: scale(1.05); }
-
-        #bookModal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            width: 320px;
-            max-height: 85vh; /* 화면을 넘지 않도록 최대 높이 설정 */
-            background: #1e293b;
-            border: 3px solid #a855f7;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            z-index: 2000;
-            display: none;
-            opacity: 0;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-            flex-direction: column;
-        }
-        #bookModal.show { display: flex; opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
-        .poca-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 10px; 
-            margin: 15px 0; 
-            overflow-y: auto; /* 🌟 도감 내부 스크롤 가능하도록 수정 완료 */
-            max-height: 380px; 
-            padding-right: 5px; 
-        }
-        
-        /* 스크롤바 디자인 예쁘게 */
-        .poca-grid::-webkit-scrollbar { width: 6px; }
-        .poca-grid::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
-
-        .poca-slot {
-            background: #0f172a;
-            border: 2px dashed #475569;
-            border-radius: 10px;
-            aspect-ratio: 3/4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 5px;
-            font-size: 11px;
-            color: #64748b;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .poca-slot.found {
-            border: 2px solid #38bdf8;
-            background: #1e293b;
-            color: #f1f5f9;
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
-            cursor: pointer;
-        }
-        .poca-slot img { width: 100%; height: 75%; object-fit: cover; border-radius: 6px; margin-bottom: 4px; }
-
-        /* 🎁 시간별 시크릿 포카 팝업 모달 */
-        #secretPocaModal {
-            position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.7);
-            width: 280px; background: #1e293b; border: 3px solid #f472b6;
-            border-radius: 20px; padding: 15px; box-shadow: 0 15px 35px rgba(244, 114, 182, 0.4);
-            z-index: 2500; opacity: 0; pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        #secretPocaModal.show { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
-        .secret-poca-img { width: 100%; height: 320px; object-fit: cover; border-radius: 12px; }
+        /* 시크릿 카드 강조 */
+        .secret-img { width: 150px; border-radius: 10px; margin: 15px 0; box-shadow: 0 5px 15px rgba(255,107,129,0.5); }
     </style>
 </head>
 <body>
 
-    <!-- 📚 우측 상단 도감 버튼 -->
-    <div id="pocaBookBtn" onclick="toggleBookModal()">📚 포카 도감 (0/15)</div>
-
-    <div class="container">
-        <h1>🎵 fromis_9 곡 기록 검색</h1>
-        
-        <!-- 🍀 데뷔 D+Day -->
-        <div class="debut-board">
-            🍀 데뷔 <strong id="debutDday">D+0000</strong>
-        </div>
-
-        <!-- 🎂 5명 멤버 생일 한눈에 보기 카드 -->
-        <div class="bday-grid" id="bdayGrid"></div>
-
-        <!-- 📅 N년 전 오늘 발매 배너 -->
-        <div id="todayBanner" class="today-banner"></div>
-
-        <!-- 🏆 커리어 하이 모듈 -->
-        <div class="career-high">
-            <h3>👑 fromis_9 CAREER HIGH</h3>
-            <div class="career-stats">
-                <div class="stat-item">
-                    <span>최다 관왕</span>
-                    <strong>Stay This Way (5관왕)</strong>
-                </div>
-                <div class="stat-item">
-                    <span>멜론 최고 순위</span>
-                    <strong>Supersonic (5위)</strong>
-                </div>
-                <div class="stat-item">
-                    <span>총 트로피</span>
-                    <strong>13개 🏆</strong>
-                </div>
-            </div>
-        </div>
-
-        <!-- ⚽ 타이틀곡 이상형 월드컵 배너 -->
-        <div class="worldcup-banner">
-            <div class="rank-list" style="margin-bottom: 25px;">
-                <h3 style="margin-top:0; text-align:center; font-size:16px;">👑 실시간 타이틀곡 우승 랭킹</h3>
-                <div id="liveRankingBoard">
-                    <p style="font-size:13px; color:#94a3b8;">랭킹 데이터를 불러오는 중...</p>
-                </div>
-            </div>
-            <h3>🏆 fromis_9 타이틀곡 이상형 월드컵</h3>
-            <p>내 최애 타이틀곡을 찾아보세요!</p>
-            <button class="wc-start-btn" onclick="startWorldCup()">월드컵 시작하기</button>
-        </div>
-
-        <!-- ⚽ 월드컵 진행 아레나 -->
-        <div id="worldcupArena" class="worldcup-arena">
-            <div id="wcRoundTitle" class="wc-round-title">16강 (1/8)</div>
-            <div class="wc-match-container">
-                <div class="wc-card" onclick="selectWCChoice(0)">
-                    <img id="wcImg1" src="" alt="곡1">
-                    <p id="wcTitle1">곡 제목 1</p>
-                </div>
-                <div class="wc-card" onclick="selectWCChoice(1)">
-                    <img id="wcImg2" src="" alt="곡2">
-                    <p id="wcTitle2">곡 제목 2</p>
-                </div>
-            </div>
-            <button onclick="closeWorldCup()" style="margin-top:15px; background:#475569; padding:6px 14px; font-size:12px;">그만하기</button>
-        </div>
-
-        <!-- 🗂️ 카테고리 필터링 버튼 -->
-        <div class="filter-group">
-            <button class="filter-btn active" onclick="filterCategory('ALL', this)">전체 곡 목록</button>
-            <button class="filter-btn" onclick="filterCategory('TITLE', this)">타이틀곡만</button>
-            <button class="filter-btn" onclick="filterCategory('SPECIAL', this)">스페셜/프로젝트</button>
-        </div>
-
-        <!-- 🖼️ 앨범 목록 그리드 -->
-        <div id="albumGrid" class="album-grid"></div>
-
-        <!-- 🔍 검색 창 -->
-        <div class="search-box">
-            <input type="text" id="songInput" placeholder="곡 제목 또는 초성 (예: dm, ㅅㅍㅅㄴ, 랔큐베)">
-            <button id="searchBtn">검색</button>
-        </div>
-
-        <!-- 🎲 랜덤 추천 버튼 -->
-        <button id="randomBtn" class="random-btn">🎲 오늘 무슨 곡 들을까? (랜덤 뽑기)</button>
-
-        <!-- 🎴 3D 포토카드 결과 영역 -->
-        <div id="flipCardContainer" class="flip-card-container">
-            <div class="card-hint">🔄 카드를 터치/클릭하면 뒤집어집니다!</div>
-            <div id="flipCard" class="flip-card">
-                
-                <!-- 카드 앞면 -->
-                <div class="card-front">
-                    <span id="cardCategory" class="category-tag">TITLE</span>
-                    <img id="albumImg" class="album-img" src="" alt="앨범 아트">
-                    <div>
-                        <h2 id="songTitle">곡 제목</h2>
-                        <div class="artist" style="color:#94a3b8; text-align:center;">fromis_9 (프로미스나인)</div>
-                    </div>
-                </div>
-
-                <!-- 카드 뒷면 -->
-                <div class="card-back">
-                    <div class="rank-list">
-                        <h3 style="margin-top:0; text-align:center; font-size:16px;">🏆 상세 성적 기록</h3>
-                        <div class="rank-item"><span>📅 발매일</span><b id="releaseDate">-</b></div>
-                        <div class="rank-item"><span>🍈 멜론 최고 순위</span><b id="melonRank">-</b></div>
-                        <div class="rank-item"><span>🧞 지니 최고 순위</span><b id="genieRank">-</b></div>
-                        <div class="rank-item"><span>📺 음악방송 수상 내역</span><b id="trophyCount">-</b></div>
-                    </div>
-
-                    <div class="btn-group">
-                        <a id="mvLink" class="mv-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎬 뮤직비디오 보기</a>
-                        <a id="fanchantLink" class="fanchant-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎤 응원법 & 가사 보기</a>
-                        <button id="copyBtn" class="copy-btn" onclick="event.stopPropagation()">📋 기록 복사하기</button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <p class="copyright">본 사이트는 비상업적 팬 아카이브 사이트입니다.</p>
+    <h1>🍀 fromis_9 포카 도감 🍀</h1>
+    
+    <div class="controls">
+        <input type="text" id="searchInput" class="search-input" placeholder="곡 제목을 검색해보세요 (초성 가능)" onkeyup="if(event.key==='Enter') searchSong()">
+        <button onclick="searchSong()">🔍 검색</button>
+        <button onclick="randomGacha()">🎲 랜덤 뽑기</button>
+        <button onclick="openBookModal()" style="background-color: #2ed573;">📚 내 도감 보기 (<span id="bookCount">0</span>/14)</button>
     </div>
 
-    <!-- 📚 도감 모달 창 -->
-    <div id="bookModal">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-            <h3 style="margin:0; font-size:16px; color:#c084fc;">📖 프로미스나인 포카 도감</h3>
-            <button onclick="toggleBookModal()" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer; padding:0;">✖</button>
+    <!-- 3D 포토카드 영역 (곡 선택 시 나타남) -->
+    <div id="flipCardContainer" class="flip-card-container">
+        <h3 id="cardCategory">카테고리</h3>
+        <div class="flip-card" id="flipCard" onclick="this.classList.toggle('flipped')">
+            <div class="flip-card-front">
+                <img id="albumImg" src="" alt="앨범 이미지">
+                <h2 id="songTitle" style="color: #333; margin-top: 15px;">곡 제목</h2>
+                <p style="color: #777; font-size: 12px;">(카드를 클릭해 뒷면을 확인하세요)</p>
+            </div>
+            <div class="flip-card-back">
+                <h2>🎵 기록 카드</h2>
+                <p><strong>발매일:</strong> <span id="releaseDate"></span></p>
+                <p><strong>멜론 최고 순위:</strong> <span id="melonRank"></span></p>
+                <p><strong>지니 최고 순위:</strong> <span id="genieRank"></span></p>
+                <p><strong>음방 트로피:</strong> <span id="trophyCount"></span></p>
+                <div style="margin-top: 15px;">
+                    <a id="mvLink" href="#" target="_blank"><button style="background: white; color: #ff6b81; font-size: 12px;">MV 보기</button></a>
+                    <button id="copyBtn" style="background: #333; font-size: 12px;">기록 복사</button>
+                </div>
+            </div>
         </div>
-        <p id="bookStatusText" style="font-size:12px; color:#94a3b8; margin:0 0 5px 0; text-align:left;">수집 현황: 0 / 15개 완료</p>
-        <div class="poca-grid" id="bookGrid"></div>
-        <button onclick="toggleBookModal()" style="width:100%; margin-top:5px; background:#475569; padding:8px; font-size:13px; border-radius:10px; border:none; color:white; cursor:pointer;">닫기</button>
     </div>
 
-    <!-- 🎁 시간별 시크릿 포카 팝업 모달 -->
-    <div id="secretPocaModal">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span id="secretPocaTitle" style="font-size:13px; font-weight:bold; color:#f472b6;">✨ 시크릿 포카 등장!</span>
-            <button onclick="closeSecretModal()" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer;">✖</button>
+    <!-- 곡 목록 그리드 -->
+    <div class="grid" id="songGrid">
+        <!-- 자바스크립트로 곡 리스트가 생성됩니다 -->
+    </div>
+
+    <!-- 📚 도감 모달창 -->
+    <div id="bookModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2>나의 포토카드 도감 🗂️</h2>
+            <p>현재 <strong style="color:#ff6b81;"><span id="modalBookCount">0</span> / 14</strong> 개 수집 완료!</p>
+            <div class="book-list" id="bookList"></div>
+            <button onclick="closeModals()" style="margin-top: 20px; width: 100%;">닫기</button>
         </div>
-        <img id="secretPocaImg" class="secret-poca-img" src="" alt="시크릿 포카">
-        <p style="font-size:11px; color:#cbd5e1; margin:8px 0 0 0;">💡 도감에 자동 저장되었습니다!</p>
+    </div>
+
+    <!-- ✨ 깜짝 시크릿 카드 획득 모달창 -->
+    <div id="secretModal" class="modal-overlay" onclick="closeModals(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2>🎉 깜짝 시크릿 카드 드롭! 🎉</h2>
+            <p>플로버를 위한 선물이 도착했어요!</p>
+            <img id="secretPocaImg" src="" class="secret-img" alt="시크릿 카드">
+            <h3 id="secretPocaTitle" style="margin-top: 5px;">곡 제목</h3>
+            <p style="font-size: 14px; color: #666;">도감에 안전하게 보관되었습니다.</p>
+            <button onclick="closeModals()" style="margin-top: 20px; width: 100%;">확인</button>
+        </div>
     </div>
 
     <script>
+        // 1. 프로미스나인 곡 데이터 (총 14곡 세팅)
         const musicData = {
-            "GLASS_SHOES": {
-                title: "유리구두", category: "PRE-DEBUT", type: "SPECIAL", monthDay: "11-30", grade: "SILVER",
-                img: "https://img.youtube.com/vi/n2TtQYuFfWw/maxresdefault.jpg",
-                mv: "https://youtu.be/n2TtQYuFfWw?si=SB9hNdRstFd3k3Bo", fanchant: "", release: "2017년 11월 30일",
-                melon: "-", genie: "-", trophy: "-", alias: ["유리구두", "ㅇㄹㄱㄷ"]
-            },
-            "TO_HEART": {
-                title: "To Heart", category: "TITLE", type: "TITLE", monthDay: "01-24", grade: "SILVER",
-                img: "https://img.youtube.com/vi/iFUHS1Ei7qw/maxresdefault.jpg",
-                mv: "https://youtu.be/iFUHS1Ei7qw?si=2ABIGMJRlmXYIBCh", fanchant: "", release: "2018년 1월 24일",
-                melon: "-", genie: "-", trophy: "-", alias: ["투하트", "ㅌㅎㅌ"]
-            },
-            "DKDK": {
-                title: "두근두근 (DKDK)", category: "TITLE", type: "TITLE", monthDay: "06-05", grade: "SILVER",
-                img: "https://img.youtube.com/vi/B3KuJqe3Epg/maxresdefault.jpg",
-                mv: "https://youtu.be/B3KuJqe3Epg?si=gwFihsRlUxVh_MiR", fanchant: "", release: "2018년 6월 5일",
-                melon: "-", genie: "-", trophy: "-", alias: ["두근두근", "ㄷㄱㄷㄱ"]
-            },
-            "LOVEBOMB": { 
-                title: "LOVE BOMB", category: "TITLE", type: "TITLE", monthDay: "10-10", grade: "GOLD",
-                img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=-SK6cvkK4c0",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+LOVE+BOMB+응원법",
-                release: "2018년 10월 10일", melon: "일간 164위 / TOP 100 -위", genie: "일간 174위 / 실시간 83위", 
-                trophy: "음방 1위 후보 👏", alias: ["러브밤", "ㄹㅂㅂ"]
-            },
-            "FUN": { 
-                title: "FUN!", category: "TITLE", type: "TITLE", monthDay: "06-04", grade: "SILVER",
-                img: "https://img.youtube.com/vi/zsRyyLtcXho/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=zsRyyLtcXho",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+FUN+응원법",
-                release: "2019년 6월 4일", melon: "일간 167위 / TOP 100 -", genie: "일간 109위 / 실시간 30위", 
-                trophy: "음방 활동 곡 👏", alias: ["펀", "ㅍ"]
-            },
-            "FEEL_GOOD": {
-                title: "Feel Good (SECRET CODE)", category: "TITLE", type: "TITLE", monthDay: "09-16", grade: "SILVER",
-                img: "https://img.youtube.com/vi/jLmJhjCzOTw/maxresdefault.jpg",
-                mv: "https://youtu.be/jLmJhjCzOTw?si=vL80aiUNGTpdlG9e", fanchant: "", release: "2020년 9월 16일",
-                melon: "-", genie: "-", trophy: "-", alias: ["필굿", "ㅍㄱ"]
-            },
-            "WEGO": { 
-                title: "WE GO", category: "TITLE", type: "TITLE", monthDay: "05-17", grade: "PLATINUM",
-                img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=HM6UpQZvbhY",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+WE+GO+응원법",
-                release: "2021년 5월 17일", melon: "일간 108위 / TOP 100 -위", genie: "일간 14위 / 실시간 4위", 
-                trophy: "음방 1위 후보 (커리어하이 달성)", alias: ["위고", "ㅇㄱ"]
-            },
-            "TALK&TALK": { 
-                title: "Talk & Talk", category: "SPECIAL", type: "SPECIAL", monthDay: "09-01", grade: "GOLD",
-                img: "https://img.youtube.com/vi/BjmmvBMXbSU/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=BjmmvBMXbSU",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Talk+and+Talk+응원법",
-                release: "2021년 9월 1일", melon: "일간 204위 / TOP 100 -", genie: "일간 212위 / 실시간 80위", 
-                trophy: "총 1관왕 🏆<br>• 21.09.07 더쇼 1위", alias: ["톡앤톡", "ㅌㅇㅌ"]
-            },
-            "DM": { 
-                title: "DM", category: "TITLE", type: "TITLE", monthDay: "01-17", grade: "PLATINUM",
-                img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=4gXmClk8rKI",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+DM+응원법",
-                release: "2022년 1월 17일", melon: "일간 66위 / TOP 100 52위", genie: "일간 137위 / 실시간 45위", 
-                trophy: "총 2관왕 🏆🏆<br>• 22.01.25 더쇼 1위<br>• 22.01.26 쇼챔피언 1위", alias: ["디엠", "ㄷㅁ"]
-            },
-            "STAYTHISWAY": { 
-                title: "Stay This Way", category: "TITLE", type: "TITLE", monthDay: "06-27", grade: "SECRET",
-                img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=JC6budcACNE",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Stay+This+Way+응원법",
-                release: "2022년 6월 27일", melon: "일간 100위 / TOP 100 86위", genie: "일간 142위 / 실시간 33위", 
-                trophy: "총 5관왕 🏆🏆🏆🏆🏆<br>• 22.07.05 더쇼 1위<br>• 22.07.06 쇼챔피언 1위<br>• 22.07.07 엠카운트다운 1위<br>• 22.07.08 뮤직뱅크 1위<br>• 22.07.09 음악중심 1위", alias: ["스디웨", "ㅅㄷㅇ"]
-            },
-            "WHITE_MEMORIES": {
-                title: "하얀 그리움", category: "SPECIAL", type: "SPECIAL", monthDay: "12-30", grade: "PLATINUM",
-                img: "https://img.youtube.com/vi/5ZB9JLfIw_Q/maxresdefault.jpg",
-                mv: "https://youtu.be/5ZB9JLfIw_Q?si=p_waAdPh5IX-uPhB", fanchant: "", release: "2022년 12월 30일",
-                melon: "일간 9위 / TOP 100 5위", genie: "일간 12위 / 실시간 8위", 
-                trophy: "총 2관왕 🏆🏆<br>• 22.12.30 뮤직뱅크 1위<br>• 22.12.31 음악중심 1위", alias: ["하얀그리움", "ㅎㅇㄱㄹㅇ"]
-            },
-            "MENOW": { 
-                title: "#menow", category: "TITLE", type: "TITLE", monthDay: "06-05", grade: "GOLD",
-                img: "https://img.youtube.com/vi/QrYIOjs7K8E/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=QrYIOjs7K8E",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+menow+응원법",
-                release: "2023년 6월 5일", melon: "일간 204위 / TOP 100 -위", genie: "일간 249위 / 실시간 79위", 
-                trophy: "총 1관왕 🏆<br>• 23.06.13 더쇼 1위", alias: ["미나우", "ㅁㄴㅇ"]
-            },
-            "SUPERSONIC": { 
-                title: "Supersonic", category: "TITLE", type: "TITLE", monthDay: "08-12", grade: "SECRET",
-                img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=0LiQp7y8Wwc",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Supersonic+응원법",
-                release: "2024년 8월 12일", melon: "일간 7위 / TOP 100 5위", genie: "일간 28위 / 실시간 20위", 
-                trophy: "총 4관왕 🏆🏆🏆🏆<br>• 24.08.20 더쇼 1위<br>• 24.08.22 엠카운트다운 1위<br>• 24.08.23 뮤직뱅크 1위<br>• 24.08.24 음악중심 1위", alias: ["슈퍼소닉", "ㅅㅍㅅㄴ"]
-            },
-            "LIKE_YOU_BETTER": {
-                title: "Like You Better", category: "TITLE", type: "TITLE", monthDay: "08-12", grade: "GOLD",
-                img: "https://img.youtube.com/vi/r1QapH1SIAI/maxresdefault.jpg",
-                mv: "https://youtu.be/r1QapH1SIAI?si=SZ6BDg-xfrVDlVgP", fanchant: "", release: "2024년 8월 12일",
-                melon: "일간 27위 / TOP 100 18위", genie: "일간 64위 / 실시간 30위", 
-                trophy: "총 1관왕 🏆<br>• 24.08.25 더쇼 1위", alias: ["라이큐베럴", "랔큐베", "ㄹㅇㅋㅂㅌ", "라이크유베터"]
-            }
+            'glass_shoes': { title: '유리구두', category: '프리데뷔', release: '2017-11-30', melon: '-', genie: '-', trophy: '0', img: 'https://via.placeholder.com/200/FFB6C1/FFFFFF?text=Glass+Shoes' },
+            'to_heart': { title: 'To Heart', category: '타이틀', release: '2018-01-24', melon: '100위권 밖', genie: '100위권 밖', trophy: '0', img: 'https://via.placeholder.com/200/87CEFA/FFFFFF?text=To+Heart' },
+            'dkdk': { title: '두근두근(DKDK)', category: '타이틀', release: '2018-06-05', melon: '100위권 밖', genie: '100위권 밖', trophy: '0', img: 'https://via.placeholder.com/200/98FB98/FFFFFF?text=DKDK' },
+            'love_bomb': { title: 'LOVE BOMB', category: '타이틀', release: '2018-10-10', melon: '81위', genie: '상위권', trophy: '0', img: 'https://via.placeholder.com/200/FFA07A/FFFFFF?text=LOVE+BOMB' },
+            'fun': { title: 'FUN!', category: '타이틀', release: '2019-06-04', melon: '100위권 밖', genie: '상위권', trophy: '0', img: 'https://via.placeholder.com/200/FFFFE0/000000?text=FUN!' },
+            'feel_good': { title: 'Feel Good (SECRET CODE)', category: '타이틀', release: '2020-09-16', melon: '차트인', genie: '차트인', trophy: '0', img: 'https://via.placeholder.com/200/DDA0DD/FFFFFF?text=Feel+Good' },
+            'we_go': { title: 'WE GO', category: '타이틀', release: '2021-05-17', melon: '탑 100', genie: '탑 100', trophy: '0', img: 'https://via.placeholder.com/200/20B2AA/FFFFFF?text=WE+GO' },
+            'talk_talk': { title: 'Talk & Talk', category: '타이틀', release: '2021-09-01', melon: '차트인', genie: '차트인', trophy: '1관왕 🏆', img: 'https://via.placeholder.com/200/FF69B4/FFFFFF?text=Talk+%26+Talk' },
+            'dm': { title: 'DM', category: '타이틀', release: '2022-01-17', melon: '탑 100', genie: '탑 10', trophy: '2관왕 🏆🏆', img: 'https://via.placeholder.com/200/E6E6FA/000000?text=DM' },
+            'stay_this_way': { title: 'Stay This Way', category: '타이틀', release: '2022-06-27', melon: '14위', genie: '1위', trophy: '5관왕 🏆x5', img: 'https://via.placeholder.com/200/00FFFF/000000?text=Stay+This+Way' },
+            'menow': { title: '#menow', category: '타이틀', release: '2023-06-05', melon: '차트인', genie: '차트인', trophy: '1관왕 🏆', img: 'https://via.placeholder.com/200/C0C0C0/000000?text=%23menow' },
+            'supersonic': { title: 'Supersonic', category: '타이틀', release: '2024-08-12', melon: '1위', genie: '1위', trophy: '4관왕 🏆x4', img: 'https://via.placeholder.com/200/FF4500/FFFFFF?text=Supersonic' },
+            'prom_night': { title: 'Prom Night', category: '수록곡', release: '2023-06-05', melon: '-', genie: '-', trophy: '0', img: 'https://via.placeholder.com/200/000080/FFFFFF?text=Prom+Night' },
+            'rewind': { title: 'Rewind', category: '수록곡', release: '2022-06-27', melon: '-', genie: '-', trophy: '0', img: 'https://via.placeholder.com/200/DAA520/FFFFFF?text=Rewind' }
         };
 
-        const allPocaKeys = Object.keys(musicData);
+        // 2. 도감(수집) 로직 세팅
         let collectedPocas = [];
+        const allPocaKeys = Object.keys(musicData);
 
-        const memberBirthdays = [
-            { name: "송하영", date: "09-29" },
-            { name: "박지원", date: "03-20" },
-            { name: "이채영", date: "05-14" },
-            { name: "이나경", date: "06-01" },
-            { name: "백지헌", date: "04-17" }
-        ];
-
-        function calculateDday() {
-            const debutDate = new Date("2018-01-24");
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            const diffTime = Math.abs(today - debutDate);
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            document.getElementById("debutDday").innerText = `D+${diffDays}`;
-
-            let calculated = memberBirthdays.map(m => {
-                const [month, day] = m.date.split("-").map(Number);
-                let nextBday = new Date(today.getFullYear(), month - 1, day);
-                if (today > nextBday) nextBday.setFullYear(today.getFullYear() + 1);
-                const dday = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
-                return { ...m, dday: dday };
-            });
-
-            const minDday = Math.min(...calculated.map(c => c.dday));
-            const grid = document.getElementById("bdayGrid");
-            grid.innerHTML = "";
-
-            calculated.forEach(m => {
-                const cardElem = document.createElement("div");
-                const isNearest = m.dday === minDday;
-                cardElem.className = `bday-card ${isNearest ? 'nearest' : ''}`;
-                const ddayStr = m.dday === 0 ? "🎉 오늘!" : `D-${m.dday}`;
-                cardElem.innerHTML = `<span class="name">${m.name}</span><span class="dday">${ddayStr}</span>`;
-                grid.appendChild(cardElem);
-            });
-        }
-        calculateDday();
-
-        let currentFilter = "ALL";
-
-        function checkTodayRelease() {
-            const today = new Date();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            const todayMD = `${month}-${day}`;
-
-            for (let key in musicData) {
-                if (musicData[key].monthDay === todayMD) {
-                    const releaseYear = parseInt(musicData[key].release.substring(0, 4));
-                    const yearsAgo = today.getFullYear() - releaseYear;
-                    const banner = document.getElementById("todayBanner");
-                    banner.innerHTML = `🎉 오늘(${month}월 ${day}일)은 <b>${musicData[key].title}</b> 발매 ${yearsAgo > 0 ? yearsAgo + '주년' : '일'}입니다! 💖`;
-                    banner.style.display = "block";
-                    break;
-                }
-            }
-        }
-        checkTodayRelease();
-
-        const card = document.getElementById("flipCard");
-        card.addEventListener("click", function() {
-            card.classList.toggle("flipped");
-        });
-
-        function renderAlbumGrid(filterType) {
-            const grid = document.getElementById("albumGrid");
-            grid.innerHTML = "";
-
-            for (let key in musicData) {
-                const song = musicData[key];
-                if (filterType === "ALL" || song.type === filterType) {
-                    const item = document.createElement("div");
-                    item.className = "album-item";
-                    item.onclick = function() { displaySongData(key); };
-                    item.innerHTML = `<img src="${song.img}" alt="${song.title}"><p>${song.title}</p>`;
-                    grid.appendChild(item);
-                }
-            }
+        // 첫 화면 그리드 렌더링
+        const grid = document.getElementById('songGrid');
+        for (const [key, song] of Object.entries(musicData)) {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML = `<img src="${song.img}" alt="${song.title}"><h4>${song.title}</h4>`;
+            div.onclick = () => selectSong(key);
+            grid.appendChild(div);
         }
 
-        function filterCategory(type, btnElement) {
-            currentFilter = type;
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
-            renderAlbumGrid(type);
-        }
-        renderAlbumGrid("ALL");
-
-        function findSongKey(inputQuery) {
-            const cleanQuery = inputQuery.replace(/\s+/g, '').toUpperCase();
-            if (musicData[cleanQuery]) return cleanQuery;
-
-            for (let key in musicData) {
-                if (musicData[key].alias) {
-                    for (let alias of musicData[key].alias) {
-                        if (alias.replace(/\s+/g, '').toUpperCase() === cleanQuery) return key;
-                    }
-                }
-            }
-            return null;
-        }
-
-        function displaySongData(key) {
+        // 3. 곡 선택 & 3D 포토카드 보기 + "도감 하나씩 열기"
+        function selectSong(key) {
             const song = musicData[key];
-            card.classList.remove("flipped");
+            if (!song) return;
 
+            // 카드 정보 업데이트
+            document.getElementById("cardCategory").innerText = song.category;
             document.getElementById("albumImg").src = song.img;
-            
-            const mvBtn = document.getElementById("mvLink");
-            mvBtn.href = song.mv || "#";
-            mvBtn.style.opacity = song.mv ? "1" : "0.5";
-
-            const fcBtn = document.getElementById("fanchantLink");
-            fcBtn.href = song.fanchant || "#";
-            fcBtn.style.opacity = song.fanchant ? "1" : "0.5";
-
-            document.getElementById("songTitle").innerText = song.title; 
-            document.getElementById("cardCategory").innerText = `${song.category} • [${song.grade}]`;
+            document.getElementById("songTitle").innerText = song.title;
             document.getElementById("releaseDate").innerText = song.release;
-            document.getElementById("melonRank").innerText = song.melon || "-";
-            document.getElementById("genieRank").innerText = song.genie || "-";
-            document.getElementById("trophyCount").innerHTML = song.trophy || "-";
+            document.getElementById("melonRank").innerText = song.melon;
+            document.getElementById("genieRank").innerText = song.genie;
+            document.getElementById("trophyCount").innerText = song.trophy;
             
-            card.className = `flip-card ${song.grade}`;
+            // 카드 보이기 및 뒤집기 초기화
+            const flipCard = document.getElementById("flipCard");
+            flipCard.classList.remove("flipped");
+            document.getElementById("flipCardContainer").style.display = "block";
+            document.getElementById("flipCardContainer").scrollIntoView({ behavior: 'smooth' });
 
-            const container = document.getElementById("flipCardContainer");
-            container.style.display = "block";
-            container.scrollIntoView({ behavior: 'smooth' });
-
-            registerCollection(key);
-        }
-
-        function registerCollection(key) {
+            // ⭐ 기능 1: 도감에 없는 곡을 뽑았을 때 도감 하나씩 추가 & 알림!
             if (!collectedPocas.includes(key)) {
                 collectedPocas.push(key);
-                updateBookUI();
+                updateBookData();
+                
+                // 자연스러운 알림을 위해 0.3초 뒤에 띄움
+                setTimeout(() => {
+                    alert(`🎉 앗! 새로운 포토카드 [ ${song.title} ] 획득!\n도감에 한 칸이 채워졌습니다!`);
+                }, 300);
             }
+
+            // 복사 기능
+            document.getElementById("copyBtn").onclick = (e) => {
+                e.stopPropagation(); // 카드 뒤집힘 방지
+                const text = `[fromis_9] ${song.title}\n발매일: ${song.release}\n최고 기록 - 멜론: ${song.melon}, 트로피: ${song.trophy}`;
+                navigator.clipboard.writeText(text).then(() => alert("기록이 클립보드에 복사되었습니다!"));
+            };
         }
 
-        function updateBookUI() {
-            const totalSlots = 15; 
-            document.getElementById("pocaBookBtn").innerText = `📚 도감 (${collectedPocas.length}/${totalSlots})`;
-            document.getElementById("bookStatusText").innerText = `수집 현황: ${collectedPocas.length} / ${totalSlots}개 완료`;
-
-            const grid = document.getElementById("bookGrid");
-            grid.innerHTML = "";
-
-            for (let i = 0; i < totalSlots; i++) {
-                const slot = document.createElement("div");
-                const songKey = allPocaKeys[i];
-
-                if (i < allPocaKeys.length && songKey && collectedPocas.includes(songKey)) {
-                    const song = musicData[songKey];
-                    slot.className = "poca-slot found";
-                    slot.innerHTML = `
-                        <img src="${song.img}" alt="${song.title}">
-                        <span style="font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${song.title}</span>
-                    `;
-                    slot.onclick = function() {
-                        toggleBookModal();
-                        displaySongData(songKey);
-                    };
-                } else {
-                    slot.className = "poca-slot";
-                    slot.innerHTML = `<span style="font-size:16px; margin-bottom:2px;">🔒</span><span>???</span>`;
-                }
-                grid.appendChild(slot);
-            }
-        }
-
-        function toggleBookModal() {
-            const modal = document.getElementById("bookModal");
-            modal.classList.toggle("show");
-        }
-
-        document.getElementById("searchBtn").addEventListener("click", function() {
-            const input = document.getElementById("songInput").value;
-            if (!input) return alert("검색어를 입력해 주세요!");
-
-            const matchedKey = findSongKey(input);
-            if (matchedKey) displaySongData(matchedKey);
-            else alert("등록되지 않은 곡입니다!\n(검색 예시: dm, stay this way, supersonic, love bomb, 랔큐베)");
-        });
-
-        document.getElementById("songInput").addEventListener("keypress", function(e) {
-            if (e.key === 'Enter') document.getElementById("searchBtn").click();
-        });
-
-        document.getElementById("randomBtn").addEventListener("click", function() {
-            let keys = Object.keys(musicData);
-            if (currentFilter !== "ALL") keys = keys.filter(k => musicData[k].type === currentFilter);
-            const randomKey = keys[Math.floor(Math.random() * keys.length)];
-            document.getElementById("songInput").value = musicData[randomKey].title;
-            displaySongData(randomKey);
-        });
-
-        document.getElementById("copyBtn").addEventListener("click", function(e) {
-            e.stopPropagation();
-            const title = document.getElementById("songTitle").innerText;
-            const release = document.getElementById("releaseDate").innerText;
-            const melon = document.getElementById("melonRank").innerText;
-            const genie = document.getElementById("genieRank").innerText;
-            const trophy = document.getElementById("trophyCount").innerText; 
+        // 검색 기능
+        function searchSong() {
+            const query = document.getElementById('searchInput').value.replace(/\s+/g, '').toLowerCase();
+            if(!query) return alert("검색어를 입력해주세요!");
             
-            const copyText = `[fromis_9 - ${title}] 역대 기록 🍀\n\n📅 발매일: ${release}\n🍈 멜론 최고 순위: ${melon}\n🧞 지니 최고 순위: ${genie}\n📺 수상 내역:\n${trophy}`;
-            
-            navigator.clipboard.writeText(copyText).then(() => {
-                alert(`'${title}' 기록이 클립보드에 복사되었습니다! 💖`);
-            }).catch(err => {
-                alert("기록 복사에 실패했습니다.");
-            });
-        });
-
-        function loadRankingBoard() {
-            const API_URL = "https://sheetdb.io/api/v1/nqbvga0zuf7zn";
-            fetch(API_URL)
-                .then(response => response.json())
-                .then(data => {
-                    const board = document.getElementById("liveRankingBoard");
-                    if (!data || data.length === 0) {
-                        board.innerHTML = "<p style='font-size:13px; color:#94a3b8;'>아직 기록된 우승 데이터가 없습니다.</p>";
-                        return;
-                    }
-                    let scoreMap = {};
-                    data.forEach(row => {
-                        let name = row.SongName;
-                        let count = parseInt(row.WinnerCount) || 1;
-                        scoreMap[name] = (scoreMap[name] || 0) + count;
-                    });
-                    let sortedSongs = Object.keys(scoreMap).sort((a, b) => scoreMap[b] - scoreMap[a]);
-                    let html = "";
-                    sortedSongs.forEach((song, index) => {
-                        html += `
-                            <div class="rank-item" style="display: flex; justify-content: space-between; margin: 8px 0; border-bottom: 1px solid #334155; padding-bottom: 6px; font-size: 14px;">
-                                <span>${index + 1}위. ${song}</span>
-                                <b>${scoreMap[song]}회 우승 🏆</b>
-                            </div>
-                        `;
-                    });
-                    board.innerHTML = html;
-                })
-                .catch(error => {
-                    document.getElementById("liveRankingBoard").innerHTML = "<p style='font-size:13px; color:#ef4444;'>랭킹을 불러오지 못했습니다.</p>";
-                });
-        }
-        loadRankingBoard();
-
-        function recordWinner(songName) {
-            const API_URL = "https://sheetdb.io/api/v1/nqbvga0zuf7zn";
-            fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ data: [{ "SongName": songName, "WinnerCount": 1 }] })
-            }).then(() => loadRankingBoard()).catch(err => console.error(err));
-        }
-
-        let wcList = [], nextRoundList = [], currentMatchIndex = 0, currentPair = [], isFinished = false;
-
-        function startWorldCup() {
-            isFinished = false;
-            let allKeys = Object.keys(musicData);
-            wcList = [...allKeys].sort(() => Math.random() - 0.5).slice(0, 16);
-            nextRoundList = [];
-            currentMatchIndex = 0;
-
-            document.getElementById("worldcupArena").style.display = "block";
-            document.getElementById("worldcupArena").scrollIntoView({ behavior: 'smooth' });
-            loadWCMatch();
-        }
-
-        function loadWCMatch() {
-            if (currentMatchIndex >= wcList.length) {
-                if (nextRoundList.length === 1) {
-                    isFinished = true;
-                    const winnerKey = nextRoundList[0];
-                    const winner = musicData[winnerKey];
-                    
-                    document.getElementById("wcRoundTitle").innerText = `🎉 최종 우승 곡! 🎉`;
-                    document.getElementById("wcImg1").src = winner.img;
-                    document.getElementById("wcTitle1").innerText = `👑 ${winner.title}`;
-                    document.getElementById("wcImg2").src = winner.img;
-                    document.getElementById("wcTitle2").innerText = `👑 ${winner.title}`;
-
-                    recordWinner(winner.title);
+            for (const [key, song] of Object.entries(musicData)) {
+                const titleStr = song.title.replace(/\s+/g, '').toLowerCase();
+                // 단순 검색 로직 (초성 검색은 라이브러리가 필요해 텍스트 포함 여부로 간단히 대체)
+                if (titleStr.includes(query)) {
+                    selectSong(key);
                     return;
                 }
-                wcList = [...nextRoundList];
-                nextRoundList = [];
-                currentMatchIndex = 0;
             }
-
-            let totalRound = wcList.length;
-            let roundName = totalRound === 16 ? "16강" : totalRound === 8 ? "8강" : totalRound === 4 ? "준결승" : "결승";
-            let matchNum = (currentMatchIndex / 2) + 1;
-            let totalMatch = totalRound / 2;
-
-            document.getElementById("wcRoundTitle").innerText = `${roundName} (${matchNum}/${totalMatch})`;
-
-            currentPair = [wcList[currentMatchIndex], wcList[currentMatchIndex + 1]];
-            const song1 = musicData[currentPair[0]];
-            const song2 = musicData[currentPair[1]];
-
-            document.getElementById("wcImg1").src = song1.img;
-            document.getElementById("wcTitle1").innerText = song1.title;
-            document.getElementById("wcImg2").src = song2.img;
-            document.getElementById("wcTitle2").innerText = song2.title;
+            alert("해당하는 곡을 찾을 수 없습니다.");
         }
 
-        function selectWCChoice(choiceIndex) {
-            if (isFinished) return;
-            nextRoundList.push(currentPair[choiceIndex]);
-            currentMatchIndex += 2;
-            loadWCMatch();
+        // 랜덤 뽑기
+        function randomGacha() {
+            const randomIndex = Math.floor(Math.random() * allPocaKeys.length);
+            selectSong(allPocaKeys[randomIndex]);
         }
 
-        function closeWorldCup() {
-            document.getElementById("worldcupArena").style.display = "none";
-        }
-
-        // 🎁 시간별 시크릿 포카 이스터에그 로직 (우측 하단 미니 독 제거 및 도감 자동 등록 유지)
-        const secretPocas = [
-            { time: 32.0, title: "💖 32.0초의 설렘", img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg", key: "STAYTHISWAY" },
-            { time: 41.7, title: "🍀 41.7초의 기적", img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg", key: "SUPERSONIC" },
-            { time: 51.4, title: "✨ 51.4초의 시크릿", img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg", key: "LOVEBOMB" },
-            { time: 60.1, title: "🌙 60.1초의 무드", img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg", key: "WEGO" },
-            { time: 92.9, title: "👑 92.9초 레전드 하영 포카", img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg", key: "DM" }
-        ];
-
-        let triggeredList = {};
-        const startTime = Date.now();
-
-        setInterval(() => {
-            let elapsedSeconds = (Date.now() - startTime) / 1000;
-            secretPocas.forEach(item => {
-                if (!triggeredList[item.time] && elapsedSeconds >= item.time) {
-                    triggeredList[item.time] = true;
-                    triggerSecretPoca(item);
+        // 도감 UI 업데이트
+        function updateBookData() {
+            document.getElementById('bookCount').innerText = collectedPocas.length;
+            document.getElementById('modalBookCount').innerText = collectedPocas.length;
+            
+            const bookList = document.getElementById('bookList');
+            bookList.innerHTML = '';
+            
+            allPocaKeys.forEach(key => {
+                const song = musicData[key];
+                const span = document.createElement('span');
+                if (collectedPocas.includes(key)) {
+                    span.className = 'book-item collected';
+                    span.innerText = song.title; // 수집완료
+                } else {
+                    span.className = 'book-item';
+                    span.innerText = '??? (미수집)'; // 미수집
                 }
+                bookList.appendChild(span);
             });
-        }, 500);
-
-        function triggerSecretPoca(item) {
-            showSecretModal(item.title, item.img);
-            registerCollection(item.key); 
         }
 
-        function showSecretModal(title, imgUrl) {
-            document.getElementById("secretPocaTitle").innerText = title;
-            document.getElementById("secretPocaImg").src = imgUrl;
-            document.getElementById("secretPocaModal").classList.add("show");
+        // 모달창 열고 닫기 로직
+        function openBookModal() {
+            updateBookData();
+            document.getElementById('bookModal').style.display = 'flex';
+        }
+        function closeModals(e) {
+            // 배경을 클릭하거나 닫기 버튼을 눌렀을 때만 모달 닫기
+            if (!e || e.target.classList.contains('modal-overlay')) {
+                document.getElementById('bookModal').style.display = 'none';
+                document.getElementById('secretModal').style.display = 'none';
+            }
         }
 
-        function closeSecretModal() {
-            document.getElementById("secretPocaModal").classList.remove("show");
+        // ⭐ 기능 2: 시간 지나서 얻는 시크릿 카드 도감 자동 오픈!
+        function dropTimeSecretPoca() {
+            // 아직 수집하지 않은 곡들만 찾아내기
+            const uncollected = allPocaKeys.filter(k => !collectedPocas.includes(k));
+            
+            // 다 모았다면 종료
+            if (uncollected.length === 0) return; 
+
+            // 미수집 곡 중 랜덤 1개 선택
+            const randomKey = uncollected[Math.floor(Math.random() * uncollected.length)];
+            const song = musicData[randomKey];
+
+            // 모달 정보 채우고 띄우기
+            document.getElementById("secretPocaTitle").innerText = song.title;
+            document.getElementById("secretPocaImg").src = song.img;
+            document.getElementById('secretModal').style.display = 'flex';
+
+            // 도감에 추가
+            collectedPocas.push(randomKey);
+            updateBookData();
         }
 
-        updateBookUI();
+        // 페이지 접속 후 15초(15000ms) 뒤에 시크릿 카드 드롭 실행!
+        // (원하시면 15000을 30000(30초) 등으로 바꿔보세요)
+        setTimeout(dropTimeSecretPoca, 15000);
+
+        // 초기 도감 UI 세팅
+        updateBookData();
+
     </script>
 </body>
 </html>
