@@ -3,816 +3,525 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fromis_9 역대 곡 기록 & 포카 도감 아카이브</title>
+    <title>fromis_9 포카 도감 & 뮤직 아카이브</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background: #0f172a; color: white; text-align: center; padding: 40px 20px; margin: 0; }
-        .container { max-width: 550px; margin: 0 auto; }
-        
-        /* 🍀 데뷔 D+Day 배너 */
-        .debut-board { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 10px 15px; margin-bottom: 10px; font-size: 13px; color: #cbd5e1; }
-        .debut-board strong { color: #38bdf8; font-size: 15px; }
-
-        /* 🎂 5명 멤버 생일 한눈에 보기 카드 그리드 (5열 배치) */
-        .bday-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 20px; }
-        .bday-card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 8px 4px; text-align: center; }
-        .bday-card.nearest { border-color: #f472b6; background: #2d1d36; box-shadow: 0 0 8px rgba(244, 114, 182, 0.3); }
-        .bday-card .name { font-size: 11px; color: #94a3b8; font-weight: bold; display: block; margin-bottom: 2px; }
-        .bday-card .dday { font-size: 12px; color: #f472b6; font-weight: bold; display: block; }
-        .bday-card.nearest .name { color: #f472b6; }
-        .bday-card.nearest .dday { color: #facc15; }
-
-        /* 📅 N년 전 오늘 배너 */
-        .today-banner { background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 12px; padding: 12px 15px; margin-bottom: 20px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); display: none; }
-
-        /* 🏆 커리어 하이 모듈 */
-        .career-high { background: linear-gradient(135deg, #1e1b4b, #312e81); border: 1px solid #4338ca; border-radius: 15px; padding: 18px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
-        .career-high h3 { margin: 0 0 12px 0; font-size: 16px; color: #a5b4fc; }
-        .career-stats { display: flex; justify-content: space-around; text-align: center; }
-        .stat-item span { display: block; font-size: 11px; color: #cbd5e1; margin-bottom: 4px; }
-        .stat-item strong { font-size: 15px; color: #facc15; }
-
-        /* ⚽ 타이틀곡 이상형 월드컵 배너 */
-        .worldcup-banner { background: linear-gradient(135deg, #f43f5e, #fb7185); border-radius: 15px; padding: 18px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(244,63,94,0.3); }
-        .worldcup-banner h3 { margin: 0 0 8px 0; font-size: 18px; color: white; }
-        .worldcup-banner p { margin: 0 0 14px 0; font-size: 13px; color: #ffe4e6; }
-        .wc-start-btn { background: white; color: #e11d48; border: none; padding: 10px 24px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
-        .wc-start-btn:hover { background: #f1f5f9; }
-
-        /* ⚽ 월드컵 플레이 모달/영역 스타일 */
-        .worldcup-arena { background: #1e293b; border: 2px solid #f43f5e; border-radius: 15px; padding: 20px; margin-bottom: 25px; display: none; }
-        .wc-round-title { font-size: 16px; color: #fb7185; font-weight: bold; margin-bottom: 15px; }
-        .wc-match-container { display: flex; justify-content: space-around; gap: 15px; }
-        .wc-card { background: #0f172a; border: 2px solid #334155; border-radius: 12px; padding: 10px; width: 45%; cursor: pointer; transition: 0.2s; }
-        .wc-card:hover { border-color: #f43f5e; transform: translateY(-3px); }
-        .wc-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; }
-        .wc-card p { margin: 8px 0 0 0; font-size: 13px; font-weight: bold; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        /* 🗂️ 카테고리 필터 버튼 */
-        .filter-group { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .filter-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid #475569; background: #1e293b; color: #94a3b8; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s; }
-        .filter-btn.active, .filter-btn:hover { background: #6366f1; color: white; border-color: #6366f1; }
-
-        /* 🖼️ 앨범 목록 그리드 */
-        .album-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
-        .album-item { 
-            background: #1e293b; border-radius: 12px; padding: 8px; cursor: pointer; 
-            border: 2px solid transparent; transition: transform 0.2s, border-color 0.2s; 
-            display: flex; flex-direction: column; align-items: center; overflow: hidden; 
+        :root {
+            --primary: #ff769b;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
         }
-        .album-item:hover { transform: translateY(-5px); border-color: #6366f1; }
-        .album-item img { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; display: block; }
-        .album-item p { margin: 6px 0 0 0; font-size: 12px; font-weight: bold; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
-
-        .search-box { margin-bottom: 15px; display: flex; justify-content: center; gap: 8px; }
-        input { padding: 12px 18px; width: 60%; border-radius: 20px; border: none; outline: none; font-size: 15px; }
-        button { padding: 12px 18px; border-radius: 20px; border: none; background: #6366f1; color: white; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.2s; }
-        button:hover { background: #4f46e5; }
-        
-        .random-btn { background: #10b981; margin-bottom: 25px; width: 100%; border-radius: 12px; padding: 12px; font-size: 14px; border:none; color:white; font-weight:bold; cursor:pointer; }
-        .random-btn:hover { background: #059669; }
-
-        /* 🎴 3D 포토카드 결과 영역 */
-        .flip-card-container { perspective: 1000px; margin-top: 20px; display: none; }
-        .flip-card { width: 100%; height: 560px; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
-        .flip-card.flipped { transform: rotateY(180deg); }
-        
-        /* 등급별 아우라 테두리 & 그림자 효과 */
-        .flip-card.GOLD { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); }
-        .flip-card.SILVER { box-shadow: 0 0 25px rgba(226, 232, 240, 0.6); }
-        .flip-card.PLATINUM { box-shadow: 0 0 25px rgba(56, 189, 248, 0.7); }
-        .flip-card.SECRET { box-shadow: 0 0 30px rgba(192, 132, 252, 0.8); animation: secretAura 2s infinite alternate; }
-        @keyframes secretAura {
-            0% { box-shadow: 0 0 20px rgba(192, 132, 252, 0.6); }
-            100% { box-shadow: 0 0 35px rgba(236, 72, 153, 0.9); }
-        }
-
-        .card-hint { font-size: 12px; color: #a5b4fc; margin-bottom: 8px; font-weight: bold; }
-        .card-front, .card-back { width: 100%; height: 100%; position: absolute; backface-visibility: hidden; border-radius: 20px; padding: 25px; box-sizing: border-box; text-align: left; }
-
-        .card-front { background: #1e293b; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid #3b82f6; }
-        .card-front .album-img { width: 100%; height: 320px; object-fit: cover; border-radius: 15px; }
-        .card-front h2 { margin: 15px 0 5px 0; text-align: center; }
-        .card-front .category-tag { text-align: center; font-size: 12px; background: #3b82f6; color: white; padding: 3px 10px; border-radius: 10px; width: fit-content; margin: 0 auto; }
-
-        .card-back { background: #0f172a; border: 2px solid #8b5cf6; transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: space-between; }
-        
-        .btn-group { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-        .mv-btn { display: block; width: 100%; text-align: center; background: #ff0000; color: white; text-decoration: none; font-weight: bold; padding: 10px 0; border-radius: 8px; font-size: 14px; }
-        .fanchant-btn { display: block; width: 100%; text-align: center; background: #ec4899; color: white; text-decoration: none; font-weight: bold; padding: 10px 0; border-radius: 8px; font-size: 14px; }
-        .copy-btn { display: block; width: 100%; text-align: center; background: #334155; color: #f1f5f9; border: 1px solid #475569; font-weight: bold; padding: 10px 0; border-radius: 8px; cursor: pointer; font-size: 14px; }
-
-        .rank-list { background: #1e293b; padding: 15px 20px; border-radius: 10px; }
-        .rank-item { display: flex; justify-content: space-between; align-items: flex-start; margin: 10px 0; border-bottom: 1px solid #334155; padding-bottom: 8px; font-size: 14px; }
-        .rank-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .rank-item span { font-weight: bold; min-width: 120px; }
-        .rank-item b { text-align: right; line-height: 1.4; font-weight: normal; }
-        .copyright { font-size: 12px; color: #64748b; margin-top: 30px; line-height: 1.4; }
-
-        /* 📚 우측 상단 포카 도감 버튼 및 모달 스타일 */
-        #pocaBookBtn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            color: white;
-            padding: 10px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-            z-index: 1000;
-            border: 1px solid #c084fc;
-            transition: 0.2s;
-        }
-        #pocaBookBtn:hover { transform: scale(1.05); }
-
-        #bookModal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            width: 320px;
-            max-height: 85vh;
-            background: #1e293b;
-            border: 3px solid #a855f7;
-            border-radius: 20px;
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
             padding: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            z-index: 2000;
-            display: none;
-            opacity: 0;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-            flex-direction: column;
-        }
-        #bookModal.show { display: flex; opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
-        .poca-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 10px; 
-            margin: 15px 0; 
-            overflow-y: auto;
-            max-height: 380px; 
-            padding-right: 5px; 
-        }
-        
-        .poca-grid::-webkit-scrollbar { width: 6px; }
-        .poca-grid::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
-
-        .poca-slot {
-            background: #0f172a;
-            border: 2px dashed #475569;
-            border-radius: 10px;
-            aspect-ratio: 3/4;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 5px;
-            font-size: 11px;
-            color: #64748b;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
         }
-        .poca-slot.found {
-            border: 2px solid #38bdf8;
-            background: #1e293b;
-            color: #f1f5f9;
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
-            cursor: pointer;
-        }
-        .poca-slot img { width: 100%; height: 75%; object-fit: cover; border-radius: 6px; margin-bottom: 4px; }
-
-        /* 🎁 시간별 시크릿 포카 팝업 모달 */
-        #secretPocaModal {
-            position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.7);
-            width: 280px; background: #1e293b; border: 3px solid #f472b6;
-            border-radius: 20px; padding: 15px; box-shadow: 0 15px 35px rgba(244, 114, 182, 0.4);
-            z-index: 2500; opacity: 0; pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        #secretPocaModal.show { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
-        .secret-poca-img { width: 100%; height: 320px; object-fit: cover; border-radius: 12px; }
+        .container { max-width: 800px; width: 100%; text-align: center; }
+        .banner { background: linear-gradient(135deg, #ff769b, #ff4370); color: white; padding: 12px; border-radius: 12px; margin-bottom: 20px; font-weight: bold; }
+        
+        .btn-group { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+        button { background: var(--card-bg); color: white; border: 1px solid #334155; padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: bold; }
+        button:hover, button.active { background: var(--primary); border-color: var(--primary); }
+        .quiz-btn { background: #8b5cf6 !important; border-color: #8b5cf6 !important; }
+        
+        .search-box { margin-bottom: 20px; display: flex; gap: 8px; justify-content: center; }
+        input { padding: 10px; border-radius: 8px; border: 1px solid #334155; background: var(--card-bg); color: white; width: 60%; }
+        
+        /* 3D 포카 카운터 */
+        .card-container { perspective: 1000px; margin: 20px auto; width: 280px; height: 420px; display: none; }
+        .flip-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer; }
+        .flip-card.flipped { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: space-between; border: 2px solid #ffd700; background: #1e293b; }
+        .card-back { transform: rotateY(180deg); background: #0f172a; border-color: var(--primary); justify-content: center; gap: 10px; }
+        .card-front img { width: 100%; height: 260px; object-fit: cover; border-radius: 12px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; width: 100%; margin-top: 20px; }
+        .album-item { background: var(--card-bg); padding: 8px; border-radius: 8px; cursor: pointer; text-align: center; }
+        .album-item img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; }
+        .album-item p { margin: 8px 0 0; font-size: 14px; font-weight: bold; }
+        
+        .bday-grid { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .bday-card { background: var(--card-bg); padding: 8px 12px; border-radius: 8px; font-size: 12px; }
+        .bday-card.nearest { border: 1px solid var(--primary); color: var(--primary); font-weight: bold; }
+        
+        /* 모달 스타일 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: var(--card-bg); padding: 24px; border-radius: 16px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; text-align: center; }
+        .poca-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 15px; }
+        .poca-slot { background: #0f172a; padding: 8px; border-radius: 8px; font-size: 11px; }
+        .poca-slot.found { border: 1px solid var(--primary); cursor: pointer; }
+        .poca-slot img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; }
+        
+        /* 월드컵 아레나 */
+        .worldcup-container { display: none; margin: 20px 0; background: var(--card-bg); padding: 20px; border-radius: 16px; }
+        .wc-vs { display: flex; gap: 20px; justify-content: center; align-items: center; margin-top: 15px; }
+        .wc-card { cursor: pointer; transition: transform 0.2s; }
+        .wc-card:hover { transform: scale(1.05); }
+        .wc-card img { width: 140px; height: 180px; object-fit: cover; border-radius: 12px; }
     </style>
 </head>
 <body>
 
-    <!-- 📚 우측 상단 도감 버튼 -->
-    <div id="pocaBookBtn" onclick="toggleBookModal()">📚 포카 도감 (0/14)</div>
-
     <div class="container">
-        <h1>🎵 fromis_9 곡 기록 검색</h1>
+        <h1>🍀 fromis_9 ARCHIVE</h1>
+        <div id="debutDday" style="font-weight: bold; margin-bottom: 10px; color: var(--primary);">D+0</div>
         
-        <!-- 🍀 데뷔 D+Day -->
-        <div class="debut-board">
-            🍀 데뷔 <strong id="debutDday">D+0000</strong>
-        </div>
-
-        <!-- 🎂 5명 멤버 생일 한눈에 보기 카드 -->
         <div class="bday-grid" id="bdayGrid"></div>
+        <div id="todayBanner" class="banner" style="display:none;"></div>
 
-        <!-- 📅 N년 전 오늘 발매 배너 -->
-        <div id="todayBanner" class="today-banner"></div>
-
-        <!-- 🏆 커리어 하이 모듈 -->
-        <div class="career-high">
-            <h3>👑 fromis_9 CAREER HIGH</h3>
-            <div class="career-stats">
-                <div class="stat-item">
-                    <span>최다 관왕</span>
-                    <strong>Stay This Way (5관왕)</strong>
-                </div>
-                <div class="stat-item">
-                    <span>멜론 최고 순위</span>
-                    <strong>Supersonic (5위)</strong>
-                </div>
-                <div class="stat-item">
-                    <span>총 트로피</span>
-                    <strong>13개 🏆</strong>
-                </div>
-            </div>
+        <!-- 메인 메뉴 버튼들 -->
+        <div class="btn-group">
+            <button class="filter-btn active" onclick="filterCategory('ALL', this)">전체</button>
+            <button class="filter-btn" onclick="filterCategory('TITLE', this)">타이틀곡</button>
+            <button class="filter-btn" onclick="filterCategory('SPECIAL', this)">특전/스페셜</button>
+            <button id="pocaBookBtn" onclick="toggleBookModal()">📚 포카 도감 (0/0)</button>
+            <button onclick="startWorldCup()">⚽ 이상형 월드컵</button>
         </div>
 
-        <!-- ⚽ 타이틀곡 이상형 월드컵 배너 -->
-        <div class="worldcup-banner">
-            <div class="rank-list" style="margin-bottom: 25px;">
-                <h3 style="margin-top:0; text-align:center; font-size:16px;">👑 실시간 타이틀곡 우승 랭킹</h3>
-                <div id="liveRankingBoard">
-                    <p style="font-size:13px; color:#94a3b8;">랭킹 데이터를 불러오는 중...</p>
-                </div>
-            </div>
-            <h3>🏆 fromis_9 타이틀곡 이상형 월드컵</h3>
-            <p>내 최애 타이틀곡을 찾아보세요!</p>
-            <button class="wc-start-btn" onclick="startWorldCup()">월드컵 시작하기</button>
+        <!-- 🎮 신규 추가: 퀴즈 메뉴 버튼 -->
+        <div class="btn-group">
+            <button class="quiz-btn" onclick="startFandomExam()">🧠 덕력고사 풀어보기</button>
+            <button class="quiz-btn" onclick="startLyricQuiz()">🎵 가사 퀴즈 (특전 지급)</button>
         </div>
 
-        <!-- ⚽ 월드컵 진행 아레나 -->
-        <div id="worldcupArena" class="worldcup-arena">
-            <div id="wcRoundTitle" class="wc-round-title">16강 (1/8)</div>
-            <div class="wc-match-container">
-                <div class="wc-card" onclick="selectWCChoice(0)">
-                    <img id="wcImg1" src="" alt="곡1">
-                    <p id="wcTitle1">곡 제목 1</p>
-                </div>
-                <div class="wc-card" onclick="selectWCChoice(1)">
-                    <img id="wcImg2" src="" alt="곡2">
-                    <p id="wcTitle2">곡 제목 2</p>
-                </div>
-            </div>
-            <button onclick="closeWorldCup()" style="margin-top:15px; background:#475569; padding:6px 14px; font-size:12px;">그만하기</button>
-        </div>
-
-        <!-- 🗂️ 카테고리 필터링 버튼 -->
-        <div class="filter-group">
-            <button class="filter-btn active" onclick="filterCategory('ALL', this)">전체 곡 목록</button>
-            <button class="filter-btn" onclick="filterCategory('TITLE', this)">타이틀곡만</button>
-            <button class="filter-btn" onclick="filterCategory('SPECIAL', this)">스페셜/프로젝트</button>
-        </div>
-
-        <!-- 🖼️ 앨범 목록 그리드 -->
-        <div id="albumGrid" class="album-grid"></div>
-
-        <!-- 🔍 검색 창 -->
+        <!-- 검색 영역 -->
         <div class="search-box">
-            <input type="text" id="songInput" placeholder="곡 제목 또는 초성 (예: dm, ㅅㅍㅅㄴ, 랔큐베)">
+            <input type="text" id="songInput" placeholder="곡 제목 또는 초성 검색 (예: 랔큐베, STAY THIS WAY)">
             <button id="searchBtn">검색</button>
+            <button id="randomBtn">🎲 랜덤 뽑기</button>
         </div>
 
-        <!-- 🎲 랜덤 추천 버튼 -->
-        <button id="randomBtn" class="random-btn">🎲 오늘 무슨 곡 들을까? (랜덤 뽑기)</button>
-
-        <!-- 🎴 3D 포토카드 결과 영역 -->
-        <div id="flipCardContainer" class="flip-card-container">
-            <div class="card-hint">🔄 카드를 터치/클릭하면 뒤집어집니다!</div>
-            <div id="flipCard" class="flip-card">
-                
-                <!-- 카드 앞면 -->
+        <!-- 3D 포토카드 연출 영역 -->
+        <div class="card-container" id="flipCardContainer">
+            <div class="flip-card" id="flipCard">
                 <div class="card-front">
-                    <span id="cardCategory" class="category-tag">TITLE</span>
-                    <img id="albumImg" class="album-img" src="" alt="앨범 아트">
-                    <div>
-                        <h2 id="songTitle">곡 제목</h2>
-                        <div class="artist" style="color:#94a3b8; text-align:center;">fromis_9 (프로미스나인)</div>
-                    </div>
+                    <span id="cardCategory" style="font-size: 12px; color: #94a3b8;">CATEGORY</span>
+                    <img id="albumImg" src="" alt="포토카드">
+                    <h3 id="songTitle" style="margin: 5px 0;">곡 제목</h3>
+                    <small style="color:#aaa;">👆 클릭해서 정보 뒤집기</small>
                 </div>
-
-                <!-- 카드 뒷면 -->
                 <div class="card-back">
-                    <div class="rank-list">
-                        <h3 style="margin-top:0; text-align:center; font-size:16px;">🏆 상세 성적 기록</h3>
-                        <div class="rank-item"><span>📅 발매일</span><b id="releaseDate">-</b></div>
-                        <div class="rank-item"><span>🍈 멜론 최고 순위</span><b id="melonRank">-</b></div>
-                        <div class="rank-item"><span>🧞 지니 최고 순위</span><b id="genieRank">-</b></div>
-                        <div class="rank-item"><span>📺 음악방송 수상 내역</span><b id="trophyCount">-</b></div>
-                    </div>
-
-                    <div class="btn-group">
-                        <a id="mvLink" class="mv-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎬 뮤직비디오 보기</a>
-                        <a id="fanchantLink" class="fanchant-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🎤 응원법 & 가사 보기</a>
-                        <button id="copyBtn" class="copy-btn" onclick="event.stopPropagation()">📋 기록 복사하기</button>
+                    <h3>📊 곡 정보 & 기록</h3>
+                    <p>📅 발매일: <span id="releaseDate">-</span></p>
+                    <p>🍈 멜론: <span id="melonRank">-</span></p>
+                    <p>🧞 지니: <span id="genieRank">-</span></p>
+                    <p id="trophyCount">🏆 -</p>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <a id="mvLink" href="#" target="_blank"><button>🎬 MV</button></a>
+                        <a id="fanchantLink" href="#" target="_blank"><button>📣 응원법</button></a>
+                        <button id="copyBtn">📋 기록 복사</button>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <p class="copyright">본 사이트는 비상업적 팬 아카이브 사이트입니다.</p>
+        <!-- 이상형 월드컵 영역 -->
+        <div class="worldcup-container" id="worldcupArena">
+            <h2 id="wcRoundTitle">타이틀곡 이상형 월드컵</h2>
+            <div class="wc-vs">
+                <div class="wc-card" onclick="selectWCChoice(0)">
+                    <img id="wcImg1" src="">
+                    <p id="wcTitle1"></p>
+                </div>
+                <h3 style="color: var(--primary);">VS</h3>
+                <div class="wc-card" onclick="selectWCChoice(1)">
+                    <img id="wcImg2" src="">
+                    <p id="wcTitle2"></p>
+                </div>
+            </div>
+            <button onclick="closeWorldCup()" style="margin-top: 15px;">닫기</button>
+        </div>
+
+        <!-- 실시간 랭킹 보드 -->
+        <div style="margin-top: 20px; background: var(--card-bg); padding: 15px; border-radius: 12px;">
+            <h3>🏆 월드컵 우승 랭킹</h3>
+            <div id="liveRankingBoard"></div>
+        </div>
+
+        <!-- 앨범 그리드 목록 -->
+        <div class="grid" id="albumGrid"></div>
     </div>
 
-    <!-- 📚 도감 모달 창 -->
-    <div id="bookModal">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-            <h3 style="margin:0; font-size:16px; color:#c084fc;">📖 프로미스나인 포카 도감</h3>
-            <button onclick="toggleBookModal()" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer; padding:0;">✖</button>
+    <!-- 포카 도감 모달 -->
+    <div class="modal" id="bookModal">
+        <div class="modal-content">
+            <h2>📚 포토카드 수집 도감</h2>
+            <p id="bookStatusText">수집 현황: 0 / 0개 완료</p>
+            <div class="poca-grid" id="bookGrid"></div>
+            <br>
+            <button onclick="toggleBookModal()">닫기</button>
         </div>
-        <p id="bookStatusText" style="font-size:12px; color:#94a3b8; margin:0 0 5px 0; text-align:left;">수집 현황: 0 / 14개 완료</p>
-        <div class="poca-grid" id="bookGrid"></div>
-        <button onclick="toggleBookModal()" style="width:100%; margin-top:5px; background:#475569; padding:8px; font-size:13px; border-radius:10px; border:none; color:white; cursor:pointer;">닫기</button>
     </div>
 
-    <!-- 🎁 시간별 시크릿 포카 팝업 모달 -->
-    <div id="secretPocaModal">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span id="secretPocaTitle" style="font-size:13px; font-weight:bold; color:#f472b6;">✨ 시크릿 포카 등장!</span>
-            <button onclick="closeSecretModal()" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer;">✖</button>
+    <!-- 시크릿/특전 지급 안내 모달 -->
+    <div class="modal" id="secretPocaModal">
+        <div class="modal-content">
+            <h2 id="secretPocaTitle">✨ 특전 포카 획득!</h2>
+            <img id="secretPocaImg" src="" style="width: 150px; height: 210px; object-fit: cover; border-radius: 12px; margin: 10px 0;">
+            <p>축하합니다! 새로운 포토카드가 도감에 추가되었습니다.</p>
+            <button onclick="closeSecretModal()">확인</button>
         </div>
-        <img id="secretPocaImg" class="secret-poca-img" src="" alt="시크릿 포카">
-        <p style="font-size:11px; color:#cbd5e1; margin:8px 0 0 0;">💡 도감에 자동 저장되었습니다!</p>
     </div>
 
     <script>
+        // 기본 곡 데이터베이스
         const musicData = {
-            "GLASS_SHOES": {
-                title: "유리구두", category: "PRE-DEBUT", type: "SPECIAL", monthDay: "11-30", grade: "SILVER",
-                img: "https://img.youtube.com/vi/n2TtQYuFfWw/maxresdefault.jpg",
-                mv: "https://youtu.be/n2TtQYuFfWw?si=SB9hNdRstFd3k3Bo", fanchant: "", release: "2017년 11월 30일",
-                melon: "-", genie: "-", trophy: "-", alias: ["유리구두", "ㅇㄹㄱㄷ"]
+            "STAYTHISWAY": {
+                title: "Stay This Way", category: "TITLE", type: "TITLE", grade: "GOLD",
+                release: "2022년 6월 27일", monthDay: "06-27",
+                img: "https://via.placeholder.com/300x420/ff769b/ffffff?text=Stay+This+Way",
+                mv: "https://www.youtube.com", fanchant: "https://www.youtube.com",
+                melon: "일간 42위 / TOP 100 15위", genie: "일간 20위 / 실시간 8위",
+                trophy: "🏆 음악방송 5관왕 ✨", alias: ["스테이디스웨이", "스디웨", "ㅅㅌㅇㄷㅅㅇ"]
             },
-            "TO_HEART": {
-                title: "To Heart", category: "TITLE", type: "TITLE", monthDay: "01-24", grade: "SILVER",
-                img: "https://img.youtube.com/vi/iFUHS1Ei7qw/maxresdefault.jpg",
-                mv: "https://youtu.be/iFUHS1Ei7qw?si=2ABIGMJRlmXYIBCh", fanchant: "", release: "2018년 1월 24일",
-                melon: "-", genie: "-", trophy: "-", alias: ["투하트", "ㅌㅎㅌ"]
+            "DM": {
+                title: "DM", category: "TITLE", type: "TITLE", grade: "GOLD",
+                release: "2022년 1월 17일", monthDay: "01-17",
+                img: "https://via.placeholder.com/300x420/8b5cf6/ffffff?text=DM",
+                mv: "https://www.youtube.com", fanchant: "https://www.youtube.com",
+                melon: "일간 55위 / TOP 100 21위", genie: "일간 30위",
+                trophy: "🏆 음악방송 2관왕 ✨", alias: ["디엠", "ㄷㅇ"]
             },
-            "DKDK": {
-                title: "두근두근 (DKDK)", category: "TITLE", type: "TITLE", monthDay: "06-05", grade: "SILVER",
-                img: "https://img.youtube.com/vi/B3KuJqe3Epg/maxresdefault.jpg",
-                mv: "https://youtu.be/B3KuJqe3Epg?si=gwFihsRlUxVh_MiR", fanchant: "", release: "2018년 6월 5일",
-                melon: "-", genie: "-", trophy: "-", alias: ["두근두근", "ㄷㄱㄷㄱ"]
-            },
-            "LOVEBOMB": { 
-                title: "LOVE BOMB", category: "TITLE", type: "TITLE", monthDay: "10-10", grade: "GOLD",
-                img: "https://img.youtube.com/vi/-SK6cvkK4c0/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=-SK6cvkK4c0",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+LOVE+BOMB+응원법",
-                release: "2018년 10월 10일", melon: "일간 164위 / TOP 100 -위", genie: "일간 174위 / 실시간 83위", 
-                trophy: "음방 1위 후보 👏", alias: ["러브밤", "ㄹㅂㅂ"]
-            },
-            "FUN": { 
-                title: "FUN!", category: "TITLE", type: "TITLE", monthDay: "06-04", grade: "SILVER",
-                img: "https://img.youtube.com/vi/zsRyyLtcXho/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=zsRyyLtcXho",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+FUN+응원법",
-                release: "2019년 6월 4일", melon: "일간 167위 / TOP 100 -", genie: "일간 109위 / 실시간 30위", 
-                trophy: "음방 활동 곡 👏", alias: ["펀", "ㅍ"]
-            },
-            "FEEL_GOOD": {
-                title: "Feel Good (SECRET CODE)", category: "TITLE", type: "TITLE", monthDay: "09-16", grade: "SILVER",
-                img: "https://img.youtube.com/vi/jLmJhjCzOTw/maxresdefault.jpg",
-                mv: "https://youtu.be/jLmJhjCzOTw?si=vL80aiUNGTpdlG9e", fanchant: "", release: "2020년 9월 16일",
-                melon: "-", genie: "-", trophy: "-", alias: ["필굿", "ㅍㄱ"]
-            },
-            "WEGO": { 
-                title: "WE GO", category: "TITLE", type: "TITLE", monthDay: "05-17", grade: "PLATINUM",
-                img: "https://img.youtube.com/vi/HM6UpQZvbhY/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=HM6UpQZvbhY",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+WE+GO+응원법",
-                release: "2021년 5월 17일", melon: "일간 108위 / TOP 100 -위", genie: "일간 14위 / 실시간 4위", 
-                trophy: "음방 1위 후보 (커리어하이 달성)", alias: ["위고", "ㅇㄱ"]
-            },
-            "TALK&TALK": { 
-                title: "Talk & Talk", category: "SPECIAL", type: "SPECIAL", monthDay: "09-01", grade: "GOLD",
-                img: "https://img.youtube.com/vi/BjmmvBMXbSU/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=BjmmvBMXbSU",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Talk+and+Talk+응원법",
-                release: "2021년 9월 1일", melon: "일간 204위 / TOP 100 -", genie: "일간 212위 / 실시간 80위", 
-                trophy: "총 1관왕 🏆<br>• 21.09.07 더쇼 1위", alias: ["톡앤톡", "ㅌㅇㅌ"]
-            },
-            "DM": { 
-                title: "DM", category: "TITLE", type: "TITLE", monthDay: "01-17", grade: "PLATINUM",
-                img: "https://img.youtube.com/vi/4gXmClk8rKI/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=4gXmClk8rKI",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+DM+응원법",
-                release: "2022년 1월 17일", melon: "일간 66위 / TOP 100 52위", genie: "일간 137위 / 실시간 45위", 
-                trophy: "총 2관왕 🏆🏆<br>• 22.01.25 더쇼 1위<br>• 22.01.26 쇼챔피언 1위", alias: ["디엠", "ㄷㅁ"]
-            },
-            "STAYTHISWAY": { 
-                title: "Stay This Way", category: "TITLE", type: "TITLE", monthDay: "06-27", grade: "SECRET",
-                img: "https://img.youtube.com/vi/JC6budcACNE/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=JC6budcACNE",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Stay+This+Way+응원법",
-                release: "2022년 6월 27일", melon: "일간 100위 / TOP 100 86위", genie: "일간 142위 / 실시간 33위", 
-                trophy: "총 5관왕 🏆🏆🏆🏆🏆<br>• 22.07.05 더쇼 1위<br>• 22.07.06 쇼챔피언 1위<br>• 22.07.07 엠카운트다운 1위<br>• 22.07.08 뮤직뱅크 1위<br>• 22.07.09 음악중심 1위", alias: ["스디웨", "ㅅㄷㅇ"]
-            },
-            "WHITE_MEMORIES": {
-                title: "하얀 그리움", category: "SPECIAL", type: "SPECIAL", monthDay: "12-30", grade: "PLATINUM",
-                img: "https://img.youtube.com/vi/5ZB9JLfIw_Q/maxresdefault.jpg",
-                mv: "https://youtu.be/5ZB9JLfIw_Q?si=p_waAdPh5IX-uPhB", fanchant: "", release: "2022년 12월 30일",
-                melon: "일간 9위 / TOP 100 5위", genie: "일간 12위 / 실시간 8위", 
-                trophy: "총 2관왕 🏆🏆<br>• 22.12.30 뮤직뱅크 1위<br>• 22.12.31 음악중심 1위", alias: ["하얀그리움", "ㅎㅇㄱㄹㅇ"]
-            },
-            "MENOW": { 
-                title: "#menow", category: "TITLE", type: "TITLE", monthDay: "06-05", grade: "GOLD",
-                img: "https://img.youtube.com/vi/QrYIOjs7K8E/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=QrYIOjs7K8E",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+menow+응원법",
-                release: "2023년 6월 5일", melon: "일간 204위 / TOP 100 -위", genie: "일간 249위 / 실시간 79위", 
-                trophy: "총 1관왕 🏆<br>• 23.06.13 더쇼 1위", alias: ["미나우", "ㅁㄴㅇ"]
-            },
-            "SUPERSONIC": { 
-                title: "Supersonic", category: "TITLE", type: "TITLE", monthDay: "08-12", grade: "SECRET",
-                img: "https://img.youtube.com/vi/0LiQp7y8Wwc/maxresdefault.jpg",
-                mv: "https://www.youtube.com/watch?v=0LiQp7y8Wwc",
-                fanchant: "https://m.search.naver.com/search.naver?query=프로미스나인+Supersonic+응원법",
-                release: "2024년 8월 12일", melon: "일간 7위 / TOP 100 5위", genie: "일간 28위 / 실시간 20위", 
-                trophy: "총 4관왕 🏆🏆🏆🏆<br>• 24.08.20 더쇼 1위<br>• 24.08.22 엠카운트다운 1위<br>• 24.08.23 뮤직뱅크 1위<br>• 24.08.24 음악중심 1위", alias: ["슈퍼소닉", "ㅅㅍㅅㄴ"]
-            },
-            "LIKE_YOU_BETTER": {
-                title: "Like You Better", category: "TITLE", type: "TITLE", monthDay: "08-12", grade: "GOLD",
-                img: "https://img.youtube.com/vi/r1QapH1SIAI/maxresdefault.jpg",
-                mv: "https://youtu.be/r1QapH1SIAI?si=SZ6BDg-xfrVDlVgP", fanchant: "", release: "2024년 8월 12일",
-                melon: "일간 27위 / TOP 100 18위", genie: "일간 64위 / 실시간 30위", 
-                trophy: "총 1관왕 🏆<br>• 24.08.25 더쇼 1위", alias: ["라이큐베럴", "랔큐베", "ㄹㅇㅋㅂㅌ", "라이크유베터"]
+            "LIKEYOUBETTER": {
+                title: "Like You Better", category: "SPECIAL", type: "SPECIAL", grade: "SILVER",
+                release: "2023년 6월 5일", monthDay: "06-05",
+                img: "https://via.placeholder.com/300x420/3b82f6/ffffff?text=Like+You+Better",
+                mv: "https://www.youtube.com", fanchant: "",
+                melon: "일간 27위 / TOP 100 18위", genie: "일간 45위 / 실시간 30위",
+                trophy: "음방 활동 수록곡 ✨", alias: ["라이크유배터", "랔큐베", "ㄹㅇㅋㅇㅂㅌ"]
             }
         };
 
-        const allPocaKeys = Object.keys(musicData);
-        let collectedPocas = [];
+        // 퀴즈 통과 시 해금되는 특전 포카
+        const specialPocas = {
+            "QUIZ_SPECIAL_1": {
+                title: "✨ [특전] 덕력고사 만점 포카", category: "SPECIAL", type: "SPECIAL", grade: "GOLD",
+                release: "2026-특전", monthDay: "", img: "https://via.placeholder.com/300x420/FFD700/000000?text=EXAM+MASTER",
+                mv: "", fanchant: "", melon: "-", genie: "-", trophy: "🏆 덕력 인증 완료", alias: ["덕력특전"]
+            },
+            "QUIZ_SPECIAL_2": {
+                title: "🎵 [특전] 가사 퀴즈 마스터 포카", category: "SPECIAL", type: "SPECIAL", grade: "GOLD",
+                release: "2026-특전", monthDay: "", img: "https://via.placeholder.com/300x420/FFD700/000000?text=LYRIC+MASTER",
+                mv: "", fanchant: "", melon: "-", genie: "-", trophy: "🏆 가사 마스터 인증", alias: ["가사특전"]
+            }
+        };
 
-        const memberBirthdays = [
-            { name: "송하영", date: "09-29" },
-            { name: "박지원", date: "03-20" },
-            { name: "이채영", date: "05-14" },
-            { name: "이나경", date: "06-01" },
-            { name: "백지헌", date: "04-17" }
+        // 덕력고사 문제
+        const fandomExamQuestions = [
+            { question: "프로미스나인(fromis_9)의 공식 데뷔일은 언제일까요?", options: ["2017년 11월 24일", "2018년 1월 24일", "2018년 6월 5일", "2019년 1월 24일"], answer: 1 },
+            { question: "프로미스나인의 공식 팬덤명은 무엇일까요?", options: ["플로버 (flover)", "클로버 (clover)", "프로미 (fromie)", "포에버 (forever)"], answer: 0 }
         ];
 
-        function calculateDday() {
-            const debutDate = new Date("2018-01-24");
+        // 가사 퀴즈 문제
+        const lyricQuizQuestions = [
+            { question: "'DM' 가사 중 괄호 안에 들어갈 말은?\n\"잠깐만 나 (    ) 말할래, 좋아하는 마음 안 숨길래\"", options: ["스르륵", "아찔하게", "더는 망설이지 않고", "이대로는 안 되겠어"], answer: 1 },
+            { question: "'Stay This Way' 가사 중 빈칸은?\n\"바람에 날리는 (    ) 속에서, 나와 함께 뛰어들래\"", options: ["파도", "모래", "햇살", "기억"], answer: 0 }
+        ];
+
+        const members = [
+            { name: "이새롬", month: 1, day: 7 },
+            { name: "송하영", month: 9, day: 29 },
+            { name: "박지원", month: 3, day: 20 },
+            { name: "노지선", month: 11, day: 23 },
+            { name: "백지헌", month: 4, day: 17 }
+        ];
+
+        let collection = JSON.parse(localStorage.getItem('fromis9_poca_collection')) || {};
+        let currentFilter = 'ALL';
+        let worldCupQueue = [];
+        let worldCupNextRound = [];
+        let worldCupCurrentMatch = [null, null];
+
+        window.onload = function() {
+            initDebutDday();
+            initBirthdayGrid();
+            checkTodayRelase();
+            renderAlbumGrid('ALL');
+            updateBookUI();
+            checkSecretPocaByTime();
+            loadLiveRanking();
+
+            document.getElementById('songInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') searchSong(); });
+            document.getElementById('searchBtn').addEventListener('click', searchSong);
+            document.getElementById('randomBtn').addEventListener('click', pickRandomSong);
+            document.getElementById('flipCard').addEventListener('click', function() { this.classList.toggle('flipped'); });
+        };
+
+        function initDebutDday() {
+            const debutDate = new Date("2018-01-24T00:00:00+09:00");
+            const diffDays = Math.floor((new Date() - debutDate) / (1000 * 60 * 60 * 24)) + 1;
+            document.getElementById('debutDday').innerText = `D+${diffDays}`;
+        }
+
+        function initBirthdayGrid() {
             const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            const currentYear = today.getFullYear();
 
-            const diffTime = Math.abs(today - debutDate);
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            document.getElementById("debutDday").innerText = `D+${diffDays}`;
-
-            let calculated = memberBirthdays.map(m => {
-                const [month, day] = m.date.split("-").map(Number);
-                let nextBday = new Date(today.getFullYear(), month - 1, day);
-                if (today > nextBday) nextBday.setFullYear(today.getFullYear() + 1);
-                const dday = Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
+            const bdayCalculated = members.map(m => {
+                let nextBday = new Date(currentYear, m.month - 1, m.day);
+                if (today > nextBday && (today.getMonth() !== nextBday.getMonth() || today.getDate() !== nextBday.getDate())) {
+                    nextBday = new Date(currentYear + 1, m.month - 1, m.day);
+                }
+                const dday = Math.ceil((nextBday - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / (1000 * 60 * 60 * 24));
                 return { ...m, dday: dday };
             });
 
-            const minDday = Math.min(...calculated.map(c => c.dday));
-            const grid = document.getElementById("bdayGrid");
-            grid.innerHTML = "";
+            const minDday = Math.min(...bdayCalculated.map(m => m.dday));
+            const gridEl = document.getElementById('bdayGrid');
+            gridEl.innerHTML = '';
 
-            calculated.forEach(m => {
-                const cardElem = document.createElement("div");
-                const isNearest = m.dday === minDday;
-                cardElem.className = `bday-card ${isNearest ? 'nearest' : ''}`;
-                const ddayStr = m.dday === 0 ? "🎉 오늘!" : `D-${m.dday}`;
-                cardElem.innerHTML = `<span class="name">${m.name}</span><span class="dday">${ddayStr}</span>`;
-                grid.appendChild(cardElem);
+            bdayCalculated.forEach(m => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = `bday-card ${m.dday === minDday ? 'nearest' : ''}`;
+                cardDiv.innerHTML = `<span class="name">${m.name}</span> <span class="dday">${m.dday === 0 ? "🎂 TODAY" : `D-${m.dday}`}</span>`;
+                gridEl.appendChild(cardDiv);
             });
         }
-        calculateDday();
 
-        let currentFilter = "ALL";
-
-        /* 📅 N년 전 오늘 발매 곡 확인 */
-        function checkTodayRelease() {
+        function checkTodayRelase() {
             const today = new Date();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            const todayMD = `${month}-${day}`;
+            const todayMD = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            let matchedSong = Object.values(musicData).find(s => s.monthDay === todayMD);
 
-            for (let key in musicData) {
-                if (musicData[key].monthDay === todayMD) {
-                    const releaseYear = parseInt(musicData[key].release.substring(0, 4));
-                    const yearsAgo = today.getFullYear() - releaseYear;
-                    const banner = document.getElementById("todayBanner");
-                    banner.innerText = `📅 ${yearsAgo > 0 ? yearsAgo + '년 전 오늘' : '오늘'}, [${musicData[key].title}] 발매! 🎉`;
-                    banner.style.display = "block";
-                    break;
-                }
-            }
+            const banner = document.getElementById('todayBanner');
+            if (matchedSong) {
+                const yearsAgo = today.getFullYear() - parseInt(matchedSong.release.split('년')[0]);
+                banner.innerText = `📅 ${yearsAgo > 0 ? yearsAgo + '년 전 ' : ''}오늘 은 '${matchedSong.title}' 발매일입니다! 🎉`;
+                banner.style.display = 'block';
+            } else { banner.style.display = 'none'; }
         }
-        checkTodayRelease();
 
-        /* 🖼️ 앨범 그리드 렌더링 */
-        function renderAlbumGrid(filter = "ALL") {
-            const grid = document.getElementById("albumGrid");
-            grid.innerHTML = "";
-            currentFilter = filter;
+        function filterCategory(cat, btn) {
+            currentFilter = cat;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderAlbumGrid(cat);
+        }
 
+        function renderAlbumGrid(cat) {
+            const grid = document.getElementById('albumGrid');
+            grid.innerHTML = '';
             for (let key in musicData) {
                 const song = musicData[key];
-                if (filter === "ALL" || song.type === filter) {
-                    const item = document.createElement("div");
-                    item.className = "album-item";
-                    item.onclick = () => selectSong(key);
-                    item.innerHTML = `
-                        <img src="${song.img}" alt="${song.title}">
-                        <p>${song.title}</p>
-                    `;
+                if (cat === 'ALL' || (cat === 'TITLE' && song.type === 'TITLE') || (cat === 'SPECIAL' && song.type === 'SPECIAL')) {
+                    const item = document.createElement('div');
+                    item.className = 'album-item';
+                    item.onclick = () => selectSongByKey(key);
+                    item.innerHTML = `<img src="${song.img}" alt="${song.title}"><p>${song.title}</p>`;
                     grid.appendChild(item);
                 }
             }
         }
-        renderAlbumGrid();
 
-        function filterCategory(cat, btn) {
-            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-            if (btn) btn.classList.add("active");
-            renderAlbumGrid(cat);
-        }
-
-        /* 🎴 곡 선택 & 3D 포토카드 보기 (도감 1개씩 해금) */
-        function selectSong(key) {
+        function selectSongByKey(key) {
             const song = musicData[key];
             if (!song) return;
 
-            document.getElementById("cardCategory").innerText = song.category;
-            document.getElementById("albumImg").src = song.img;
-            document.getElementById("songTitle").innerText = song.title;
-            document.getElementById("releaseDate").innerText = song.release;
-            document.getElementById("melonRank").innerText = song.melon;
-            document.getElementById("genieRank").innerText = song.genie;
-            document.getElementById("trophyCount").innerHTML = song.trophy;
-            
-            document.getElementById("mvLink").href = song.mv;
-            const fanchantBtn = document.getElementById("fanchantLink");
-            if (!song.fanchant) {
-                fanchantBtn.style.display = "none";
-            } else {
-                fanchantBtn.style.display = "block";
-                fanchantBtn.href = song.fanchant;
-            }
+            collection[key] = true;
+            localStorage.setItem('fromis9_poca_collection', JSON.stringify(collection));
+            updateBookUI();
 
-            const flipCard = document.getElementById("flipCard");
-            flipCard.className = `flip-card ${song.grade || ''}`;
-            flipCard.classList.remove("flipped");
+            const cardContainer = document.getElementById('flipCardContainer');
+            const card = document.getElementById('flipCard');
+            card.classList.remove('flipped');
+            card.className = `flip-card ${song.grade || 'SILVER'}`;
 
-            const container = document.getElementById("flipCardContainer");
-            container.style.display = "block";
-            container.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('cardCategory').innerText = song.category;
+            document.getElementById('albumImg').src = song.img;
+            document.getElementById('songTitle').innerText = song.title;
+            document.getElementById('releaseDate').innerText = song.release;
+            document.getElementById('melonRank').innerText = song.melon;
+            document.getElementById('genieRank').innerText = song.genie;
+            document.getElementById('trophyCount').innerHTML = song.trophy;
 
-            // 🌟 도감 자동 등록 및 새 포카 알림 (1개씩 해금)
-            if (!collectedPocas.includes(key)) {
-                collectedPocas.push(key);
-                updateBookModal();
-                setTimeout(() => {
-                    alert(`🎉 새로운 포토카드 [ ${song.title} ] 획득!\n도감에 수집되었습니다.`);
-                }, 300);
-            }
+            document.getElementById('mvLink').href = song.mv || '#';
+            const fanchantBtn = document.getElementById('fanchantLink');
+            if (song.fanchant) { fanchantBtn.href = song.fanchant; fanchantBtn.style.display = 'block'; }
+            else { fanchantBtn.style.display = 'none'; }
 
-            document.getElementById("copyBtn").onclick = (e) => {
-                e.stopPropagation();
-                const text = `[fromis_9] ${song.title}\n발매일: ${song.release}\n멜론 최고: ${song.melon}\n지니 최고: ${song.genie}\n트로피: ${song.trophy.replace(/<br>/g, ' ')}`;
-                navigator.clipboard.writeText(text).then(() => {
-                    alert("곡 기록이 클립보드에 복사되었습니다!");
-                });
-            };
+            document.getElementById('copyBtn').onclick = (e) => { e.stopPropagation(); copySongInfo(song); };
+            cardContainer.style.display = 'block';
+            cardContainer.scrollIntoView({ behavior: 'smooth' });
         }
 
-        document.getElementById("flipCard").addEventListener("click", function() {
-            this.classList.toggle("flipped");
-        });
-
-        /* 🔍 한글 초성 추출 함수 */
-        function getChosung(str) {
-            const cho = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
-            let result = "";
-            for (let i = 0; i < str.length; i++) {
-                const code = str.charCodeAt(i) - 44032;
-                if (code >= 0 && code <= 11172) {
-                    result += cho[Math.floor(code / 588)];
-                } else {
-                    result += str[i].toLowerCase();
-                }
-            }
-            return result;
-        }
-
-        /* 🔍 곡 검색 (제목/별칭/초성) */
         function searchSong() {
-            const query = document.getElementById("songInput").value.trim().toLowerCase();
+            const query = document.getElementById('songInput').value.trim().toLowerCase();
             if (!query) return;
+            let foundKey = Object.keys(musicData).find(k => {
+                const s = musicData[k];
+                return s.title.toLowerCase().includes(query) || (s.alias && s.alias.some(a => a.toLowerCase().includes(query)));
+            });
+            if (foundKey) selectSongByKey(foundKey);
+            else alert('검색 결과가 없습니다!');
+        }
 
-            const choQuery = getChosung(query);
+        function pickRandomSong() {
+            const keys = Object.keys(musicData);
+            selectSongByKey(keys[Math.floor(Math.random() * keys.length)]);
+        }
 
+        function copySongInfo(song) {
+            const text = `[fromis_9 곡 기록]\n🎵 곡명: ${song.title}\n📅 발매일: ${song.release}\n🍈 멜론: ${song.melon}\n🧞 지니: ${song.genie}\n🏆 수상: ${song.trophy}`;
+            navigator.clipboard.writeText(text).then(() => alert('클립보드에 복사되었습니다!'));
+        }
+
+        function toggleBookModal() { document.getElementById('bookModal').classList.toggle('show'); }
+
+        function updateBookUI() {
+            const total = Object.keys(musicData).length;
+            const count = Object.keys(collection).length;
+            document.getElementById('pocaBookBtn').innerText = `📚 포카 도감 (${count}/${total})`;
+            document.getElementById('bookStatusText').innerText = `수집 현황: ${count} / ${total}개 완료`;
+
+            const grid = document.getElementById('bookGrid');
+            grid.innerHTML = '';
             for (let key in musicData) {
                 const song = musicData[key];
-                const titleLower = song.title.toLowerCase();
-                const choTitle = getChosung(song.title);
-                const isAliasMatch = song.alias && song.alias.some(a => a.toLowerCase().includes(query));
-
-                if (titleLower.includes(query) || choTitle.includes(choQuery) || isAliasMatch) {
-                    selectSong(key);
-                    return;
-                }
-            }
-            alert("검색 결과가 없습니다. 곡 제목이나 초성을 다시 확인해주세요!");
-        }
-
-        document.getElementById("searchBtn").addEventListener("click", searchSong);
-        document.getElementById("songInput").addEventListener("keypress", (e) => {
-            if (e.key === "Enter") searchSong();
-        });
-
-        /* 🎲 랜덤 뽑기 */
-        document.getElementById("randomBtn").addEventListener("click", () => {
-            const keys = Object.keys(musicData);
-            const randomKey = keys[Math.floor(Math.random() * keys.length)];
-            selectSong(randomKey);
-        });
-
-        /* 📚 도감 모달 제어 */
-        function toggleBookModal() {
-            const modal = document.getElementById("bookModal");
-            modal.classList.toggle("show");
-        }
-
-        function updateBookModal() {
-            const grid = document.getElementById("bookGrid");
-            grid.innerHTML = "";
-            
-            const totalCount = allPocaKeys.length;
-            const collectedCount = collectedPocas.length;
-
-            document.getElementById("pocaBookBtn").innerText = `📚 포카 도감 (${collectedCount}/${totalCount})`;
-            document.getElementById("bookStatusText").innerText = `수집 현황: ${collectedCount} / ${totalCount}개 완료`;
-
-            allPocaKeys.forEach(key => {
-                const song = musicData[key];
-                const slot = document.createElement("div");
-                const isFound = collectedPocas.includes(key);
-
+                const isFound = collection[key];
+                const slot = document.createElement('div');
                 slot.className = `poca-slot ${isFound ? 'found' : ''}`;
                 if (isFound) {
-                    slot.onclick = () => {
-                        toggleBookModal();
-                        selectSong(key);
-                    };
-                    slot.innerHTML = `
-                        <img src="${song.img}" alt="${song.title}">
-                        <span>${song.title}</span>
-                    `;
+                    slot.onclick = () => { toggleBookModal(); selectSongByKey(key); };
+                    slot.innerHTML = `<img src="${song.img}"><span>${song.title}</span>`;
                 } else {
-                    slot.innerHTML = `
-                        <div style="font-size:18px; margin-bottom:4px;">🔒</div>
-                        <span>미수집</span>
-                    `;
+                    slot.innerHTML = `<span>🔒<br>미수집</span>`;
                 }
                 grid.appendChild(slot);
-            });
+            }
         }
-        updateBookModal();
 
-        /* 🏆 타이틀곡 이상형 월드컵 로직 */
-        let wcCandidates = [];
-        let wcCurrentRound = [];
-        let wcNextRound = [];
-        let wcMatchIndex = 0;
-        let wcRoundName = "16강";
-
-        const wcWins = {
-            "Supersonic": 12,
-            "DM": 9,
-            "WE GO": 7,
-            "Stay This Way": 6,
-            "LOVE BOMB": 5,
-            "Like You Better": 3
-        };
-
-        function updateRankingBoard() {
-            const board = document.getElementById("liveRankingBoard");
-            const sorted = Object.entries(wcWins).sort((a, b) => b[1] - a[1]);
-            board.innerHTML = sorted.map(([title, wins], idx) => `
-                <div class="rank-item">
-                    <span>${idx + 1}위: ${title}</span>
-                    <b>${wins}회 우승 🏆</b>
-                </div>
-            `).join("");
+        function checkSecretPocaByTime() {
+            const hours = new Date().getHours();
+            if (hours >= 21 && hours <= 23 && !collection["STAYTHISWAY"]) {
+                collection["STAYTHISWAY"] = true;
+                localStorage.setItem('fromis9_poca_collection', JSON.stringify(collection));
+                updateBookUI();
+                document.getElementById('secretPocaTitle').innerText = "✨ 밤의 선물! 시크릿 포카 등장";
+                document.getElementById('secretPocaImg').src = musicData["STAYTHISWAY"].img;
+                document.getElementById('secretPocaModal').classList.add('show');
+            }
         }
-        updateRankingBoard();
 
-        function startWorldCup() {
-            const titleKeys = Object.keys(musicData).filter(k => musicData[k].type === "TITLE");
-            wcCandidates = [...titleKeys].sort(() => Math.random() - 0.5);
-            wcCurrentRound = [...wcCandidates];
-            wcNextRound = [];
-            wcMatchIndex = 0;
+        function closeSecretModal() { document.getElementById('secretPocaModal').classList.remove('show'); }
+
+        /* 🧠 퀴즈 실행 로직 */
+        function startFandomExam() {
+            let score = 0;
+            for (let i = 0; i < fandomExamQuestions.length; i++) {
+                const q = fandomExamQuestions[i];
+                let promptText = `[덕력고사 ${i + 1}/${fandomExamQuestions.length}]\n\n${q.question}\n\n` + q.options.map((o, idx) => `${idx + 1}. ${o}`).join('\n');
+                const userInput = prompt(promptText + "\n\n정답 번호를 입력하세요 (1~4):");
+                if (userInput !== null && parseInt(userInput) - 1 === q.answer) score++;
+            }
+            if (score === fandomExamQuestions.length) {
+                alert("🎉 축하합니다! 덕력고사 만점! [특전 포토카드]가 해금되었습니다!");
+                unlockSpecialPoca("QUIZ_SPECIAL_1");
+            } else {
+                alert(`아쉽네요! ${fandomExamQuestions.length}개 중 ${score}개 맞히셨습니다.`);
+            }
+        }
+
+        function startLyricQuiz() {
+            let score = 0;
+            for (let i = 0; i < lyricQuizQuestions.length; i++) {
+                const q = lyricQuizQuestions[i];
+                let promptText = `[가사 퀴즈 ${i + 1}/${lyricQuizQuestions.length}]\n\n${q.question}\n\n` + q.options.map((o, idx) => `${idx + 1}. ${o}`).join('\n');
+                const userInput = prompt(promptText + "\n\n정답 번호를 입력하세요 (1~4):");
+                if (userInput !== null && parseInt(userInput) - 1 === q.answer) score++;
+            }
+            if (score === lyricQuizQuestions.length) {
+                alert("🎵 완벽합니다! 가사 퀴즈를 모두 맞춰 [가사 마스터 특전 포카]를 획득했습니다!");
+                unlockSpecialPoca("QUIZ_SPECIAL_2");
+            } else {
+                alert(`아쉽습니다! ${lyricQuizQuestions.length}개 중 ${score}개 맞히셨습니다.`);
+            }
+        }
+
+        function unlockSpecialPoca(pocaKey) {
+            if (!musicData[pocaKey]) { musicData[pocaKey] = specialPocas[pocaKey]; }
+            collection[pocaKey] = true;
+            localStorage.setItem('fromis9_poca_collection', JSON.stringify(collection));
+            renderAlbumGrid(currentFilter);
+            updateBookUI();
             
-            if (wcCurrentRound.length > 8) wcRoundName = "16강";
-            else if (wcCurrentRound.length > 4) wcRoundName = "8강";
-            else if (wcCurrentRound.length > 2) wcRoundName = "4강";
-            else wcRoundName = "결승";
-
-            document.getElementById("worldcupArena").style.display = "block";
-            document.getElementById("worldcupArena").scrollIntoView({ behavior: "smooth" });
-            renderWCMatch();
+            document.getElementById('secretPocaTitle').innerText = specialPocas[pocaKey].title;
+            document.getElementById('secretPocaImg').src = specialPocas[pocaKey].img;
+            document.getElementById('secretPocaModal').classList.add('show');
         }
 
-        function renderWCMatch() {
-            if (wcMatchIndex >= wcCurrentRound.length - 1) {
-                if (wcCurrentRound.length === 1 || wcNextRound.length === 1) {
-                    const winnerKey = wcNextRound[0] || wcCurrentRound[0];
-                    const winner = musicData[winnerKey];
-                    alert(`🏆 [${winner.title}] 이(가) 타이틀곡 월드컵 우승!`);
-                    
-                    if (wcWins[winner.title]) wcWins[winner.title]++;
-                    else wcWins[winner.title] = 1;
-                    updateRankingBoard();
+        /* ⚽ 이상형 월드컵 로직 */
+        function startWorldCup() {
+            const titles = Object.keys(musicData).filter(k => musicData[k].type === 'TITLE');
+            worldCupQueue = titles.sort(() => 0.5 - Math.random());
+            worldCupNextRound = [];
+            document.getElementById('worldcupArena').style.display = 'block';
+            document.getElementById('worldcupArena').scrollIntoView({ behavior: 'smooth' });
+            setupWCRound();
+        }
 
-                    closeWorldCup();
-                    selectSong(winnerKey);
-                    return;
-                }
-
-                wcCurrentRound = [...wcNextRound];
-                wcNextRound = [];
-                wcMatchIndex = 0;
-
-                if (wcCurrentRound.length === 8) wcRoundName = "8강";
-                else if (wcCurrentRound.length === 4) wcRoundName = "4강";
-                else if (wcCurrentRound.length === 2) wcRoundName = "결승";
+        function setupWCRound() {
+            if (worldCupQueue.length === 1 && worldCupNextRound.length === 0) {
+                const winnerKey = worldCupQueue[0];
+                alert(`🏆 이상형 월드컵 우승 곡: [${musicData[winnerKey].title}]!`);
+                saveWorldCupWin(winnerKey);
+                closeWorldCup();
+                selectSongByKey(winnerKey);
+                return;
             }
 
-            const totalMatches = Math.floor(wcCurrentRound.length / 2);
-            const currentMatchNum = Math.floor(wcMatchIndex / 2) + 1;
-            document.getElementById("wcRoundTitle").innerText = `${wcRoundName} (${currentMatchNum}/${totalMatches})`;
+            if (worldCupQueue.length === 0) {
+                worldCupQueue = [...worldCupNextRound];
+                worldCupNextRound = [];
+            }
 
-            const song1 = musicData[wcCurrentRound[wcMatchIndex]];
-            const song2 = musicData[wcCurrentRound[wcMatchIndex + 1]];
+            const key1 = worldCupQueue.shift();
+            const key2 = worldCupQueue.shift();
 
-            document.getElementById("wcImg1").src = song1.img;
-            document.getElementById("wcTitle1").innerText = song1.title;
-            document.getElementById("wcImg2").src = song2.img;
-            document.getElementById("wcTitle2").innerText = song2.title;
+            if (!key2) { worldCupNextRound.push(key1); setupWCRound(); return; }
+
+            worldCupCurrentMatch = [key1, key2];
+            document.getElementById('wcImg1').src = musicData[key1].img;
+            document.getElementById('wcTitle1').innerText = musicData[key1].title;
+            document.getElementById('wcImg2').src = musicData[key2].img;
+            document.getElementById('wcTitle2').innerText = musicData[key2].title;
         }
 
         function selectWCChoice(idx) {
-            const selectedKey = wcCurrentRound[wcMatchIndex + idx];
-            wcNextRound.push(selectedKey);
-            wcMatchIndex += 2;
-            renderWCMatch();
+            worldCupNextRound.push(worldCupCurrentMatch[idx]);
+            setupWCRound();
         }
 
-        function closeWorldCup() {
-            document.getElementById("worldcupArena").style.display = "none";
+        function closeWorldCup() { document.getElementById('worldcupArena').style.display = 'none'; }
+
+        function saveWorldCupWin(key) {
+            let ranks = JSON.parse(localStorage.getItem('fromis9_wc_ranks')) || {};
+            ranks[key] = (ranks[key] || 0) + 1;
+            localStorage.setItem('fromis9_wc_ranks', JSON.stringify(ranks));
+            loadLiveRanking();
         }
 
-        function closeSecretModal() {
-            document.getElementById("secretPocaModal").classList.remove("show");
-        }
+        function loadLiveRanking() {
+            let ranks = JSON.parse(localStorage.getItem('fromis9_wc_ranks')) || {};
+            const board = document.getElementById('liveRankingBoard');
+            const sorted = Object.keys(ranks).sort((a,b) => ranks[b] - ranks[a]);
 
-        /* 🎁 지정 시각(32.0s, 41.7s, 51.4s, 60.1s, 92.9s) 시크릿 포카 자동 드롭 로직 */
-        function dropTimeSecretPoca() {
-            const uncollected = allPocaKeys.filter(k => !collectedPocas.includes(k));
-            if (uncollected.length === 0) return; // 이미 도감을 다 채웠다면 종료
-
-            const randomKey = uncollected[Math.floor(Math.random() * uncollected.length)];
-            const song = musicData[randomKey];
-
-            document.getElementById("secretPocaTitle").innerText = `✨ 시간 보상 드롭! [ ${song.title} ]`;
-            document.getElementById("secretPocaImg").src = song.img;
-            document.getElementById("secretPocaModal").classList.add("show");
-
-            if (!collectedPocas.includes(randomKey)) {
-                collectedPocas.push(randomKey);
-                updateBookModal();
+            if (sorted.length === 0) {
+                board.innerHTML = `<p style="font-size:13px; color:#94a3b8;">아직 우승 기록이 없습니다.</p>`;
+                return;
             }
+            board.innerHTML = sorted.slice(0, 3).map((key, idx) => 
+                `<div style="display:flex; justify-content:space-between; margin:5px 0;">
+                    <span>${idx===0?'🥇':idx===1?'🥈':'🥉'} ${idx+1}위: ${musicData[key]?.title || key}</span>
+                    <b>${ranks[key]}회 우승</b>
+                </div>`
+            ).join('');
         }
-
-        // 지정 타임스탬프 (밀리초 변환)
-        const secretTimings = [
-            32000, // 32.0초
-            41700, // 41.7초
-            51400, // 51.4초
-            60100, // 60.1초
-            92900  // 92.9초 (하영님 생일 모티브 🍀)
-        ];
-
-        secretTimings.forEach(time => {
-            setTimeout(dropTimeSecretPoca, time);
-        });
     </script>
 </body>
 </html>
